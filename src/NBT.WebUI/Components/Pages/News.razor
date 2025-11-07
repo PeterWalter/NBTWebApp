@@ -1,5 +1,8 @@
 @page "/news"
 @rendermode InteractiveServer
+@using NBT.WebUI.Services
+@using NBT.WebUI.Models
+@inject IAnnouncementService AnnouncementService
 
 <PageTitle>What's New - National Benchmark Tests</PageTitle>
 
@@ -69,82 +72,40 @@
         <FluentStack Orientation="Orientation.Vertical" VerticalGap="20">
             <h2>📰 Recent News</h2>
             <FluentDivider />
+            
+            @if (isLoading)
+            {
+                <FluentProgressRing />
+                <p>Loading announcements...</p>
+            }
+            else if (announcements.Any())
+            {
+                @foreach (var announcement in announcements)
+                {
+                    <div>
+                        <FluentStack Orientation="Orientation.Vertical" VerticalGap="8">
+                            <h4>@announcement.Title</h4>
+                            <p style="color: gray; font-size: 0.9rem;">@announcement.PublicationDate.ToString("MMMM d, yyyy")</p>
+                            <div>@((MarkupString)announcement.Content)</div>
+                            @if (announcement.IsFeatured)
+                            {
+                                <FluentBadge Appearance="Appearance.Accent">Featured</FluentBadge>
+                            }
+                        </FluentStack>
+                    </div>
+                    
+                    @if (announcement != announcements.Last())
+                    {
+                        <FluentDivider />
+                    }
+                }
+            }
+            else
+            {
+                <p>No announcements available at this time.</p>
+            }
 
-            <!-- News Item 1 -->
-            <div>
-                <FluentStack Orientation="Orientation.Vertical" VerticalGap="8">
-                    <h4>Enhanced Security Measures for 2024</h4>
-                    <p style="color: gray; font-size: 0.9rem;">January 15, 2024</p>
-                    <p>
-                        The NBT Project has implemented enhanced security measures for the 2024 test administration. 
-                        All candidates will be required to present original ID documents, and biometric verification 
-                        will be used at test centers to ensure test integrity.
-                    </p>
-                </FluentStack>
-            </div>
 
-            <FluentDivider />
-
-            <!-- News Item 2 -->
-            <div>
-                <FluentStack Orientation="Orientation.Vertical" VerticalGap="8">
-                    <h4>New Research Publication Available</h4>
-                    <p style="color: gray; font-size: 0.9rem;">December 10, 2023</p>
-                    <p>
-                        CETAP has released a new research report examining the predictive validity of NBT scores 
-                        for academic performance across South African universities. The report is available in 
-                        the Resources section.
-                    </p>
-                    <FluentButton Appearance="Appearance.Accent" Href="/resources">
-                        View Publication
-                    </FluentButton>
-                </FluentStack>
-            </div>
-
-            <FluentDivider />
-
-            <!-- News Item 3 -->
-            <div>
-                <FluentStack Orientation="Orientation.Vertical" VerticalGap="8">
-                    <h4>Extended Test Centers for Rural Areas</h4>
-                    <p style="color: gray; font-size: 0.9rem;">November 20, 2023</p>
-                    <p>
-                        In response to accessibility concerns, the NBT Project has expanded test center locations 
-                        to include more venues in rural and remote areas. This initiative aims to reduce travel 
-                        costs and improve access for all South African learners.
-                    </p>
-                </FluentStack>
-            </div>
-
-            <FluentDivider />
-
-            <!-- News Item 4 -->
-            <div>
-                <FluentStack Orientation="Orientation.Vertical" VerticalGap="8">
-                    <h4>Digital Accommodations for Students with Disabilities</h4>
-                    <p style="color: gray; font-size: 0.9rem;">October 5, 2023</p>
-                    <p>
-                        The NBT now offers enhanced digital accommodations for students with visual impairments 
-                        and learning disabilities, including screen readers and extended time options. 
-                        Contact us for accommodation requests.
-                    </p>
-                </FluentStack>
-            </div>
-
-            <FluentDivider />
-
-            <!-- News Item 5 -->
-            <div>
-                <FluentStack Orientation="Orientation.Vertical" VerticalGap="8">
-                    <h4>Partnerships with Educational NGOs</h4>
-                    <p style="color: gray; font-size: 0.9rem;">September 15, 2023</p>
-                    <p>
-                        CETAP has formed partnerships with several educational NGOs to provide NBT preparation 
-                        workshops and fee waivers for financially disadvantaged students. Schools can contact 
-                        us for more information about these programs.
-                    </p>
-                </FluentStack>
-            </div>
         </FluentStack>
     </FluentCard>
 
@@ -232,3 +193,15 @@
         </FluentStack>
     </FluentCard>
 </FluentStack>
+
+@code {
+    private List<AnnouncementDto> announcements = new();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        announcements = await AnnouncementService.GetAllAsync();
+        isLoading = false;
+    }
+}

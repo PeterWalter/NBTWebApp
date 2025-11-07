@@ -1,5 +1,8 @@
 @page "/resources"
 @rendermode InteractiveServer
+@using NBT.WebUI.Services
+@using NBT.WebUI.Models
+@inject IResourceService ResourceService
 
 <PageTitle>Resources - National Benchmark Tests</PageTitle>
 
@@ -64,60 +67,85 @@
                 used in the NBT.
             </p>
 
-            <FluentAccordion>
-                <FluentAccordionItem Heading="Academic Literacy (AL) Sample Test" Expanded="true">
-                    <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
-                        <p>
-                            This sample test provides examples of the types of questions you will encounter 
-                            in the Academic Literacy test. It includes reading comprehension passages, 
-                            reasoning questions, and language use items.
-                        </p>
-                        <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="10" Wrap="true">
-                            <FluentButton Appearance="Appearance.Accent">
-                                ⬇️ Download Sample Test (PDF)
-                            </FluentButton>
-                            <FluentButton Appearance="Appearance.Outline">
-                                ⬇️ Download Answer Key (PDF)
-                            </FluentButton>
+            @if (isLoading)
+            {
+                <FluentProgressRing />
+                <p>Loading resources...</p>
+            }
+            else if (sampleTests.Any())
+            {
+                <FluentAccordion>
+                    @foreach (var resource in sampleTests)
+                    {
+                        <FluentAccordionItem Heading="@resource.Title" Expanded="@(resource == sampleTests.First())">
+                            <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                                <p>@resource.Description</p>
+                                <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="10" Wrap="true">
+                                    <FluentButton Appearance="Appearance.Accent" OnClick="@(() => DownloadResource(resource.Id, resource.FileUrl))">
+                                        ⬇️ Download (@FormatFileSize(resource.FileSizeBytes))
+                                    </FluentButton>
+                                    <p style="color: gray; font-size: 0.9rem;">Downloaded @resource.DownloadCount times</p>
+                                </FluentStack>
+                            </FluentStack>
+                        </FluentAccordionItem>
+                    }
+                </FluentAccordion>
+            }
+            else
+            {
+                <FluentAccordion>
+                    <FluentAccordionItem Heading="Academic Literacy (AL) Sample Test" Expanded="true">
+                        <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                            <p>
+                                This sample test provides examples of the types of questions you will encounter 
+                                in the Academic Literacy test. It includes reading comprehension passages, 
+                                reasoning questions, and language use items.
+                            </p>
+                            <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="10" Wrap="true">
+                                <FluentButton Appearance="Appearance.Accent">
+                                    ⬇️ Download Sample Test (PDF)
+                                </FluentButton>
+                                <FluentButton Appearance="Appearance.Outline">
+                                    ⬇️ Download Answer Key (PDF)
+                                </FluentButton>
+                            </FluentStack>
                         </FluentStack>
-                    </FluentStack>
-                </FluentAccordionItem>
-
-                <FluentAccordionItem Heading="Quantitative Literacy (QL) Sample Test">
-                    <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
-                        <p>
-                            Sample questions demonstrating the quantitative literacy skills assessed, 
-                            including data interpretation, basic calculations, and problem-solving in 
-                            real-world contexts.
-                        </p>
-                        <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="10" Wrap="true">
-                            <FluentButton Appearance="Appearance.Accent">
-                                ⬇️ Download Sample Test (PDF)
-                            </FluentButton>
-                            <FluentButton Appearance="Appearance.Outline">
-                                ⬇️ Download Answer Key (PDF)
-                            </FluentButton>
+                    </FluentAccordionItem>
+                    <FluentAccordionItem Heading="Quantitative Literacy (QL) Sample Test">
+                        <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                            <p>
+                                Sample questions demonstrating the quantitative literacy skills assessed, 
+                                including data interpretation, basic calculations, and problem-solving in 
+                                real-world contexts.
+                            </p>
+                            <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="10" Wrap="true">
+                                <FluentButton Appearance="Appearance.Accent">
+                                    ⬇️ Download Sample Test (PDF)
+                                </FluentButton>
+                                <FluentButton Appearance="Appearance.Outline">
+                                    ⬇️ Download Answer Key (PDF)
+                                </FluentButton>
+                            </FluentStack>
                         </FluentStack>
-                    </FluentStack>
-                </FluentAccordionItem>
-
-                <FluentAccordionItem Heading="Mathematics (MAT) Sample Test">
-                    <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
-                        <p>
-                            Practice questions covering the mathematical content assessed in the NBT Mathematics 
-                            test, including algebra, geometry, data handling, and problem-solving.
-                        </p>
-                        <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="10" Wrap="true">
-                            <FluentButton Appearance="Appearance.Accent">
-                                ⬇️ Download Sample Test (PDF)
-                            </FluentButton>
-                            <FluentButton Appearance="Appearance.Outline">
-                                ⬇️ Download Answer Key (PDF)
-                            </FluentButton>
+                    </FluentAccordionItem>
+                    <FluentAccordionItem Heading="Mathematics (MAT) Sample Test">
+                        <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                            <p>
+                                Practice questions covering the mathematical content assessed in the NBT Mathematics 
+                                test, including algebra, geometry, data handling, and problem-solving.
+                            </p>
+                            <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="10" Wrap="true">
+                                <FluentButton Appearance="Appearance.Accent">
+                                    ⬇️ Download Sample Test (PDF)
+                                </FluentButton>
+                                <FluentButton Appearance="Appearance.Outline">
+                                    ⬇️ Download Answer Key (PDF)
+                                </FluentButton>
+                            </FluentStack>
                         </FluentStack>
-                    </FluentStack>
-                </FluentAccordionItem>
-            </FluentAccordion>
+                    </FluentAccordionItem>
+                </FluentAccordion>
+            }
         </FluentStack>
     </FluentCard>
 
@@ -391,5 +419,39 @@
 </FluentStack>
 
 @code {
-    
+    private List<DownloadableResourceDto> resources = new();
+    private List<DownloadableResourceDto> sampleTests = new();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        resources = await ResourceService.GetAllAsync();
+        sampleTests = resources.Where(r => r.Category == "Sample Questions").ToList();
+        isLoading = false;
+    }
+
+    private async Task DownloadResource(Guid id, string url)
+    {
+        await ResourceService.IncrementDownloadCountAsync(id);
+        // In a real implementation, trigger file download
+    }
+
+    private string FormatFileSize(long? bytes)
+    {
+        if (!bytes.HasValue || bytes.Value == 0)
+            return "Unknown size";
+
+        string[] sizes = { "B", "KB", "MB", "GB" };
+        int order = 0;
+        double len = bytes.Value;
+
+        while (len >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            len = len / 1024;
+        }
+
+        return $"{len:0.#} {sizes[order]}";
+    }
 }

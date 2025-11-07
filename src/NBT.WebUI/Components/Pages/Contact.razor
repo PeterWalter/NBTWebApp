@@ -1,5 +1,8 @@
 @page "/contact"
 @rendermode InteractiveServer
+@using NBT.WebUI.Services
+@using NBT.WebUI.Models
+@inject IContactInquiryService ContactInquiryService
 
 <PageTitle>Contact Us - National Benchmark Tests</PageTitle>
 
@@ -16,19 +19,38 @@
             <FluentCard>
                 <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
                     <h2>Send Us a Message</h2>
-                    <FluentTextField @bind-Value="@ContactForm.Name" Label="Name" Required="true" Style="width: 100%;" />
-                    <FluentTextField @bind-Value="@ContactForm.Email" Label="Email" Required="true" Style="width: 100%;" />
-                    <FluentTextField @bind-Value="@ContactForm.Phone" Label="Phone (Optional)" Style="width: 100%;" />
-                    <FluentSelect Label="Inquiry Type" TOption="string" @bind-Value="@ContactForm.InquiryType" Style="width: 100%;">
-                        <FluentOption TOption="string" Value="General">General Inquiry</FluentOption>
-                        <FluentOption TOption="string" Value="Registration">Registration</FluentOption>
-                        <FluentOption TOption="string" Value="Results">Results</FluentOption>
-                        <FluentOption TOption="string" Value="Technical">Technical Support</FluentOption>
-                    </FluentSelect>
-                    <FluentTextField @bind-Value="@ContactForm.Subject" Label="Subject" Required="true" Style="width: 100%;" />
-                    <FluentTextArea @bind-Value="@ContactForm.Message" Label="Message" Required="true" Rows="5" Style="width: 100%;" />
-                    <FluentButton Appearance="Appearance.Accent" OnClick="@SubmitForm">
-                        Send Message
+                    
+                    @if (submissionSuccess)
+                    {
+                        <FluentMessageBar Intent="MessageIntent.Success">
+                            <strong>Message Sent Successfully!</strong><br />
+                            Your inquiry has been received. Reference number: <strong>@referenceNumber</strong><br />
+                            We'll respond to your inquiry shortly.
+                        </FluentMessageBar>
+                    }
+                    else if (submissionError)
+                    {
+                        <FluentMessageBar Intent="MessageIntent.Error">
+                            <strong>Error:</strong> Failed to submit your inquiry. Please try again.
+                        </FluentMessageBar>
+                    }
+                    
+                    <FluentTextField @bind-Value="@ContactForm.Name" Label="Name *" Required="true" Style="width: 100%;" />
+                    <FluentTextField @bind-Value="@ContactForm.Email" Label="Email *" Required="true" Style="width: 100%;" />
+                    <FluentTextField @bind-Value="@ContactForm.PhoneNumber" Label="Phone (Optional)" Style="width: 100%;" />
+                    <FluentTextField @bind-Value="@ContactForm.Subject" Label="Subject *" Required="true" Style="width: 100%;" />
+                    <FluentTextArea @bind-Value="@ContactForm.Message" Label="Message *" Required="true" Rows="5" Style="width: 100%;" />
+                    
+                    <FluentButton Appearance="Appearance.Accent" OnClick="@SubmitForm" Disabled="@isSubmitting">
+                        @if (isSubmitting)
+                        {
+                            <FluentProgressRing Style="width: 20px; height: 20px;" />
+                            <span>Sending...</span>
+                        }
+                        else
+                        {
+                            <span>Send Message</span>
+                        }
                     </FluentButton>
                 </FluentStack>
             </FluentCard>
@@ -67,20 +89,41 @@
 </FluentStack>
 
 @code {
-    private ContactFormModel ContactForm = new();
+    private CreateContactInquiryDto ContactForm = new();
+    private bool isSubmitting = false;
+    private bool submissionSuccess = false;
+    private bool submissionError = false;
+    private string referenceNumber = string.Empty;
 
-    private void SubmitForm()
+    private async Task SubmitForm()
     {
-        // TODO: Implement form submission
-    }
+        if (string.IsNullOrWhiteSpace(ContactForm.Name) || 
+            string.IsNullOrWhiteSpace(ContactForm.Email) ||
+            string.IsNullOrWhiteSpace(ContactForm.Subject) ||
+            string.IsNullOrWhiteSpace(ContactForm.Message))
+        {
+            return;
+        }
 
-    private class ContactFormModel
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Phone { get; set; } = string.Empty;
-        public string InquiryType { get; set; } = "General";
-        public string Subject { get; set; } = string.Empty;
-        public string Message { get; set; } = string.Empty;
+        isSubmitting = true;
+        submissionSuccess = false;
+        submissionError = false;
+
+        var result = await ContactInquiryService.SubmitInquiryAsync(ContactForm);
+
+        if (result != null)
+        {
+            submissionSuccess = true;
+            referenceNumber = result.ReferenceNumber;
+            
+            // Reset form
+            ContactForm = new CreateContactInquiryDto();
+        }
+        else
+        {
+            submissionError = true;
+        }
+
+        isSubmitting = false;
     }
 }

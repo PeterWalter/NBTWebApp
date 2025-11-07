@@ -1,5 +1,8 @@
 @page "/"
 @rendermode InteractiveServer
+@using NBT.WebUI.Services
+@using NBT.WebUI.Models
+@inject IAnnouncementService AnnouncementService
 
 <PageTitle>Home - National Benchmark Tests</PageTitle>
 
@@ -136,11 +139,47 @@
         <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
             <h2>Latest News & Announcements</h2>
             <FluentDivider />
-            <p><em>Check the <FluentAnchor Href="/news">What's New</FluentAnchor> page for the latest updates, test dates, and announcements.</em></p>
+            
+            @if (isLoading)
+            {
+                <FluentProgressRing />
+            }
+            else if (featuredAnnouncements.Any())
+            {
+                @foreach (var announcement in featuredAnnouncements)
+                {
+                    <div>
+                        <h4>@announcement.Title</h4>
+                        <p style="color: gray; font-size: 0.9rem;">@announcement.PublicationDate.ToString("MMMM d, yyyy")</p>
+                        <div>@((MarkupString)announcement.Content.Substring(0, Math.Min(200, announcement.Content.Length)))...</div>
+                    </div>
+                    
+                    @if (announcement != featuredAnnouncements.Last())
+                    {
+                        <FluentDivider />
+                    }
+                }
+                
+                <FluentButton Appearance="Appearance.Accent" Href="/news">
+                    View All Announcements
+                </FluentButton>
+            }
+            else
+            {
+                <p><em>Check the <FluentAnchor Href="/news">What's New</FluentAnchor> page for the latest updates, test dates, and announcements.</em></p>
+            }
         </FluentStack>
     </FluentCard>
 </FluentStack>
 
 @code {
-    
+    private List<AnnouncementDto> featuredAnnouncements = new();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        featuredAnnouncements = await AnnouncementService.GetFeaturedAsync();
+        isLoading = false;
+    }
 }
