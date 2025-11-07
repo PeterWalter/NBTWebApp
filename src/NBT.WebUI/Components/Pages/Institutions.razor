@@ -9,24 +9,288 @@
         <FluentBreadcrumbItem Href="/institutions">For Institutions</FluentBreadcrumbItem>
     </FluentBreadcrumb>
 
-    <h1>Information for Institutions</h1>
+    <h1>Information for Higher Education Institutions</h1>
 
-    <FluentCard>
-        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
-            <h2>Using NBT Results</h2>
-            <p>
-                Information for higher education institutions on how to interpret and use NBT results
-                in their admissions processes.
+    <!-- Overview -->
+    <FluentCard Style="background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%); color: white; padding: 2rem;">
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+            <h2 style="color: white; margin: 0;">Enhancing Student Success Through Assessment</h2>
+            <p style="color: white; margin: 0;">
+                The NBT provides valuable diagnostic information to support student placement, 
+                academic development, and institutional research.
             </p>
         </FluentStack>
     </FluentCard>
 
+    <!-- Participating Institutions -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>Participating Institutions</h2>
+            <FluentDivider />
+            <p>
+                Most South African public universities use NBT results as part of their admissions process. 
+                These include:
+            </p>
+            <FluentGrid Spacing="2">
+                <FluentGridItem xs="12" sm="6" md="4">
+                    <ul>
+                        <li>University of Cape Town</li>
+                        <li>University of the Witwatersrand</li>
+                        <li>University of Pretoria</li>
+                        <li>Stellenbosch University</li>
+                        <li>University of KwaZulu-Natal</li>
+                    </ul>
+                </FluentGridItem>
+                <FluentGridItem xs="12" sm="6" md="4">
+                    <ul>
+                        <li>Rhodes University</li>
+                        <li>Nelson Mandela University</li>
+                        <li>University of Johannesburg</li>
+                        <li>University of the Free State</li>
+                        <li>North-West University</li>
+                    </ul>
+                </FluentGridItem>
+                <FluentGridItem xs="12" sm="6" md="4">
+                    <ul>
+                        <li>University of the Western Cape</li>
+                        <li>University of Limpopo</li>
+                        <li>Walter Sisulu University</li>
+                        <li>Cape Peninsula University of Technology</li>
+                        <li>And many others...</li>
+                    </ul>
+                </FluentGridItem>
+            </FluentGrid>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- How to Use NBT Results -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>How Institutions Use NBT Results</h2>
+            <FluentDivider />
+            <p>
+                Institutions use NBT results in various ways to support student success:
+            </p>
+            
+            <FluentAccordion>
+                <FluentAccordionItem Heading="Admissions Decisions" Expanded="true">
+                    <p>
+                        NBT results complement NSC results in the admissions process. Institutions may:
+                    </p>
+                    <ul>
+                        <li>Use NBT scores as part of admission point calculations</li>
+                        <li>Set minimum NBT requirements for specific programs</li>
+                        <li>Consider NBT results alongside NSC for borderline cases</li>
+                        <li>Use results for faculty-specific admission requirements</li>
+                    </ul>
+                </FluentAccordionItem>
+
+                <FluentAccordionItem Heading="Student Placement">
+                    <p>
+                        NBT results help determine appropriate academic placement:
+                    </p>
+                    <ul>
+                        <li>Placement in mainstream vs. extended curriculum programs</li>
+                        <li>Identification of students requiring foundational support</li>
+                        <li>Course selection and academic planning</li>
+                        <li>Matching students with appropriate support services</li>
+                    </ul>
+                </FluentAccordionItem>
+
+                <FluentAccordionItem Heading="Academic Development">
+                    <p>
+                        Results inform the design and delivery of academic support:
+                    </p>
+                    <ul>
+                        <li>Development of targeted intervention programs</li>
+                        <li>Design of bridging and foundation courses</li>
+                        <li>Identification of students for early support initiatives</li>
+                        <li>Resource allocation for academic development services</li>
+                    </ul>
+                </FluentAccordionItem>
+
+                <FluentAccordionItem Heading="Institutional Research">
+                    <p>
+                        NBT data supports evidence-based decision making:
+                    </p>
+                    <ul>
+                        <li>Predictive validity studies</li>
+                        <li>Program evaluation and curriculum development</li>
+                        <li>Student success and retention research</li>
+                        <li>Quality assurance and institutional planning</li>
+                    </ul>
+                </FluentAccordionItem>
+            </FluentAccordion>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Accessing Results -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>Accessing Student Results</h2>
+            <FluentDivider />
+            <p>
+                Institutions receive NBT results for students who have nominated them during registration. 
+                Results are provided through:
+            </p>
+            <ul>
+                <li><strong>Secure Online Portal:</strong> Access results for all nominated students</li>
+                <li><strong>Data Files:</strong> Bulk downloads in CSV or Excel format for integration</li>
+                <li><strong>API Integration:</strong> Automated data transfer to institutional systems</li>
+                <li><strong>Regular Updates:</strong> Results uploaded within 4-6 weeks of test administration</li>
+            </ul>
+            <FluentButton Appearance="Appearance.Accent">
+                Access Institutional Portal
+            </FluentButton>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Understanding Results -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>Understanding NBT Results</h2>
+            <FluentDivider />
+            
+            <h4>Performance Bands</h4>
+            <p>Results are reported in three performance bands:</p>
+            <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                <div>
+                    <h5>🟢 Proficient</h5>
+                    <p>
+                        Student demonstrates competence that suggests academic performance can be expected 
+                        to be adequate; students in this category are likely to cope with the demands 
+                        of degree-level study.
+                    </p>
+                </div>
+                <div>
+                    <h5>🟡 Intermediate</h5>
+                    <p>
+                        Student demonstrates partial competence in the area; challenges are predicted, 
+                        which could be managed through access to special support such as augmented 
+                        programmes, extended programmes, or additional tutorials.
+                    </p>
+                </div>
+                <div>
+                    <h5>🔴 Basic</h5>
+                    <p>
+                        Student demonstrates a level of competence that suggests serious learning 
+                        challenges will be experienced; an extended or augmented curriculum programme 
+                        is strongly recommended, or foundation provision.
+                    </p>
+                </div>
+            </FluentStack>
+
+            <FluentMessageBar Intent="MessageIntent.Info">
+                These bands are diagnostic, not prescriptive. Institutions determine how to use the 
+                information based on their own context and student support capabilities.
+            </FluentMessageBar>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Technical Information -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>Technical Information</h2>
+            <FluentDivider />
+            <p>
+                The NBT Project provides comprehensive technical documentation:
+            </p>
+            <ul>
+                <li><strong>Test Construction:</strong> Information about test development and validation</li>
+                <li><strong>Psychometric Properties:</strong> Reliability, validity, and fairness studies</li>
+                <li><strong>Scoring and Scaling:</strong> How scores are calculated and standardized</li>
+                <li><strong>Benchmarking:</strong> How performance bands were established</li>
+                <li><strong>Research Reports:</strong> Annual reports on NBT research and development</li>
+            </ul>
+            <FluentButton Appearance="Appearance.Accent" Href="/resources">
+                Access Technical Documentation
+            </FluentButton>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Partnership and Support -->
     <FluentCard>
         <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
             <h2>Partnership Opportunities</h2>
+            <FluentDivider />
             <p>
-                Learn about how your institution can partner with the NBT project.
+                CETAP works collaboratively with South African universities to:
             </p>
+            <ul>
+                <li>Conduct predictive validity studies at participating institutions</li>
+                <li>Research academic development interventions</li>
+                <li>Share best practices in student placement and support</li>
+                <li>Develop new assessment tools and approaches</li>
+                <li>Provide workshops and training for institutional staff</li>
+            </ul>
+            <p>
+                For inquiries about research collaborations, institutional partnerships, or technical 
+                support, please contact us.
+            </p>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- FAQs -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>Frequently Asked Questions</h2>
+            <FluentDivider />
+            
+            <FluentAccordion>
+                <FluentAccordionItem Heading="How do we register as a participating institution?">
+                    <p>
+                        Most South African public universities already participate. If your institution 
+                        wishes to begin using NBT results, please contact CETAP to discuss participation 
+                        requirements and data access procedures.
+                    </p>
+                </FluentAccordionItem>
+
+                <FluentAccordionItem Heading="What is the cost to institutions?">
+                    <p>
+                        There is no cost to institutions for receiving NBT results. Students pay the 
+                        test fee directly when registering. Participating institutions receive results 
+                        at no additional charge.
+                    </p>
+                </FluentAccordionItem>
+
+                <FluentAccordionItem Heading="Can we conduct research using NBT data?">
+                    <p>
+                        Yes. Institutions may use NBT data for internal research purposes, subject to 
+                        ethical clearance and POPIA compliance. For collaborative research projects or 
+                        external publications, please contact CETAP to discuss data use agreements.
+                    </p>
+                </FluentAccordionItem>
+
+                <FluentAccordionItem Heading="How often are tests administered?">
+                    <p>
+                        Tests are offered multiple times throughout the year at venues across South Africa. 
+                        This ensures students have multiple opportunities to write before application 
+                        deadlines. Test dates are published annually.
+                    </p>
+                </FluentAccordionItem>
+
+                <FluentAccordionItem Heading="What technical support is available?">
+                    <p>
+                        CETAP provides technical support for data access, result interpretation, and 
+                        system integration. Contact our institutional support team for assistance with 
+                        portal access, data exports, or technical questions.
+                    </p>
+                </FluentAccordionItem>
+            </FluentAccordion>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Contact Section -->
+    <FluentCard Style="background: #f3f2f1;">
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+            <h3>Institutional Support</h3>
+            <p>
+                For questions about institutional participation, data access, research collaborations, 
+                or technical support, please contact our institutional liaison team.
+            </p>
+            <FluentButton Appearance="Appearance.Accent" Href="/contact">
+                Contact Institutional Support
+            </FluentButton>
         </FluentStack>
     </FluentCard>
 </FluentStack>

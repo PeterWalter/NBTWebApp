@@ -11,11 +11,224 @@
 
     <h1>News & Announcements</h1>
 
+    <!-- Latest Announcement -->
+    <FluentMessageBar Intent="MessageIntent.Info" Style="padding: 1.5rem;">
+        <strong>Registration Now Open:</strong> 2024 NBT test dates are now available. 
+        Register early to secure your preferred date and venue.
+    </FluentMessageBar>
+
+    <!-- Important Dates -->
     <FluentCard>
         <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
-            <FluentMessageBar Intent="MessageIntent.Info">
-                No announcements at this time. Check back soon for updates.
-            </FluentMessageBar>
+            <h2>📅 2024 Test Dates</h2>
+            <FluentDivider />
+            <p>The following test dates are available for 2024:</p>
+            
+            <FluentGrid Spacing="3">
+                <FluentGridItem xs="12" md="6">
+                    <FluentCard Style="background: #f3f2f1;">
+                        <h4>First Semester</h4>
+                        <ul>
+                            <li>February 10, 2024</li>
+                            <li>February 24, 2024</li>
+                            <li>March 9, 2024</li>
+                            <li>March 23, 2024</li>
+                            <li>April 13, 2024</li>
+                            <li>April 27, 2024</li>
+                            <li>May 11, 2024</li>
+                            <li>May 25, 2024</li>
+                        </ul>
+                    </FluentCard>
+                </FluentGridItem>
+                
+                <FluentGridItem xs="12" md="6">
+                    <FluentCard Style="background: #f3f2f1;">
+                        <h4>Second Semester</h4>
+                        <ul>
+                            <li>July 13, 2024</li>
+                            <li>July 27, 2024</li>
+                            <li>August 10, 2024</li>
+                            <li>August 24, 2024</li>
+                            <li>September 14, 2024</li>
+                            <li>September 28, 2024</li>
+                            <li>October 12, 2024</li>
+                            <li>October 26, 2024</li>
+                        </ul>
+                    </FluentCard>
+                </FluentGridItem>
+            </FluentGrid>
+
+            <FluentButton Appearance="Appearance.Accent" Href="/applicants">
+                Register Now
+            </FluentButton>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Recent News -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="20">
+            <h2>📰 Recent News</h2>
+            <FluentDivider />
+
+            <!-- News Item 1 -->
+            <div>
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="8">
+                    <h4>Enhanced Security Measures for 2024</h4>
+                    <p style="color: gray; font-size: 0.9rem;">January 15, 2024</p>
+                    <p>
+                        The NBT Project has implemented enhanced security measures for the 2024 test administration. 
+                        All candidates will be required to present original ID documents, and biometric verification 
+                        will be used at test centers to ensure test integrity.
+                    </p>
+                </FluentStack>
+            </div>
+
+            <FluentDivider />
+
+            <!-- News Item 2 -->
+            <div>
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="8">
+                    <h4>New Research Publication Available</h4>
+                    <p style="color: gray; font-size: 0.9rem;">December 10, 2023</p>
+                    <p>
+                        CETAP has released a new research report examining the predictive validity of NBT scores 
+                        for academic performance across South African universities. The report is available in 
+                        the Resources section.
+                    </p>
+                    <FluentButton Appearance="Appearance.Accent" Href="/resources">
+                        View Publication
+                    </FluentButton>
+                </FluentStack>
+            </div>
+
+            <FluentDivider />
+
+            <!-- News Item 3 -->
+            <div>
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="8">
+                    <h4>Extended Test Centers for Rural Areas</h4>
+                    <p style="color: gray; font-size: 0.9rem;">November 20, 2023</p>
+                    <p>
+                        In response to accessibility concerns, the NBT Project has expanded test center locations 
+                        to include more venues in rural and remote areas. This initiative aims to reduce travel 
+                        costs and improve access for all South African learners.
+                    </p>
+                </FluentStack>
+            </div>
+
+            <FluentDivider />
+
+            <!-- News Item 4 -->
+            <div>
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="8">
+                    <h4>Digital Accommodations for Students with Disabilities</h4>
+                    <p style="color: gray; font-size: 0.9rem;">October 5, 2023</p>
+                    <p>
+                        The NBT now offers enhanced digital accommodations for students with visual impairments 
+                        and learning disabilities, including screen readers and extended time options. 
+                        Contact us for accommodation requests.
+                    </p>
+                </FluentStack>
+            </div>
+
+            <FluentDivider />
+
+            <!-- News Item 5 -->
+            <div>
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="8">
+                    <h4>Partnerships with Educational NGOs</h4>
+                    <p style="color: gray; font-size: 0.9rem;">September 15, 2023</p>
+                    <p>
+                        CETAP has formed partnerships with several educational NGOs to provide NBT preparation 
+                        workshops and fee waivers for financially disadvantaged students. Schools can contact 
+                        us for more information about these programs.
+                    </p>
+                </FluentStack>
+            </div>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- System Updates -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>💻 System Updates</h2>
+            <FluentDivider />
+            
+            <div>
+                <h4>Online Portal Enhancements</h4>
+                <p style="color: gray; font-size: 0.9rem;">January 5, 2024</p>
+                <p>
+                    The NBT registration portal has been upgraded with improved mobile responsiveness 
+                    and faster loading times. Candidates can now also update their test venue preferences 
+                    up to 48 hours before their scheduled test.
+                </p>
+            </div>
+
+            <FluentDivider />
+
+            <div>
+                <h4>Results Retrieval System Update</h4>
+                <p style="color: gray; font-size: 0.9rem;">December 1, 2023</p>
+                <p>
+                    The results retrieval system has been updated to provide more detailed performance 
+                    feedback and downloadable result certificates for candidates.
+                </p>
+            </div>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Upcoming Events -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>🎓 Upcoming Events</h2>
+            <FluentDivider />
+            
+            <div>
+                <h4>Educator Workshops - March 2024</h4>
+                <p>
+                    CETAP will be conducting NBT information workshops for educators across South Africa. 
+                    These workshops will cover test content, student preparation strategies, and understanding 
+                    NBT results. Registration details will be announced in February.
+                </p>
+            </div>
+
+            <FluentDivider />
+
+            <div>
+                <h4>Annual Research Conference - June 2024</h4>
+                <p>
+                    The Annual NBT Research Conference will be held in Cape Town in June 2024. The conference 
+                    will bring together researchers, practitioners, and policymakers to discuss academic 
+                    preparedness and student success in higher education.
+                </p>
+            </div>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Archive -->
+    <FluentCard Style="background: #f3f2f1;">
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+            <h3>📚 News Archive</h3>
+            <p>
+                Looking for older announcements and news items? Access our complete news archive.
+            </p>
+            <FluentButton Appearance="Appearance.Accent">
+                View Archive
+            </FluentButton>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Newsletter Signup -->
+    <FluentCard Style="background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%); color: white; padding: 2rem;">
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+            <h3 style="color: white;">Stay Updated</h3>
+            <p style="color: white;">
+                Subscribe to our newsletter to receive the latest NBT news, test dates, and announcements.
+            </p>
+            <FluentButton Appearance="Appearance.Lightweight" 
+                          Style="background: white; color: #0078d4; width: fit-content;">
+                Subscribe to Newsletter
+            </FluentButton>
         </FluentStack>
     </FluentCard>
 </FluentStack>
