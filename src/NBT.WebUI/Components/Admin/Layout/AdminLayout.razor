@@ -1,0 +1,113 @@
+@inherits LayoutComponentBase
+
+<div class="admin-layout">
+    <div class="admin-sidebar">
+        <div class="admin-logo">
+            <FluentIcon Value="@(new Icons.Regular.Size24.Shield())" Color="Color.Accent" />
+            <h3>NBT Admin</h3>
+        </div>
+        
+        <FluentNavMenu>
+            <FluentNavLink Href="/admin" Icon="@(new Icons.Regular.Size20.Home())" Match="NavLinkMatch.All">
+                Dashboard
+            </FluentNavLink>
+            
+            <FluentNavGroup Title="Content Management" Icon="@(new Icons.Regular.Size20.Document())">
+                <FluentNavLink Href="/admin/content-pages" Icon="@(new Icons.Regular.Size20.DocumentText())">
+                    Content Pages
+                </FluentNavLink>
+                <FluentNavLink Href="/admin/announcements" Icon="@(new Icons.Regular.Size20.Megaphone())">
+                    Announcements
+                </FluentNavLink>
+                <FluentNavLink Href="/admin/resources" Icon="@(new Icons.Regular.Size20.DocumentBulletList())">
+                    Resources
+                </FluentNavLink>
+            </FluentNavGroup>
+            
+            <FluentNavGroup Title="User Management" Icon="@(new Icons.Regular.Size20.People())">
+                <FluentNavLink Href="/admin/users" Icon="@(new Icons.Regular.Size20.Person())">
+                    Users
+                </FluentNavLink>
+                <FluentNavLink Href="/admin/roles" Icon="@(new Icons.Regular.Size20.PersonKey())">
+                    Roles
+                </FluentNavLink>
+            </FluentNavGroup>
+            
+            <FluentNavLink Href="/admin/inquiries" Icon="@(new Icons.Regular.Size20.Mail())">
+                Contact Inquiries
+            </FluentNavLink>
+            
+            <FluentDivider />
+            
+            <FluentNavLink Href="/" Icon="@(new Icons.Regular.Size20.ArrowLeft())">
+                Back to Site
+            </FluentNavLink>
+            <FluentNavLink Href="/logout" Icon="@(new Icons.Regular.Size20.SignOut())">
+                Logout
+            </FluentNavLink>
+        </FluentNavMenu>
+    </div>
+    
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <FluentStack HorizontalAlignment="HorizontalAlignment.End" VerticalAlignment="VerticalAlignment.Center">
+                <FluentBadge Appearance="Appearance.Accent">Admin Mode</FluentBadge>
+                <FluentPersona Name="Admin User" Status="PresenceStatus.Available" />
+            </FluentStack>
+        </div>
+        
+        <div class="admin-content">
+            @Body
+        </div>
+    </div>
+</div>
+
+<style>
+    .admin-layout {
+        display: flex;
+        height: 100vh;
+        background-color: var(--neutral-layer-1);
+    }
+    
+    .admin-sidebar {
+        width: 280px;
+        background-color: var(--neutral-layer-2);
+        border-right: 1px solid var(--neutral-stroke-layer-rest);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+    
+    .admin-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 24px 20px;
+        border-bottom: 1px solid var(--neutral-stroke-layer-rest);
+    }
+    
+    .admin-logo h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+    }
+    
+    .admin-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    
+    .admin-topbar {
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--neutral-stroke-layer-rest);
+        background-color: var(--neutral-layer-2);
+    }
+    
+    .admin-content {
+        flex: 1;
+        padding: 24px;
+        overflow-y: auto;
+    }
+</style>
