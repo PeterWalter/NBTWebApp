@@ -1,0 +1,61 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using NBT.Application.Common.Interfaces;
+using NBT.Domain.Entities;
+using NBT.Infrastructure.Persistence;
+using NBT.Infrastructure.Services;
+
+namespace NBT.Infrastructure;
+
+/// <summary>
+/// Infrastructure layer dependency injection configuration.
+/// </summary>
+public static class DependencyInjection
+{
+    /// <summary>
+    /// Adds Infrastructure layer services to the service collection.
+    /// </summary>
+    /// <param name="services">Service collection.</param>
+    /// <param name="configuration">Application configuration.</param>
+    /// <returns>Service collection for chaining.</returns>
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    {
+        // Database Context
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(
+                configuration.GetConnectionString("DefaultConnection"),
+                b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+
+        services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+
+        // Identity
+        services.AddIdentity<User, IdentityRole<Guid>>(options =>
+        {
+            // Password settings
+            options.Password.RequireDigit = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireNonAlphanumeric = true;
+            options.Password.RequiredLength = 8;
+
+            // Lockout settings
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+            options.Lockout.MaxFailedAccessAttempts = 5;
+            options.Lockout.AllowedForNewUsers = true;
+
+            // User settings
+            options.User.RequireUniqueEmail = true;
+        })
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultTokenProviders();
+
+        // Infrastructure Services
+        services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IFileStorageService, FileStorageService>();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+        return services;
+    }
+}
