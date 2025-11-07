@@ -12,12 +12,10 @@ public interface IContactInquiryService
 public class ContactInquiryService : IContactInquiryService
 {
     private readonly HttpClient _httpClient;
-    private readonly ILogger<ContactInquiryService> _logger;
 
-    public ContactInquiryService(IHttpClientFactory httpClientFactory, ILogger<ContactInquiryService> logger)
+    public ContactInquiryService(HttpClient httpClient)
     {
-        _httpClient = httpClientFactory.CreateClient("NBT.WebAPI");
-        _logger = logger;
+        _httpClient = httpClient;
     }
 
     public async Task<ContactInquiryDto?> SubmitInquiryAsync(CreateContactInquiryDto inquiry)
@@ -30,7 +28,7 @@ public class ContactInquiryService : IContactInquiryService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error submitting contact inquiry");
+            Console.WriteLine($"Error submitting contact inquiry: {ex.Message}");
             return null;
         }
     }
@@ -43,7 +41,7 @@ public class ContactInquiryService : IContactInquiryService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching inquiry by reference number {ReferenceNumber}", referenceNumber);
+            Console.WriteLine($"Error fetching inquiry by reference number {referenceNumber}: {ex.Message}");
             return null;
         }
     }

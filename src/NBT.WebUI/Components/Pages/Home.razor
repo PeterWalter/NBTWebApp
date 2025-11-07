@@ -1,60 +1,344 @@
 @page "/"
-@using NBT.WebUI.Services
-@using NBT.WebUI.Models
-@inject IAnnouncementService AnnouncementService
+@inject HttpClient Http
 
 <PageTitle>Home - National Benchmark Tests</PageTitle>
 
-<FluentStack Orientation="Orientation.Vertical" VerticalGap="32">
+<style>
+    .full-width-hero {
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        margin-top: -2rem;
+        margin-bottom: 2rem;
+    }
     
-    <!-- Hero Section -->
-    <FluentCard Style="background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%); color: white; padding: 2.5rem;">
-        <FluentStack Orientation="Orientation.Vertical" VerticalGap="20">
-            <h1 style="margin: 0; font-size: 2.5rem; color: white;">National Benchmark Tests</h1>
-            <p style="font-size: 1.2rem; margin: 0; color: white;">
-                Assessing academic readiness for higher education in South Africa
-            </p>
-            <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="15" Wrap="true">
-                <FluentButton Appearance="Appearance.Lightweight" 
-                              Style="background: white; color: #0078d4; font-weight: 600;" 
-                              Href="/applicants">
-                    Register for NBT
-                </FluentButton>
-                <FluentButton Appearance="Appearance.Outline" 
-                              Style="border: 2px solid white; color: white; font-weight: 600;" 
-                              Href="/about">
-                    Learn More
-                </FluentButton>
-            </FluentStack>
+    .hero-section {
+        position: relative;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 30%, rgba(102, 126, 234, 0) 70%);
+        padding: 3rem 2rem;
+        overflow: hidden;
+        min-height: 400px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.25);
+    }
+    
+    .hero-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+    }
+    
+    .hero-content {
+        flex: 1;
+        z-index: 2;
+        max-width: 550px;
+    }
+    
+    .hero-image {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1;
+    }
+    
+    .hero-image img {
+        max-width: 100%;
+        max-height: 350px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        mask-image: linear-gradient(to left, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 25%, rgba(0,0,0,1) 100%);
+        -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 25%, rgba(0,0,0,1) 100%);
+    }
+    
+    .hero-title {
+        margin: 0 0 0.5rem 0;
+        font-size: 2rem;
+        font-weight: 800;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        line-height: 1.2;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.95rem;
+        margin: 0 0 1rem 0;
+        color: rgba(255, 255, 255, 0.95);
+        line-height: 1.4;
+    }
+    
+    .hero-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .hero-btn-primary {
+        background: white !important;
+        color: #667eea !important;
+        font-weight: 700 !important;
+        padding: 8px 20px !important;
+        border-radius: 6px !important;
+        font-size: 0.9rem !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .hero-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .hero-btn-secondary {
+        border: 2px solid white !important;
+        color: white !important;
+        font-weight: 700 !important;
+        padding: 8px 20px !important;
+        border-radius: 6px !important;
+        font-size: 0.9rem !important;
+        transition: all 0.3s ease !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    .hero-btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.2) !important;
+        transform: translateY(-2px);
+    }
+    
+    .student-illustration {
+        width: 100%;
+        max-width: 280px;
+        height: auto;
+    }
+    
+    .test-costs {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+        backdrop-filter: blur(10px);
+    }
+    
+    .cost-item {
+        color: white;
+        font-size: 0.9rem;
+        margin: 0.4rem 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .cost-label {
+        font-weight: 600;
+    }
+    
+    .cost-value {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #ffeb3b;
+    }
+    
+    @@keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+    }
+    
+    .section-card {
+        border-radius: 10px;
+        padding: 1.2rem;
+        transition: all 0.3s ease;
+    }
+    
+    .section-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .audience-card {
+        background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 10px;
+        padding: 1.2rem;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    
+    .audience-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .compact-section {
+        margin-bottom: 0.8rem;
+    }
+    
+    .page-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem;
+    }
+    
+    @@media (max-width: 768px) {
+        .hero-section {
+            flex-direction: column;
+            padding: 2rem 1.5rem;
+            min-height: auto;
+        }
+        
+        .hero-inner {
+            flex-direction: column;
+        }
+        
+        .hero-title {
+            font-size: 2rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1rem;
+        }
+        
+        .hero-image {
+            margin-top: 1.5rem;
+        }
+    }
+    
+    .announcements-section {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .announcement-card {
+        background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+    
+    .announcement-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+    }
+    
+    .announcement-title {
+        color: #667eea;
+        font-weight: 700;
+        font-size: 1.3rem;
+        margin: 0 0 0.5rem 0;
+    }
+    
+    .announcement-date {
+        color: #999;
+        font-size: 0.85rem;
+        margin-bottom: 0.8rem;
+    }
+
+</style>
+
+<!-- Modern Hero Section - Full Width -->
+<div class="full-width-hero">
+    <div class="hero-section">
+        <div class="hero-inner">
+            <div class="hero-content">
+                <h1 class="hero-title">National Benchmark Tests</h1>
+                <p class="hero-subtitle">
+                    Empowering South African students with academic assessments that unlock higher education opportunities
+                </p>
+                <div class="hero-buttons">
+                    <FluentButton Appearance="Appearance.Lightweight" 
+                                  Class="hero-btn-primary"
+                                  Href="/applicants">
+                        Register for NBT
+                    </FluentButton>
+                    <FluentButton Appearance="Appearance.Outline" 
+                                  Class="hero-btn-secondary"
+                                  Href="/about">
+                        Learn More
+                    </FluentButton>
+                </div>
+                
+                <!-- Test Costs -->
+                <div class="test-costs">
+                    <div class="cost-item">
+                        <span class="cost-label">AQL Test (Academic & Quantitative Literacy):</span>
+                        <span class="cost-value">R150</span>
+                    </div>
+                    <div class="cost-item">
+                        <span class="cost-label">AQL & Maths Test (All Three Components):</span>
+                        <span class="cost-value">R250</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="/images/hero-student.png" alt="Student taking NBT test" class="student-illustration" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-container">
+<FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+    
+    <!-- Announcements Section -->
+    <div class="announcements-section">
+        <h2 style="color: #667eea; font-weight: 700; font-size: 1.75rem; margin: 0 0 1rem 0;">📢 Latest Announcements</h2>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+            @if (announcements == null)
+            {
+                <p style="text-align: center; color: #999;">Loading announcements...</p>
+            }
+            else if (!announcements.Any())
+            {
+                <p style="text-align: center; color: #999;">No announcements at this time.</p>
+            }
+            else
+            {
+                @foreach (var announcement in announcements.Take(3))
+                {
+                    <div class="announcement-card">
+                        <h3 class="announcement-title">@announcement.Title</h3>
+                        <div class="announcement-date">📅 @announcement.PublishedDate.ToString("MMMM dd, yyyy")</div>
+                        <p style="line-height: 1.6; color: #555; margin: 0;">@announcement.Content</p>
+                    </div>
+                }
+            }
         </FluentStack>
-    </FluentCard>
+    </div>
 
     <!-- About NBT Section -->
-    <FluentCard>
-        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
-            <h2>What are the NBTs?</h2>
-            <FluentDivider />
-            <p>
+    <FluentCard Class="section-card compact-section">
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+            <h2 style="color: #667eea; font-weight: 700; font-size: 1.75rem; margin: 0;">What are the NBTs?</h2>
+            <FluentDivider Style="border-color: #667eea; margin: 0.5rem 0;"/>
+            <p style="font-size: 1rem; line-height: 1.6; color: #444; margin: 0;">
                 The National Benchmark Tests (NBTs) are assessments for first-year applicants into higher education institutions.
-                The NBTs were designed to assess academic readiness for university. They complement and support the National Senior Certificate (NSC) 
-                as a predictor of academic performance, specifically in the domains of Academic Literacy, Quantitative Literacy, and Mathematics.
-            </p>
-            <p>
-                These tests provide valuable information about individual academic strengths and challenges, helping universities to place students 
-                appropriately and provide targeted academic development and support where necessary.
+                They measure academic readiness for university in Academic Literacy, Quantitative Literacy, and Mathematics, 
+                complementing the National Senior Certificate (NSC) to help universities place students appropriately.
             </p>
         </FluentStack>
     </FluentCard>
 
     <!-- Test Components Grid -->
-    <FluentGrid Spacing="3">
+    <FluentGrid Spacing="2" Class="compact-section">
         <FluentGridItem xs="12" md="4">
-            <FluentCard Height="100%">
-                <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
-                    <div style="font-size: 2.5rem;">📖</div>
-                    <h3>Academic Literacy (AL)</h3>
-                    <p>
-                        Assesses your ability to engage successfully with the demands of academic study in the medium of instruction. 
+            <FluentCard Height="100%" Class="section-card" Style="background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="8">
+                    <div class="feature-icon">📖</div>
+                    <h3 style="color: #667eea; font-weight: 700; font-size: 1.1rem; margin: 0;">Academic Literacy</h3>
+                    <p style="line-height: 1.5; color: #555; font-size: 0.95rem; margin: 0;">
                         Measures comprehension, reasoning, and language use in academic contexts.
                     </p>
                 </FluentStack>
@@ -62,26 +346,24 @@
         </FluentGridItem>
 
         <FluentGridItem xs="12" md="4">
-            <FluentCard Height="100%">
-                <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
-                    <div style="font-size: 2.5rem;">📊</div>
-                    <h3>Quantitative Literacy (QL)</h3>
-                    <p>
-                        Evaluates your ability to manage situations or solve problems in real contexts relevant to higher education. 
-                        Includes working with numbers, data interpretation, and quantitative reasoning.
+            <FluentCard Height="100%" Class="section-card" Style="background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="8">
+                    <div class="feature-icon">📊</div>
+                    <h3 style="color: #764ba2; font-weight: 700; font-size: 1.1rem; margin: 0;">Quantitative Literacy</h3>
+                    <p style="line-height: 1.5; color: #555; font-size: 0.95rem; margin: 0;">
+                        Evaluates problem-solving with numbers, data interpretation, and quantitative reasoning.
                     </p>
                 </FluentStack>
             </FluentCard>
         </FluentGridItem>
 
         <FluentGridItem xs="12" md="4">
-            <FluentCard Height="100%">
-                <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
-                    <div style="font-size: 2.5rem;">🔢</div>
-                    <h3>Mathematics (MAT)</h3>
-                    <p>
-                        Tests your understanding of mathematical concepts and problem-solving ability. 
-                        Required for programs that have mathematics as a major component.
+            <FluentCard Height="100%" Class="section-card" Style="background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="8">
+                    <div class="feature-icon">🔢</div>
+                    <h3 style="color: #667eea; font-weight: 700; font-size: 1.1rem; margin: 0;">Mathematics</h3>
+                    <p style="line-height: 1.5; color: #555; font-size: 0.95rem; margin: 0;">
+                        Tests mathematical concepts and problem-solving for math-intensive programs.
                     </p>
                 </FluentStack>
             </FluentCard>
@@ -89,96 +371,67 @@
     </FluentGrid>
 
     <!-- Audience Cards -->
-    <FluentGrid Spacing="3">
+    <FluentGrid Spacing="2" Class="compact-section">
         <FluentGridItem xs="12" sm="6" md="4">
-            <FluentCard Height="100%" Style="background: #f3f2f1;">
-                <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
-                    <h3>📝 For Applicants</h3>
-                    <p>Register for the NBT, view test dates, access practice materials, and retrieve your results.</p>
-                    <FluentButton Appearance="Appearance.Accent" Href="/applicants">
+            <div class="audience-card">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="10">
+                    <h3 style="color: #667eea; font-weight: 700; font-size: 1.1rem; margin: 0;">📝 For Applicants</h3>
+                    <p style="line-height: 1.5; color: #555; font-size: 0.95rem; margin: 0;">Register for the NBT, view test dates, and retrieve your results.</p>
+                    <FluentButton Appearance="Appearance.Accent" Href="/applicants" Style="background: #667eea; padding: 8px 20px;">
                         Go to Applicants
                     </FluentButton>
                 </FluentStack>
-            </FluentCard>
+            </div>
         </FluentGridItem>
 
         <FluentGridItem xs="12" sm="6" md="4">
-            <FluentCard Height="100%" Style="background: #f3f2f1;">
-                <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
-                    <h3>👨‍🏫 For Educators</h3>
-                    <p>Access resources, research publications, and information about supporting students.</p>
-                    <FluentButton Appearance="Appearance.Accent" Href="/educators">
+            <div class="audience-card">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="10">
+                    <h3 style="color: #764ba2; font-weight: 700; font-size: 1.1rem; margin: 0;">👨‍🏫 For Educators</h3>
+                    <p style="line-height: 1.5; color: #555; font-size: 0.95rem; margin: 0;">Access resources and research publications for supporting students.</p>
+                    <FluentButton Appearance="Appearance.Accent" Href="/educators" Style="background: #764ba2; padding: 8px 20px;">
                         Go to Educators
                     </FluentButton>
                 </FluentStack>
-            </FluentCard>
+            </div>
         </FluentGridItem>
 
         <FluentGridItem xs="12" sm="6" md="4">
-            <FluentCard Height="100%" Style="background: #f3f2f1;">
-                <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
-                    <h3>🏛️ For Institutions</h3>
-                    <p>Information for universities about using NBT results in admissions processes.</p>
-                    <FluentButton Appearance="Appearance.Accent" Href="/institutions">
+            <div class="audience-card">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="10">
+                    <h3 style="color: #667eea; font-weight: 700; font-size: 1.1rem; margin: 0;">🏛️ For Institutions</h3>
+                    <p style="line-height: 1.5; color: #555; font-size: 0.95rem; margin: 0;">Information about using NBT results in admissions processes.</p>
+                    <FluentButton Appearance="Appearance.Accent" Href="/institutions" Style="background: #667eea; padding: 8px 20px;">
                         Go to Institutions
                     </FluentButton>
                 </FluentStack>
-            </FluentCard>
+            </div>
         </FluentGridItem>
     </FluentGrid>
-
-    <!-- Important Information -->
-    <FluentMessageBar Intent="MessageIntent.Info">
-        <strong>Important:</strong> NBT results are valid for three years from the date of writing. 
-        Results are sent directly to the universities you specify during registration.
-    </FluentMessageBar>
-
-    <!-- Latest Announcements -->
-    <FluentCard>
-        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
-            <h2>Latest News & Announcements</h2>
-            <FluentDivider />
-            
-            @if (isLoading)
-            {
-                <FluentProgressRing />
-            }
-            else if (featuredAnnouncements.Any())
-            {
-                @foreach (var announcement in featuredAnnouncements)
-                {
-                    <div>
-                        <h4>@announcement.Title</h4>
-                        <p style="color: gray; font-size: 0.9rem;">@announcement.PublicationDate.ToString("MMMM d, yyyy")</p>
-                        <div>@((MarkupString)announcement.Content.Substring(0, Math.Min(200, announcement.Content.Length)))...</div>
-                    </div>
-                    
-                    @if (announcement != featuredAnnouncements.Last())
-                    {
-                        <FluentDivider />
-                    }
-                }
-                
-                <FluentButton Appearance="Appearance.Accent" Href="/news">
-                    View All Announcements
-                </FluentButton>
-            }
-            else
-            {
-                <p><em>Check the <FluentAnchor Href="/news">What's New</FluentAnchor> page for the latest updates, test dates, and announcements.</em></p>
-            }
-        </FluentStack>
-    </FluentCard>
 </FluentStack>
+</div>
 
 @code {
-    private List<AnnouncementDto> featuredAnnouncements = new();
-    private bool isLoading = true;
+    private List<AnnouncementDto> announcements = new();
 
     protected override async Task OnInitializedAsync()
     {
-        isLoading = true;
-        featuredAnnouncements = await AnnouncementService.GetFeaturedAsync();
-        isLoading = false;
+        try
+        {
+            announcements = await Http.GetFromJsonAsync<List<AnnouncementDto>>("http://localhost:5000/api/Announcements") ?? new();
+        }
+        catch (Exception)
+        {
+            announcements = new();
+        }
+    }
+
+    public class AnnouncementDto
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
+        public DateTime PublishedDate { get; set; }
     }
 }
+

@@ -8,21 +8,19 @@ public interface IAnnouncementService
     Task<List<AnnouncementDto>> GetAllAsync();
     Task<List<AnnouncementDto>> GetFeaturedAsync();
     Task<AnnouncementDto?> GetByIdAsync(Guid id);
-    Task<AnnouncementDto?> CreateAnnouncementAsync(AnnouncementDto announcement);
-    Task<AnnouncementDto?> UpdateAnnouncementAsync(Guid id, AnnouncementDto announcement);
+    Task<AnnouncementDto?> CreateAnnouncementAsync(CreateAnnouncementDto announcement);
+    Task<AnnouncementDto?> UpdateAnnouncementAsync(Guid id, UpdateAnnouncementDto announcement);
     Task<bool> DeleteAnnouncementAsync(Guid id);
-    Task<List<AnnouncementDto>> GetAllAnnouncementsAsync(); // Alias for consistency
+    Task<List<AnnouncementDto>> GetAllAnnouncementsAsync();
 }
 
 public class AnnouncementService : IAnnouncementService
 {
     private readonly HttpClient _httpClient;
-    private readonly ILogger<AnnouncementService> _logger;
 
-    public AnnouncementService(IHttpClientFactory httpClientFactory, ILogger<AnnouncementService> logger)
+    public AnnouncementService(HttpClient httpClient)
     {
-        _httpClient = httpClientFactory.CreateClient("NBT.WebAPI");
-        _logger = logger;
+        _httpClient = httpClient;
     }
 
     public async Task<List<AnnouncementDto>> GetAllAsync()
@@ -34,7 +32,7 @@ public class AnnouncementService : IAnnouncementService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching announcements");
+            Console.WriteLine($"Error fetching announcements: {ex.Message}");
             return new List<AnnouncementDto>();
         }
     }
@@ -50,7 +48,7 @@ public class AnnouncementService : IAnnouncementService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching featured announcements");
+            Console.WriteLine($"Error fetching featured announcements: {ex.Message}");
             return new List<AnnouncementDto>();
         }
     }
@@ -63,12 +61,12 @@ public class AnnouncementService : IAnnouncementService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching announcement {Id}", id);
+            Console.WriteLine($"Error fetching announcement {id}: {ex.Message}");
             return null;
         }
     }
 
-    public async Task<AnnouncementDto?> CreateAnnouncementAsync(AnnouncementDto announcement)
+    public async Task<AnnouncementDto?> CreateAnnouncementAsync(CreateAnnouncementDto announcement)
     {
         try
         {
@@ -78,12 +76,12 @@ public class AnnouncementService : IAnnouncementService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error creating announcement");
+            Console.WriteLine($"Error creating announcement: {ex.Message}");
             throw;
         }
     }
 
-    public async Task<AnnouncementDto?> UpdateAnnouncementAsync(Guid id, AnnouncementDto announcement)
+    public async Task<AnnouncementDto?> UpdateAnnouncementAsync(Guid id, UpdateAnnouncementDto announcement)
     {
         try
         {
@@ -93,7 +91,7 @@ public class AnnouncementService : IAnnouncementService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error updating announcement {Id}", id);
+            Console.WriteLine($"Error updating announcement {id}: {ex.Message}");
             throw;
         }
     }
@@ -107,7 +105,7 @@ public class AnnouncementService : IAnnouncementService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error deleting announcement {Id}", id);
+            Console.WriteLine($"Error deleting announcement {id}: {ex.Message}");
             return false;
         }
     }

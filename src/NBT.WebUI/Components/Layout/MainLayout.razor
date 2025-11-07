@@ -3,13 +3,22 @@
 <FluentLayout>
     <FluentHeader>
         <div class="header-container">
-            <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Start">
+            <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Start" VerticalAlignment="VerticalAlignment.Center">
+                <div class="header-icons">
+                    <img src="/images/cea-badge.png" alt="CEA" class="header-icon" onerror="this.style.display='none'" />
+                    <img src="/images/nbt-icon.png" alt="NBT" class="header-icon" onerror="this.style.display='none'" />
+                </div>
                 <FluentNavLink Href="/" >
                     <span class="site-title">🎓 National Benchmark Tests</span>
                 </FluentNavLink>
             </FluentStack>
             <FluentSpacer />
-            <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.End">
+            <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.End" VerticalGap="10">
+                <FluentButton Appearance="Appearance.Outline" 
+                              Href="/login"
+                              Class="login-btn">
+                    🔐 Login
+                </FluentButton>
                 <FluentButton Appearance="Appearance.Lightweight" Href="/contact" >
                     📧 Contact Us
                 </FluentButton>

@@ -14,12 +14,10 @@ public interface IResourceService
 public class ResourceService : IResourceService
 {
     private readonly HttpClient _httpClient;
-    private readonly ILogger<ResourceService> _logger;
 
-    public ResourceService(IHttpClientFactory httpClientFactory, ILogger<ResourceService> logger)
+    public ResourceService(HttpClient httpClient)
     {
-        _httpClient = httpClientFactory.CreateClient("NBT.WebAPI");
-        _logger = logger;
+        _httpClient = httpClient;
     }
 
     public async Task<List<DownloadableResourceDto>> GetAllAsync()
@@ -31,7 +29,7 @@ public class ResourceService : IResourceService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching resources");
+            Console.WriteLine($"Error fetching resources: {ex.Message}");
             return new List<DownloadableResourceDto>();
         }
     }
@@ -45,7 +43,7 @@ public class ResourceService : IResourceService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching resources for category {Category}", category);
+            Console.WriteLine($"Error fetching resources for category {category}: {ex.Message}");
             return new List<DownloadableResourceDto>();
         }
     }
@@ -58,7 +56,7 @@ public class ResourceService : IResourceService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching resource {Id}", id);
+            Console.WriteLine($"Error fetching resource {id}: {ex.Message}");
             return null;
         }
     }
@@ -71,7 +69,7 @@ public class ResourceService : IResourceService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error incrementing download count for resource {Id}", id);
+            Console.WriteLine($"Error incrementing download count for resource {id}: {ex.Message}");
         }
     }
 }

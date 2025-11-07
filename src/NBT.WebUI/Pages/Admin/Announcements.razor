@@ -1,6 +1,5 @@
 @page "/admin/announcements"
-@using NBT.WebUI.Services
-@using NBT.WebUI.Models
+@rendermode @(new Microsoft.AspNetCore.Components.Web.InteractiveServerRenderMode(prerender: false))
 @inject IAnnouncementService AnnouncementService
 @inject NavigationManager NavigationManager
 
@@ -77,20 +76,22 @@
     </FluentDialogHeader>
     <FluentDialogBody>
         <FluentStack Orientation="Orientation.Vertical" Style="gap: 16px;">
-            <FluentTextField @bind-Value="@currentAnnouncement.Title" Label="Title" Required Style="width: 100%;" />
+            <FluentTextField @bind-Value="@currentTitle" Label="Title" Required Style="width: 100%;" />
             
-            <FluentTextArea @bind-Value="@currentAnnouncement.Content" Label="Content" Required Rows="10" Style="width: 100%;" />
+            <FluentTextField @bind-Value="@currentSummary" Label="Summary" Required Style="width: 100%;" />
             
-            <FluentSelect TOption="string" @bind-Value="@currentAnnouncement.Category" Label="Category" Style="width: 100%;">
-                <FluentOption Value="General">General</FluentOption>
-                <FluentOption Value="News">News</FluentOption>
-                <FluentOption Value="Update">Update</FluentOption>
-                <FluentOption Value="Important">Important</FluentOption>
+            <FluentTextArea @bind-Value="@currentFullContent" Label="Full Content" Required Rows="10" Style="width: 100%;" />
+            
+            <FluentSelect TOption="string" @bind-Value="@selectedCategory" Label="Category" Style="width: 100%;">
+                <FluentOption Value="@(((int)AnnouncementCategory.PolicyUpdate).ToString())">Policy Update</FluentOption>
+                <FluentOption Value="@(((int)AnnouncementCategory.TestDates).ToString())">Test Dates</FluentOption>
+                <FluentOption Value="@(((int)AnnouncementCategory.FeeChanges).ToString())">Fee Changes</FluentOption>
+                <FluentOption Value="@(((int)AnnouncementCategory.GeneralNews).ToString())">General News</FluentOption>
             </FluentSelect>
             
             <FluentDatePicker @bind-Value="@publicationDate" Label="Publication Date" Style="width: 100%;" />
             
-            <FluentCheckbox @bind-Value="@currentAnnouncement.IsFeatured" Label="Feature this announcement" />
+            <FluentCheckbox @bind-Value="@currentIsFeatured" Label="Feature this announcement" />
         </FluentStack>
     </FluentDialogBody>
     <FluentDialogFooter>
@@ -130,7 +131,12 @@
     private bool hideEditDialog = true;
     private bool hideDeleteDialog = true;
     private bool isEditMode = false;
-    private AnnouncementDto currentAnnouncement = new();
+    private Guid currentId;
+    private string currentTitle = string.Empty;
+    private string currentSummary = string.Empty;
+    private string currentFullContent = string.Empty;
+    private string selectedCategory = "4"; // GeneralNews
+    private bool currentIsFeatured = false;
     private AnnouncementDto? selectedAnnouncement;
     private DateTime? publicationDate = DateTime.Today;
 
@@ -161,7 +167,12 @@
     private void ShowCreateDialog()
     {
         isEditMode = false;
-        currentAnnouncement = new AnnouncementDto { PublicationDate = DateTime.Today, Category = "General" };
+        currentId = Guid.Empty;
+        currentTitle = string.Empty;
+        currentSummary = string.Empty;
+        currentFullContent = string.Empty;
+        selectedCategory = "4"; // GeneralNews
+        currentIsFeatured = false;
         publicationDate = DateTime.Today;
         hideEditDialog = false;
     }
@@ -169,15 +180,12 @@
     private void ShowEditDialog(AnnouncementDto announcement)
     {
         isEditMode = true;
-        currentAnnouncement = new AnnouncementDto
-        {
-            Id = announcement.Id,
-            Title = announcement.Title,
-            Content = announcement.Content,
-            Category = announcement.Category,
-            PublicationDate = announcement.PublicationDate,
-            IsFeatured = announcement.IsFeatured
-        };
+        currentId = announcement.Id;
+        currentTitle = announcement.Title;
+        currentSummary = announcement.Summary;
+        currentFullContent = announcement.FullContent;
+        selectedCategory = ((int)announcement.Category).ToString();
+        currentIsFeatured = announcement.IsFeatured;
         publicationDate = announcement.PublicationDate;
         hideEditDialog = false;
     }
@@ -186,18 +194,32 @@
     {
         try
         {
-            if (publicationDate.HasValue)
-            {
-                currentAnnouncement.PublicationDate = publicationDate.Value;
-            }
-
             if (isEditMode)
             {
-                await AnnouncementService.UpdateAnnouncementAsync(currentAnnouncement.Id, currentAnnouncement);
+                var updateDto = new UpdateAnnouncementDto
+                {
+                    Title = currentTitle,
+                    Summary = currentSummary,
+                    FullContent = currentFullContent,
+                    Category = (AnnouncementCategory)int.Parse(selectedCategory),
+                    IsFeatured = currentIsFeatured,
+                    Status = "Published"
+                };
+                await AnnouncementService.UpdateAnnouncementAsync(currentId, updateDto);
             }
             else
             {
-                await AnnouncementService.CreateAnnouncementAsync(currentAnnouncement);
+                var createDto = new CreateAnnouncementDto
+                {
+                    Title = currentTitle,
+                    Summary = currentSummary,
+                    FullContent = currentFullContent,
+                    Category = (AnnouncementCategory)int.Parse(selectedCategory),
+                    PublicationDate = publicationDate,
+                    IsFeatured = currentIsFeatured,
+                    Status = "Published"
+                };
+                await AnnouncementService.CreateAnnouncementAsync(createDto);
             }
             
             hideEditDialog = true;
@@ -213,8 +235,16 @@
     {
         try
         {
-            announcement.IsFeatured = !announcement.IsFeatured;
-            await AnnouncementService.UpdateAnnouncementAsync(announcement.Id, announcement);
+            var updateDto = new UpdateAnnouncementDto
+            {
+                Title = announcement.Title,
+                Summary = announcement.Summary,
+                FullContent = announcement.FullContent,
+                Category = announcement.Category,
+                IsFeatured = !announcement.IsFeatured,
+                Status = announcement.Status
+            };
+            await AnnouncementService.UpdateAnnouncementAsync(announcement.Id, updateDto);
             await LoadData();
         }
         catch (Exception ex)

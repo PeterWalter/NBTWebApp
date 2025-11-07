@@ -85,7 +85,7 @@
                         <FluentStack Orientation="Orientation.Vertical" VerticalGap="8">
                             <h4>@announcement.Title</h4>
                             <p style="color: gray; font-size: 0.9rem;">@announcement.PublicationDate.ToString("MMMM d, yyyy")</p>
-                            <div>@((MarkupString)announcement.Content)</div>
+                            <div>@((MarkupString)announcement.FullContent)</div>
                             @if (announcement.IsFeatured)
                             {
                                 <FluentBadge Appearance="Appearance.Accent">Featured</FluentBadge>

@@ -13,12 +13,10 @@ public interface IContentPageService
 public class ContentPageService : IContentPageService
 {
     private readonly HttpClient _httpClient;
-    private readonly ILogger<ContentPageService> _logger;
 
-    public ContentPageService(IHttpClientFactory httpClientFactory, ILogger<ContentPageService> logger)
+    public ContentPageService(HttpClient httpClient)
     {
-        _httpClient = httpClientFactory.CreateClient("NBT.WebAPI");
-        _logger = logger;
+        _httpClient = httpClient;
     }
 
     public async Task<List<ContentPageDto>> GetAllAsync()
@@ -30,7 +28,7 @@ public class ContentPageService : IContentPageService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching content pages");
+            Console.WriteLine($"Error fetching content pages: {ex.Message}");
             return new List<ContentPageDto>();
         }
     }
@@ -43,7 +41,7 @@ public class ContentPageService : IContentPageService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching content page {Id}", id);
+            Console.WriteLine($"Error fetching content page {id}: {ex.Message}");
             return null;
         }
     }
@@ -56,7 +54,7 @@ public class ContentPageService : IContentPageService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching content page by slug {Slug}", slug);
+            Console.WriteLine($"Error fetching content page by slug {slug}: {ex.Message}");
             return null;
         }
     }

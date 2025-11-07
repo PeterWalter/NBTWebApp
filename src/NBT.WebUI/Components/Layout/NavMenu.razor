@@ -1,3 +1,7 @@
+@using NBT.WebUI.Services
+@inject IAuthenticationService AuthService
+@implements IDisposable
+
 <nav class="top-nav">
     <div class="nav-container">
         <FluentNavLink Href="/" Match="NavLinkMatch.All">
@@ -9,15 +13,15 @@
         </FluentNavLink>
 
         <FluentNavLink Href="/applicants">
-            For Applicants
+            Applicants
         </FluentNavLink>
 
         <FluentNavLink Href="/educators">
-            For Educators
+            Educators
         </FluentNavLink>
 
         <FluentNavLink Href="/institutions">
-            For Institutions
+            Institutions
         </FluentNavLink>
 
         <FluentNavLink Href="/news">
@@ -32,9 +36,79 @@
             Contact
         </FluentNavLink>
 
-        <FluentNavLink Href="/admin" Style="margin-left: auto; background-color: var(--accent-fill-rest); color: white; padding: 8px 16px; border-radius: 4px;">
-            Admin
-        </FluentNavLink>
+        <div class="auth-section">
+            @if (_isAuthenticated && _currentUser != null)
+            {
+                <span class="user-name">@_currentUser.FirstName @_currentUser.LastName</span>
+                
+                @if (_currentUser.Roles.Contains("Admin"))
+                {
+                    <FluentNavLink Href="/admin" Class="auth-link admin-link">
+                        Admin
+                    </FluentNavLink>
+                }
+                else if (_currentUser.Roles.Contains("Institution"))
+                {
+                    <FluentNavLink Href="/institution-dashboard" Class="auth-link">
+                        Dashboard
+                    </FluentNavLink>
+                }
+                else if (_currentUser.Roles.Contains("Student"))
+                {
+                    <FluentNavLink Href="/student-dashboard" Class="auth-link">
+                        Dashboard
+                    </FluentNavLink>
+                }
+                
+                <FluentButton Appearance="Appearance.Outline" OnClick="HandleLogoutAsync" Class="logout-btn">
+                    Logout
+                </FluentButton>
+            }
+            else
+            {
+                <FluentNavLink Href="/login" Class="auth-link login-link">
+                    Login
+                </FluentNavLink>
+            }
+        </div>
     </div>
 </nav>
 
+@code {
+    private bool _isAuthenticated;
+    private UserInfo? _currentUser;
+    private Timer? _checkTimer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CheckAuthenticationStatus();
+        
+        _checkTimer = new Timer(async _ => await InvokeAsync(async () =>
+        {
+            await CheckAuthenticationStatus();
+            StateHasChanged();
+        }), null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
+    }
+
+    private async Task CheckAuthenticationStatus()
+    {
+        _isAuthenticated = await AuthService.IsAuthenticatedAsync();
+        if (_isAuthenticated)
+        {
+            _currentUser = await AuthService.GetCurrentUserAsync();
+        }
+    }
+
+    private async Task HandleLogoutAsync()
+    {
+        await AuthService.LogoutAsync();
+        _isAuthenticated = false;
+        _currentUser = null;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _checkTimer?.Dispose();
+    }
+}

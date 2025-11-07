@@ -5,11 +5,38 @@
     padding: 0 1rem;
 }
 
+.header-icons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.header-icon {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+}
+
 .site-title {
     font-size: 1.5rem;
     font-weight: 600;
     margin-left: 0.5rem;
     color: var(--accent-fill-rest);
+}
+
+.login-btn {
+    border: 2px solid #667eea !important;
+    color: #667eea !important;
+    font-weight: 700 !important;
+    padding: 8px 20px !important;
+    border-radius: 6px !important;
+    transition: all 0.3s ease !important;
+}
+
+.login-btn:hover {
+    background: #667eea !important;
+    color: white !important;
+    transform: translateY(-2px);
 }
 
 .body-content {
