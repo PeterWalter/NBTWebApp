@@ -11,32 +11,285 @@
 
     <h1>Information for Applicants</h1>
 
+    <!-- Important Notice -->
+    <FluentMessageBar Intent="MessageIntent.Info">
+        <strong>Important:</strong> Check with your chosen university about their NBT requirements 
+        before registering. Different institutions have different requirements.
+    </FluentMessageBar>
+
+    <!-- Quick Actions -->
+    <FluentGrid Spacing="3">
+        <FluentGridItem xs="12" sm="6" md="3">
+            <FluentCard Height="100%" Style="text-align: center; padding: 1.5rem;">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                    <div style="font-size: 3rem;">📝</div>
+                    <h4>Register Online</h4>
+                    <FluentButton Appearance="Appearance.Accent">
+                        Register Now
+                    </FluentButton>
+                </FluentStack>
+            </FluentCard>
+        </FluentGridItem>
+
+        <FluentGridItem xs="12" sm="6" md="3">
+            <FluentCard Height="100%" Style="text-align: center; padding: 1.5rem;">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                    <div style="font-size: 3rem;">📅</div>
+                    <h4>Test Dates</h4>
+                    <FluentButton Appearance="Appearance.Accent">
+                        View Dates
+                    </FluentButton>
+                </FluentStack>
+            </FluentCard>
+        </FluentGridItem>
+
+        <FluentGridItem xs="12" sm="6" md="3">
+            <FluentCard Height="100%" Style="text-align: center; padding: 1.5rem;">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                    <div style="font-size: 3rem;">📊</div>
+                    <h4>View Results</h4>
+                    <FluentButton Appearance="Appearance.Accent">
+                        Get Results
+                    </FluentButton>
+                </FluentStack>
+            </FluentCard>
+        </FluentGridItem>
+
+        <FluentGridItem xs="12" sm="6" md="3">
+            <FluentCard Height="100%" Style="text-align: center; padding: 1.5rem;">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                    <div style="font-size: 3rem;">📚</div>
+                    <h4>Practice Tests</h4>
+                    <FluentButton Appearance="Appearance.Accent">
+                        Prepare
+                    </FluentButton>
+                </FluentStack>
+            </FluentCard>
+        </FluentGridItem>
+    </FluentGrid>
+
+    <!-- Registration Process -->
     <FluentCard>
         <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
             <h2>How to Register</h2>
+            <FluentDivider />
+            <p>Follow these steps to register for the NBT:</p>
+            
+            <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+                <div>
+                    <h4>Step 1: Check University Requirements</h4>
+                    <p>
+                        Verify with your chosen university whether they require NBT results and which tests 
+                        you need to write (AQL and/or MAT).
+                    </p>
+                </div>
+                
+                <div>
+                    <h4>Step 2: Register Online</h4>
+                    <p>
+                        Complete the online registration form. You will need:
+                    </p>
+                    <ul>
+                        <li>Valid South African ID number or passport number</li>
+                        <li>Email address</li>
+                        <li>Cellphone number</li>
+                        <li>School information</li>
+                        <li>Universities you're applying to</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4>Step 3: Pay Registration Fee</h4>
+                    <p>
+                        Current fees (subject to change):
+                    </p>
+                    <ul>
+                        <li><strong>AQL Test:</strong> R140</li>
+                        <li><strong>MAT Test:</strong> R140</li>
+                        <li><strong>Both Tests (same sitting):</strong> R280</li>
+                    </ul>
+                    <p>Payment can be made via credit card, EFT, or at selected retail stores.</p>
+                </div>
+
+                <div>
+                    <h4>Step 4: Select Test Date and Venue</h4>
+                    <p>
+                        Choose your preferred test date and venue from available options. 
+                        Test venues are located throughout South Africa.
+                    </p>
+                </div>
+
+                <div>
+                    <h4>Step 5: Receive Confirmation</h4>
+                    <p>
+                        You will receive a confirmation email with your test details and instructions 
+                        on what to bring on test day.
+                    </p>
+                </div>
+            </FluentStack>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Test Information -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>Test Information</h2>
+            <FluentDivider />
+            
+            <FluentAccordion>
+                <FluentAccordionItem Heading="Academic and Quantitative Literacy (AQL)" Expanded="true">
+                    <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                        <p><strong>Duration:</strong> 3 hours</p>
+                        <p><strong>Format:</strong> Multiple choice questions</p>
+                        <p><strong>Components:</strong></p>
+                        <ul>
+                            <li><strong>Academic Literacy:</strong> Tests reading comprehension, reasoning, and 
+                                language use in academic contexts</li>
+                            <li><strong>Quantitative Literacy:</strong> Assesses ability to work with numbers, 
+                                data, and spatial information in real-world contexts</li>
+                        </ul>
+                        <p><strong>What to bring:</strong> ID document, pen, pencil, eraser, non-programmable calculator</p>
+                    </FluentStack>
+                </FluentAccordionItem>
+
+                <FluentAccordionItem Heading="Mathematics (MAT)">
+                    <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                        <p><strong>Duration:</strong> 3 hours</p>
+                        <p><strong>Format:</strong> Multiple choice questions</p>
+                        <p><strong>Content areas:</strong></p>
+                        <ul>
+                            <li>Number and operations with numbers</li>
+                            <li>Patterns, relationships, and functions</li>
+                            <li>Space, shape, and measurement</li>
+                            <li>Data handling and probability</li>
+                        </ul>
+                        <p><strong>What to bring:</strong> ID document, pen, pencil, eraser, non-programmable calculator</p>
+                    </FluentStack>
+                </FluentAccordionItem>
+
+                <FluentAccordionItem Heading="Test Day Information">
+                    <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                        <p><strong>What to bring:</strong></p>
+                        <ul>
+                            <li>Original ID document or passport (certified copy not accepted)</li>
+                            <li>Confirmation email or SMS</li>
+                            <li>Black or blue pens</li>
+                            <li>HB pencils and eraser</li>
+                            <li>Non-programmable calculator</li>
+                        </ul>
+                        <p><strong>Arrival time:</strong> Arrive at least 30 minutes before your scheduled test time</p>
+                        <p><strong>Not allowed:</strong> Cellphones, smartwatches, programmable calculators, notes, or any electronic devices</p>
+                    </FluentStack>
+                </FluentAccordionItem>
+            </FluentAccordion>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Results Information -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>Understanding Your Results</h2>
+            <FluentDivider />
             <p>
-                Registration for the NBT is done online. Follow these steps to register for your test.
+                Your results will be sent directly to the universities you specified during registration. 
+                Results are typically available within 4-6 weeks after writing.
             </p>
-            <FluentButton Appearance="Appearance.Accent">
-                Register Now
+            
+            <h4>Performance Bands</h4>
+            <p>NBT results are reported in performance bands:</p>
+            <ul>
+                <li><strong>Proficient:</strong> Academic performance can be expected to be adequate</li>
+                <li><strong>Intermediate:</strong> Challenges are predicted, which could be managed 
+                    through access to special support</li>
+                <li><strong>Basic:</strong> Serious learning challenges are predicted – an extended 
+                    curriculum program or foundation provision is recommended</li>
+            </ul>
+
+            <FluentMessageBar Intent="MessageIntent.Info">
+                NBT results are valid for 3 years from the date of writing. You can write the tests 
+                more than once, and universities will consider your best scores.
+            </FluentMessageBar>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Preparation Resources -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>How to Prepare</h2>
+            <FluentDivider />
+            <p>
+                While you cannot "study" for the NBTs in the traditional sense, you can prepare by:
+            </p>
+            <ul>
+                <li>Reviewing the sample tests available on this website</li>
+                <li>Reading widely in English (newspapers, academic texts, novels)</li>
+                <li>Practicing mathematical problem-solving</li>
+                <li>Working with data, graphs, and tables</li>
+                <li>Ensuring you understand basic mathematical concepts</li>
+            </ul>
+            <FluentButton Appearance="Appearance.Accent" Href="/resources">
+                Access Practice Materials
             </FluentButton>
         </FluentStack>
     </FluentCard>
 
+    <!-- FAQs -->
     <FluentCard>
         <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
-            <h2>Test Information</h2>
+            <h2>Frequently Asked Questions</h2>
+            <FluentDivider />
+            
             <FluentAccordion>
-                <FluentAccordionItem Heading="Academic Literacy Test (ALT)">
-                    <p>The ALT assesses your ability to engage successfully with texts in different disciplines.</p>
+                <FluentAccordionItem Heading="Do I have to write the NBT?">
+                    <p>
+                        It depends on your chosen university. Most South African universities require NBT 
+                        results as part of their admissions process. Check with your university for their 
+                        specific requirements.
+                    </p>
                 </FluentAccordionItem>
-                <FluentAccordionItem Heading="Quantitative Literacy Test (QLT)">
-                    <p>The QLT assesses your ability to manage quantitative information in various contexts.</p>
+
+                <FluentAccordionItem Heading="When should I write the NBT?">
+                    <p>
+                        It's recommended to write the NBT in Grade 12, preferably in the first half of the year. 
+                        This ensures your results are available when you apply to universities.
+                    </p>
                 </FluentAccordionItem>
-                <FluentAccordionItem Heading="Mathematics Test (MAT)">
-                    <p>The MAT assesses your mathematical skills and understanding.</p>
+
+                <FluentAccordionItem Heading="Can I write the tests more than once?">
+                    <p>
+                        Yes, you can write the NBT more than once. Universities will consider your best scores. 
+                        However, you must wait at least 6 months before re-writing.
+                    </p>
+                </FluentAccordionItem>
+
+                <FluentAccordionItem Heading="What if I miss my test date?">
+                    <p>
+                        If you miss your scheduled test date, you will need to register and pay for a new 
+                        test session. No refunds are given for missed tests.
+                    </p>
+                </FluentAccordionItem>
+
+                <FluentAccordionItem Heading="How do I send my results to universities?">
+                    <p>
+                        Results are automatically sent to the universities you specify during registration. 
+                        If you need to send results to additional universities, you can request this online 
+                        for a fee.
+                    </p>
                 </FluentAccordionItem>
             </FluentAccordion>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Contact Support -->
+    <FluentCard Style="background: #f3f2f1;">
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+            <h3>Need Help?</h3>
+            <p>
+                If you have questions about registration, test dates, or results, please contact us.
+            </p>
+            <FluentButton Appearance="Appearance.Accent" Href="/contact">
+                Contact Support
+            </FluentButton>
         </FluentStack>
     </FluentCard>
 </FluentStack>

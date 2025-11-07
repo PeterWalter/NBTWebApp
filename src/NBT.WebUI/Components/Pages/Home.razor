@@ -4,62 +4,139 @@
 <PageTitle>Home - National Benchmark Tests</PageTitle>
 
 <FluentStack Orientation="Orientation.Vertical" VerticalGap="32">
+    
+    <!-- Hero Section -->
+    <FluentCard Style="background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%); color: white; padding: 2.5rem;">
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="20">
+            <h1 style="margin: 0; font-size: 2.5rem; color: white;">National Benchmark Tests</h1>
+            <p style="font-size: 1.2rem; margin: 0; color: white;">
+                Assessing academic readiness for higher education in South Africa
+            </p>
+            <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="15" Wrap="true">
+                <FluentButton Appearance="Appearance.Lightweight" 
+                              Style="background: white; color: #0078d4; font-weight: 600;" 
+                              Href="/applicants">
+                    Register for NBT
+                </FluentButton>
+                <FluentButton Appearance="Appearance.Outline" 
+                              Style="border: 2px solid white; color: white; font-weight: 600;" 
+                              Href="/about">
+                    Learn More
+                </FluentButton>
+            </FluentStack>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- About NBT Section -->
     <FluentCard>
         <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
-            <h1>Welcome to the National Benchmark Tests</h1>
+            <h2>What are the NBTs?</h2>
             <FluentDivider />
-            <p class="lead">
+            <p>
                 The National Benchmark Tests (NBTs) are assessments for first-year applicants into higher education institutions.
+                The NBTs were designed to assess academic readiness for university. They complement and support the National Senior Certificate (NSC) 
+                as a predictor of academic performance, specifically in the domains of Academic Literacy, Quantitative Literacy, and Mathematics.
             </p>
             <p>
-                The NBTs were designed to assess academic readiness for university. They complement and support the National Senior Certificate (NSC) as a predictor of academic performance, specifically, in the domains of Academic Literacy, Quantitative Literacy, and Mathematics.
+                These tests provide valuable information about individual academic strengths and challenges, helping universities to place students 
+                appropriately and provide targeted academic development and support where necessary.
             </p>
         </FluentStack>
     </FluentCard>
 
+    <!-- Test Components Grid -->
+    <FluentGrid Spacing="3">
+        <FluentGridItem xs="12" md="4">
+            <FluentCard Height="100%">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                    <div style="font-size: 2.5rem;">📖</div>
+                    <h3>Academic Literacy (AL)</h3>
+                    <p>
+                        Assesses your ability to engage successfully with the demands of academic study in the medium of instruction. 
+                        Measures comprehension, reasoning, and language use in academic contexts.
+                    </p>
+                </FluentStack>
+            </FluentCard>
+        </FluentGridItem>
+
+        <FluentGridItem xs="12" md="4">
+            <FluentCard Height="100%">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                    <div style="font-size: 2.5rem;">📊</div>
+                    <h3>Quantitative Literacy (QL)</h3>
+                    <p>
+                        Evaluates your ability to manage situations or solve problems in real contexts relevant to higher education. 
+                        Includes working with numbers, data interpretation, and quantitative reasoning.
+                    </p>
+                </FluentStack>
+            </FluentCard>
+        </FluentGridItem>
+
+        <FluentGridItem xs="12" md="4">
+            <FluentCard Height="100%">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                    <div style="font-size: 2.5rem;">🔢</div>
+                    <h3>Mathematics (MAT)</h3>
+                    <p>
+                        Tests your understanding of mathematical concepts and problem-solving ability. 
+                        Required for programs that have mathematics as a major component.
+                    </p>
+                </FluentStack>
+            </FluentCard>
+        </FluentGridItem>
+    </FluentGrid>
+
+    <!-- Audience Cards -->
     <FluentGrid Spacing="3">
         <FluentGridItem xs="12" sm="6" md="4">
-            <FluentCard Height="100%">
+            <FluentCard Height="100%" Style="background: #f3f2f1;">
                 <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
-                    <h3>👤 For Applicants</h3>
-                    <p>Find out how to register, prepare, and write the NBT.</p>
+                    <h3>📝 For Applicants</h3>
+                    <p>Register for the NBT, view test dates, access practice materials, and retrieve your results.</p>
                     <FluentButton Appearance="Appearance.Accent" Href="/applicants">
-                        Learn More
+                        Go to Applicants
                     </FluentButton>
                 </FluentStack>
             </FluentCard>
         </FluentGridItem>
 
         <FluentGridItem xs="12" sm="6" md="4">
-            <FluentCard Height="100%">
+            <FluentCard Height="100%" Style="background: #f3f2f1;">
                 <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
-                    <h3>📚 For Educators</h3>
-                    <p>Resources and information for teachers and counselors.</p>
+                    <h3>👨‍🏫 For Educators</h3>
+                    <p>Access resources, research publications, and information about supporting students.</p>
                     <FluentButton Appearance="Appearance.Accent" Href="/educators">
-                        Learn More
+                        Go to Educators
                     </FluentButton>
                 </FluentStack>
             </FluentCard>
         </FluentGridItem>
 
         <FluentGridItem xs="12" sm="6" md="4">
-            <FluentCard Height="100%">
+            <FluentCard Height="100%" Style="background: #f3f2f1;">
                 <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
                     <h3>🏛️ For Institutions</h3>
-                    <p>Information for higher education institutions.</p>
+                    <p>Information for universities about using NBT results in admissions processes.</p>
                     <FluentButton Appearance="Appearance.Accent" Href="/institutions">
-                        Learn More
+                        Go to Institutions
                     </FluentButton>
                 </FluentStack>
             </FluentCard>
         </FluentGridItem>
     </FluentGrid>
 
+    <!-- Important Information -->
+    <FluentMessageBar Intent="MessageIntent.Info">
+        <strong>Important:</strong> NBT results are valid for three years from the date of writing. 
+        Results are sent directly to the universities you specify during registration.
+    </FluentMessageBar>
+
+    <!-- Latest Announcements -->
     <FluentCard>
         <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
-            <h2>Latest Announcements</h2>
+            <h2>Latest News & Announcements</h2>
             <FluentDivider />
-            <p><em>No announcements at this time. Check back soon for updates.</em></p>
+            <p><em>Check the <FluentAnchor Href="/news">What's New</FluentAnchor> page for the latest updates, test dates, and announcements.</em></p>
         </FluentStack>
     </FluentCard>
 </FluentStack>

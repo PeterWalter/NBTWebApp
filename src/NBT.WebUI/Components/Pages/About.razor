@@ -11,23 +11,171 @@
 
     <h1>About the National Benchmark Tests</h1>
 
+    <!-- Overview Section -->
     <FluentCard>
         <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
-            <h2>Our Mission</h2>
+            <h2>Overview</h2>
+            <FluentDivider />
             <p>
-                The National Benchmark Tests project is committed to providing fair and accurate assessments
-                of academic readiness for higher education in South Africa.
+                The National Benchmark Tests (NBTs) are a set of tests that measure an applicant's academic readiness 
+                for university-level education. The tests were implemented in 2009 and are managed by the Centre for 
+                Educational Testing for Access and Placement (CETAP) at the University of Cape Town.
+            </p>
+            <p>
+                The NBTs complement and support the National Senior Certificate (NSC) as predictor of academic performance. 
+                They assess entry-level literacy and numeracy skills in an academic context, providing valuable information 
+                about individual academic strengths and challenges.
             </p>
         </FluentStack>
     </FluentCard>
 
+    <!-- Purpose Section -->
     <FluentCard>
         <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
-            <h2>What We Do</h2>
+            <h2>Purpose of the NBTs</h2>
+            <FluentDivider />
+            <p>The NBTs serve multiple purposes:</p>
+            <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                <div>
+                    <h4>✓ Complement the NSC</h4>
+                    <p>
+                        Provide additional information to help universities make informed decisions about 
+                        applicant placement and academic support needs.
+                    </p>
+                </div>
+                <div>
+                    <h4>✓ Identify Academic Readiness</h4>
+                    <p>
+                        Assess whether students have the academic literacy and quantitative skills necessary 
+                        to succeed in higher education.
+                    </p>
+                </div>
+                <div>
+                    <h4>✓ Support Student Success</h4>
+                    <p>
+                        Help institutions provide appropriate academic development and support programs 
+                        to enhance student success rates.
+                    </p>
+                </div>
+                <div>
+                    <h4>✓ Inform Decision Making</h4>
+                    <p>
+                        Provide diagnostic information that assists with placement decisions, course selection, 
+                        and the development of foundation programs.
+                    </p>
+                </div>
+            </FluentStack>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Test Domains -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>Test Domains</h2>
+            <FluentDivider />
+            <p>The NBTs consist of two test types:</p>
+            
+            <FluentAccordion>
+                <FluentAccordionItem Heading="Academic and Quantitative Literacy (AQL)" Expanded="true">
+                    <p><strong>Duration:</strong> 3 hours</p>
+                    <p><strong>Components:</strong></p>
+                    <ul>
+                        <li><strong>Academic Literacy (AL):</strong> Tests ability to engage with language and texts in an academic context</li>
+                        <li><strong>Quantitative Literacy (QL):</strong> Assesses ability to work with numerical and spatial information</li>
+                    </ul>
+                    <p>This test is required by most universities for all applicants.</p>
+                </FluentAccordionItem>
+
+                <FluentAccordionItem Heading="Mathematics (MAT)">
+                    <p><strong>Duration:</strong> 3 hours</p>
+                    <p><strong>Content:</strong> Tests mathematics ability in areas including:</p>
+                    <ul>
+                        <li>Algebra and functions</li>
+                        <li>Measurement and geometry</li>
+                        <li>Data handling and probability</li>
+                        <li>Logic and problem solving</li>
+                    </ul>
+                    <p>Required for applicants to programs with mathematics as a major component (Engineering, Science, Commerce, etc.).</p>
+                </FluentAccordionItem>
+            </FluentAccordion>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- How Results Are Used -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>How Universities Use NBT Results</h2>
+            <FluentDivider />
             <p>
-                We develop and administer benchmark tests that measure academic literacy, quantitative literacy,
-                and mathematics proficiency of prospective university students.
+                Higher education institutions use NBT results in various ways as part of their admissions and 
+                placement processes:
             </p>
+            <ul>
+                <li>As part of admission requirements alongside NSC results</li>
+                <li>To place students in appropriate foundation or extended programs</li>
+                <li>To identify students who may benefit from additional academic support</li>
+                <li>To inform curriculum development and teaching strategies</li>
+                <li>For research purposes to improve student success rates</li>
+            </ul>
+            <FluentMessageBar Intent="MessageIntent.Warning">
+                <strong>Note:</strong> Each university has its own specific requirements and uses NBT results 
+                differently. Always check with your chosen institution about their specific NBT requirements.
+            </FluentMessageBar>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- About CETAP -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>About CETAP</h2>
+            <FluentDivider />
+            <p>
+                The Centre for Educational Testing for Access and Placement (CETAP) is based at the 
+                University of Cape Town and is responsible for managing the NBT project. CETAP works 
+                collaboratively with South African universities to develop, administer, and research 
+                assessment tools for higher education.
+            </p>
+            <p>
+                CETAP is committed to ensuring that the tests are fair, valid, and reliable, and that 
+                they serve the best interests of students and institutions.
+            </p>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Research and Development -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>Research and Development</h2>
+            <FluentDivider />
+            <p>
+                The NBT project is grounded in ongoing research about academic preparedness, student success, 
+                and assessment practices in South African higher education. Regular research activities include:
+            </p>
+            <ul>
+                <li>Validity and reliability studies of the tests</li>
+                <li>Predictive validity research linking NBT scores to academic performance</li>
+                <li>Bias and fairness analyses</li>
+                <li>Studies on academic development and support interventions</li>
+                <li>Comparative research on assessment practices</li>
+            </ul>
+            <FluentButton Appearance="Appearance.Accent" Href="/educators">
+                View Research Publications
+            </FluentButton>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Contact Information -->
+    <FluentCard Style="background: #f3f2f1;">
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+            <h3>Need More Information?</h3>
+            <p>
+                For specific queries about the NBTs, registration, test dates, or results, 
+                please visit our Contact page or check the relevant sections for applicants, 
+                educators, or institutions.
+            </p>
+            <FluentButton Appearance="Appearance.Accent" Href="/contact">
+                Contact Us
+            </FluentButton>
         </FluentStack>
     </FluentCard>
 </FluentStack>
