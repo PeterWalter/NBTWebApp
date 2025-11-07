@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NBT.Application.Announcements.Interfaces;
 using NBT.Application.Announcements.Services;
+using NBT.Application.Authentication.Interfaces;
 using NBT.Application.Common.Interfaces;
 using NBT.Application.ContactInquiries.Interfaces;
 using NBT.Application.ContactInquiries.Services;
@@ -12,6 +13,7 @@ using NBT.Application.ContentPages.Services;
 using NBT.Application.Resources.Interfaces;
 using NBT.Application.Resources.Services;
 using NBT.Domain.Entities;
+using NBT.Infrastructure.Authentication;
 using NBT.Infrastructure.Persistence;
 using NBT.Infrastructure.Repositories;
 using NBT.Infrastructure.Services;
@@ -64,6 +66,10 @@ public static class DependencyInjection
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IFileStorageService, FileStorageService>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+        // Authentication Services
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
 
         // Repositories
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

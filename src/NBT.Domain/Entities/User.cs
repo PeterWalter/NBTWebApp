@@ -24,6 +24,11 @@ public class User : IdentityUser<Guid>
     public UserRole Role { get; set; }
 
     /// <summary>
+    /// Gets or sets the institution name (for institutional users).
+    /// </summary>
+    public string? InstitutionName { get; set; }
+
+    /// <summary>
     /// Gets or sets the institution ID (for institutional users).
     /// </summary>
     public string? InstitutionId { get; set; }
@@ -52,4 +57,14 @@ public class User : IdentityUser<Guid>
     /// Gets or sets the expiry date for the password reset token.
     /// </summary>
     public DateTime? TokenExpiryDate { get; set; }
+
+    /// <summary>
+    /// Gets or sets the refresh token for JWT authentication.
+    /// </summary>
+    public string? RefreshToken { get; set; }
+
+    /// <summary>
+    /// Gets or sets the expiry date for the refresh token.
+    /// </summary>
+    public DateTime? RefreshTokenExpiry { get; set; }
 }
