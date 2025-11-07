@@ -11,22 +11,258 @@
 
     <h1>Information for Educators</h1>
 
-    <FluentCard>
-        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
-            <h2>Supporting Your Students</h2>
-            <p>
-                As an educator, you play a crucial role in preparing students for higher education.
-                Here you'll find resources to help guide your students through the NBT process.
+    <!-- Overview -->
+    <FluentCard Style="background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%); color: white; padding: 2rem;">
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+            <h2 style="color: white; margin: 0;">Supporting Student Success</h2>
+            <p style="color: white; margin: 0;">
+                As educators, you play a vital role in preparing students for higher education success. 
+                The NBT provides valuable insights into students' academic readiness.
             </p>
         </FluentStack>
     </FluentCard>
 
+    <!-- Key Resources -->
+    <FluentGrid Spacing="3">
+        <FluentGridItem xs="12" sm="6" md="4">
+            <FluentCard Height="100%">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                    <div style="font-size: 2.5rem;">📚</div>
+                    <h3>Teaching Resources</h3>
+                    <p>Sample questions, preparation guides, and teaching materials.</p>
+                    <FluentButton Appearance="Appearance.Accent" Href="/resources">
+                        Access Resources
+                    </FluentButton>
+                </FluentStack>
+            </FluentCard>
+        </FluentGridItem>
+
+        <FluentGridItem xs="12" sm="6" md="4">
+            <FluentCard Height="100%">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                    <div style="font-size: 2.5rem;">📊</div>
+                    <h3>Research Publications</h3>
+                    <p>Academic research on NBT validity, reliability, and student success.</p>
+                    <FluentButton Appearance="Appearance.Accent">
+                        View Publications
+                    </FluentButton>
+                </FluentStack>
+            </FluentCard>
+        </FluentGridItem>
+
+        <FluentGridItem xs="12" sm="6" md="4">
+            <FluentCard Height="100%">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                    <div style="font-size: 2.5rem;">🎓</div>
+                    <h3>Workshop Materials</h3>
+                    <p>Training materials for NBT information sessions.</p>
+                    <FluentButton Appearance="Appearance.Accent">
+                        Download Materials
+                    </FluentButton>
+                </FluentStack>
+            </FluentCard>
+        </FluentGridItem>
+    </FluentGrid>
+
+    <!-- Understanding the NBT -->
     <FluentCard>
         <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
-            <h2>Teaching Resources</h2>
+            <h2>Understanding the NBT</h2>
+            <FluentDivider />
             <p>
-                Access sample questions, preparation guides, and other materials to help your students succeed.
+                The National Benchmark Tests assess the academic readiness of first-year university applicants. 
+                As an educator, understanding what the tests measure can help you better prepare your students.
             </p>
+
+            <h4>What the NBT Measures:</h4>
+            <ul>
+                <li><strong>Academic Literacy:</strong> Ability to understand and engage with academic texts</li>
+                <li><strong>Quantitative Literacy:</strong> Ability to work with numbers and data in context</li>
+                <li><strong>Mathematics:</strong> Mathematical competence for STEM programs</li>
+            </ul>
+
+            <FluentMessageBar Intent="MessageIntent.Info">
+                The NBT complements the NSC - it doesn't replace it. Together, they provide a more complete 
+                picture of student readiness for higher education.
+            </FluentMessageBar>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Advising Students -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>Advising Your Students</h2>
+            <FluentDivider />
+            
+            <FluentAccordion>
+                <FluentAccordionItem Heading="When Should Students Write?" Expanded="true">
+                    <p>
+                        We recommend students write the NBT in Grade 12, ideally in the first half of the year. 
+                        This timing ensures:
+                    </p>
+                    <ul>
+                        <li>Results are available for university applications</li>
+                        <li>Students can rewrite if needed before final applications</li>
+                        <li>Less stress during final exams</li>
+                    </ul>
+                </FluentAccordionItem>
+
+                <FluentAccordionItem Heading="Which Tests Should Students Write?">
+                    <p>This depends on their intended field of study:</p>
+                    <ul>
+                        <li><strong>All students:</strong> Academic and Quantitative Literacy (AQL)</li>
+                        <li><strong>STEM students:</strong> AQL + Mathematics (MAT)</li>
+                        <li><strong>Commerce students:</strong> Usually AQL + MAT (check specific university requirements)</li>
+                        <li><strong>Humanities students:</strong> Usually only AQL</li>
+                    </ul>
+                    <p><em>Always advise students to check specific university requirements.</em></p>
+                </FluentAccordionItem>
+
+                <FluentAccordionItem Heading="How Can Students Prepare?">
+                    <p>While students cannot "study" for the NBT, they can prepare by:</p>
+                    <ul>
+                        <li>Reading widely in English - newspapers, academic articles, books</li>
+                        <li>Practicing critical thinking and analysis</li>
+                        <li>Working with graphs, tables, and data interpretation</li>
+                        <li>Reviewing mathematical concepts from Grades 10-12</li>
+                        <li>Completing the practice tests available on this website</li>
+                    </ul>
+                </FluentAccordionItem>
+
+                <FluentAccordionItem Heading="Understanding Results">
+                    <p>NBT results are reported in performance bands:</p>
+                    <ul>
+                        <li><strong>Proficient:</strong> Student demonstrates adequate academic readiness</li>
+                        <li><strong>Intermediate:</strong> Student may face challenges; support recommended</li>
+                        <li><strong>Basic:</strong> Extended curriculum or foundation program recommended</li>
+                    </ul>
+                    <p>
+                        These results help universities provide appropriate placement and support, 
+                        not to exclude students from higher education.
+                    </p>
+                </FluentAccordionItem>
+            </FluentAccordion>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- School Registration -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>Group Bookings for Schools</h2>
+            <FluentDivider />
+            <p>
+                Schools can arrange for groups of students to write the NBT at a convenient venue. 
+                Benefits of group bookings include:
+            </p>
+            <ul>
+                <li>Discounted rates for groups of 20 or more students</li>
+                <li>Option to arrange testing at your school (subject to requirements)</li>
+                <li>Simplified administration and payment processes</li>
+                <li>Support from NBT coordinators</li>
+            </ul>
+            <FluentButton Appearance="Appearance.Accent" Href="/contact">
+                Contact Us for Group Bookings
+            </FluentButton>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Research and Publications -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>Research and Publications</h2>
+            <FluentDivider />
+            <p>
+                CETAP conducts ongoing research into academic preparedness and the NBT. Research areas include:
+            </p>
+            <ul>
+                <li>Predictive validity of NBT scores for academic performance</li>
+                <li>Reliability and fairness of the assessments</li>
+                <li>Relationship between NBT and NSC results</li>
+                <li>Effectiveness of foundation and support programs</li>
+                <li>Cognitive development and academic literacies</li>
+            </ul>
+            <p>
+                Publications are available for educators, researchers, and higher education professionals 
+                interested in assessment and student success.
+            </p>
+            <FluentButton Appearance="Appearance.Accent" Href="/resources">
+                View Publications
+            </FluentButton>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Professional Development -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>Professional Development</h2>
+            <FluentDivider />
+            <p>
+                CETAP offers workshops and information sessions for educators, including:
+            </p>
+            <ul>
+                <li>Understanding the NBT and how it's used in university admissions</li>
+                <li>Supporting academic literacy development in Grade 10-12</li>
+                <li>Developing quantitative literacy skills</li>
+                <li>Preparing students for higher education</li>
+            </ul>
+            <FluentMessageBar Intent="MessageIntent.Info">
+                Contact us for information about upcoming workshops or to arrange a session at your school.
+            </FluentMessageBar>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- FAQs for Educators -->
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>Frequently Asked Questions</h2>
+            <FluentDivider />
+            
+            <FluentAccordion>
+                <FluentAccordionItem Heading="Can schools purchase NBT materials for teaching?">
+                    <p>
+                        Sample tests and preparation materials are available for free on this website. 
+                        These can be used for classroom activities and student preparation.
+                    </p>
+                </FluentAccordionItem>
+
+                <FluentAccordionItem Heading="How do universities use NBT results?">
+                    <p>
+                        Universities use NBT results alongside NSC results for admissions decisions, 
+                        student placement, and identifying students who may benefit from additional support. 
+                        Each university has its own approach to using NBT results.
+                    </p>
+                </FluentAccordionItem>
+
+                <FluentAccordionItem Heading="What if a student cannot afford the test fee?">
+                    <p>
+                        Some universities and organizations offer bursaries that cover NBT fees for 
+                        financially disadvantaged students. Students should inquire at their schools 
+                        and chosen universities about available support.
+                    </p>
+                </FluentAccordionItem>
+
+                <FluentAccordionItem Heading="Can students with disabilities or special needs write the NBT?">
+                    <p>
+                        Yes. The NBT project provides accommodations for students with documented disabilities. 
+                        These include extra time, readers, scribes, and other appropriate support. 
+                        Contact us for specific accommodation requests.
+                    </p>
+                </FluentAccordionItem>
+            </FluentAccordion>
+        </FluentStack>
+    </FluentCard>
+
+    <!-- Contact Section -->
+    <FluentCard Style="background: #f3f2f1;">
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+            <h3>Need More Information?</h3>
+            <p>
+                For questions about group bookings, workshops, research collaborations, or other 
+                educator-related inquiries, please contact us.
+            </p>
+            <FluentButton Appearance="Appearance.Accent" Href="/contact">
+                Contact Us
+            </FluentButton>
         </FluentStack>
     </FluentCard>
 </FluentStack>
