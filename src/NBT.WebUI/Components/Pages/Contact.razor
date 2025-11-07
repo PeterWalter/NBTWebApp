@@ -1,0 +1,86 @@
+@page "/contact"
+@rendermode InteractiveServer
+
+<PageTitle>Contact Us - National Benchmark Tests</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical" VerticalGap="24">
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/">Home</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/contact">Contact Us</FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h1>Contact Us</h1>
+
+    <FluentGrid>
+        <FluentGridItem xs="12" md="6">
+            <FluentCard>
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+                    <h2>Send Us a Message</h2>
+                    <FluentTextField @bind-Value="@ContactForm.Name" Label="Name" Required="true" Style="width: 100%;" />
+                    <FluentTextField @bind-Value="@ContactForm.Email" Label="Email" Required="true" Style="width: 100%;" />
+                    <FluentTextField @bind-Value="@ContactForm.Phone" Label="Phone (Optional)" Style="width: 100%;" />
+                    <FluentSelect Label="Inquiry Type" TOption="string" @bind-Value="@ContactForm.InquiryType" Style="width: 100%;">
+                        <FluentOption TOption="string" Value="General">General Inquiry</FluentOption>
+                        <FluentOption TOption="string" Value="Registration">Registration</FluentOption>
+                        <FluentOption TOption="string" Value="Results">Results</FluentOption>
+                        <FluentOption TOption="string" Value="Technical">Technical Support</FluentOption>
+                    </FluentSelect>
+                    <FluentTextField @bind-Value="@ContactForm.Subject" Label="Subject" Required="true" Style="width: 100%;" />
+                    <FluentTextArea @bind-Value="@ContactForm.Message" Label="Message" Required="true" Rows="5" Style="width: 100%;" />
+                    <FluentButton Appearance="Appearance.Accent" OnClick="@SubmitForm">
+                        Send Message
+                    </FluentButton>
+                </FluentStack>
+            </FluentCard>
+        </FluentGridItem>
+
+        <FluentGridItem xs="12" md="6">
+            <FluentCard>
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+                    <h2>Contact Information</h2>
+                    <FluentStack Orientation="Orientation.Horizontal" VerticalGap="8">
+                        <div>
+                            <strong>📧 Email:</strong><br />
+                            info@nbt.ac.za
+                        </div>
+                    </FluentStack>
+                    <FluentStack Orientation="Orientation.Horizontal" VerticalGap="8">
+                        <div>
+                            <strong>📞 Phone:</strong><br />
+                            +27 (0) 21 650 3523
+                        </div>
+                    </FluentStack>
+                    <FluentStack Orientation="Orientation.Horizontal" VerticalGap="8">
+                        <div>
+                            <strong>📍 Address:</strong><br />
+                            Centre for Educational Testing for Access and Placement<br />
+                            University of Cape Town<br />
+                            Private Bag X1<br />
+                            Rondebosch 7701<br />
+                            South Africa
+                        </div>
+                    </FluentStack>
+                </FluentStack>
+            </FluentCard>
+        </FluentGridItem>
+    </FluentGrid>
+</FluentStack>
+
+@code {
+    private ContactFormModel ContactForm = new();
+
+    private void SubmitForm()
+    {
+        // TODO: Implement form submission
+    }
+
+    private class ContactFormModel
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Phone { get; set; } = string.Empty;
+        public string InquiryType { get; set; } = "General";
+        public string Subject { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;
+    }
+}

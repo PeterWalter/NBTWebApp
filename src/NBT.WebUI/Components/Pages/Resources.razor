@@ -1,0 +1,47 @@
+@page "/resources"
+@rendermode InteractiveServer
+
+<PageTitle>Resources - National Benchmark Tests</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical" VerticalGap="24">
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/">Home</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/resources">Resources</FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h1>Resources & Downloads</h1>
+
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>Preparation Materials</h2>
+            <p>
+                Sample questions, preparation guides, and other resources to help you prepare for the NBT.
+            </p>
+        </FluentStack>
+    </FluentCard>
+
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>Available Downloads</h2>
+            <FluentDataGrid Items="@ResourceItems" GridTemplateColumns="1fr 1fr auto">
+                <PropertyColumn Property="@(r => r.Title)" />
+                <PropertyColumn Property="@(r => r.Type)" />
+                <TemplateColumn Title="Actions">
+                    <FluentButton Appearance="Appearance.Lightweight">
+                        ⬇️ Download
+                    </FluentButton>
+                </TemplateColumn>
+            </FluentDataGrid>
+        </FluentStack>
+    </FluentCard>
+</FluentStack>
+
+@code {
+    private IQueryable<ResourceItem> ResourceItems = new List<ResourceItem>().AsQueryable();
+
+    private class ResourceItem
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
+    }
+}

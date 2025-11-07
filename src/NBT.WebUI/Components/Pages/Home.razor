@@ -1,7 +1,69 @@
-﻿@page "/"
+@page "/"
+@rendermode InteractiveServer
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Home - National Benchmark Tests</PageTitle>
 
-<h1>Hello, world!</h1>
+<FluentStack Orientation="Orientation.Vertical" VerticalGap="32">
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h1>Welcome to the National Benchmark Tests</h1>
+            <FluentDivider />
+            <p class="lead">
+                The National Benchmark Tests (NBTs) are assessments for first-year applicants into higher education institutions.
+            </p>
+            <p>
+                The NBTs were designed to assess academic readiness for university. They complement and support the National Senior Certificate (NSC) as a predictor of academic performance, specifically, in the domains of Academic Literacy, Quantitative Literacy, and Mathematics.
+            </p>
+        </FluentStack>
+    </FluentCard>
 
-Welcome to your new app.
+    <FluentGrid Spacing="3">
+        <FluentGridItem xs="12" sm="6" md="4">
+            <FluentCard Height="100%">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                    <h3>👤 For Applicants</h3>
+                    <p>Find out how to register, prepare, and write the NBT.</p>
+                    <FluentButton Appearance="Appearance.Accent" Href="/applicants">
+                        Learn More
+                    </FluentButton>
+                </FluentStack>
+            </FluentCard>
+        </FluentGridItem>
+
+        <FluentGridItem xs="12" sm="6" md="4">
+            <FluentCard Height="100%">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                    <h3>📚 For Educators</h3>
+                    <p>Resources and information for teachers and counselors.</p>
+                    <FluentButton Appearance="Appearance.Accent" Href="/educators">
+                        Learn More
+                    </FluentButton>
+                </FluentStack>
+            </FluentCard>
+        </FluentGridItem>
+
+        <FluentGridItem xs="12" sm="6" md="4">
+            <FluentCard Height="100%">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                    <h3>🏛️ For Institutions</h3>
+                    <p>Information for higher education institutions.</p>
+                    <FluentButton Appearance="Appearance.Accent" Href="/institutions">
+                        Learn More
+                    </FluentButton>
+                </FluentStack>
+            </FluentCard>
+        </FluentGridItem>
+    </FluentGrid>
+
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>Latest Announcements</h2>
+            <FluentDivider />
+            <p><em>No announcements at this time. Check back soon for updates.</em></p>
+        </FluentStack>
+    </FluentCard>
+</FluentStack>
+
+@code {
+    
+}

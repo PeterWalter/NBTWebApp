@@ -1,0 +1,42 @@
+@page "/applicants"
+@rendermode InteractiveServer
+
+<PageTitle>For Applicants - National Benchmark Tests</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical" VerticalGap="24">
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/">Home</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/applicants">For Applicants</FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h1>Information for Applicants</h1>
+
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>How to Register</h2>
+            <p>
+                Registration for the NBT is done online. Follow these steps to register for your test.
+            </p>
+            <FluentButton Appearance="Appearance.Accent">
+                Register Now
+            </FluentButton>
+        </FluentStack>
+    </FluentCard>
+
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <h2>Test Information</h2>
+            <FluentAccordion>
+                <FluentAccordionItem Heading="Academic Literacy Test (ALT)">
+                    <p>The ALT assesses your ability to engage successfully with texts in different disciplines.</p>
+                </FluentAccordionItem>
+                <FluentAccordionItem Heading="Quantitative Literacy Test (QLT)">
+                    <p>The QLT assesses your ability to manage quantitative information in various contexts.</p>
+                </FluentAccordionItem>
+                <FluentAccordionItem Heading="Mathematics Test (MAT)">
+                    <p>The MAT assesses your mathematical skills and understanding.</p>
+                </FluentAccordionItem>
+            </FluentAccordion>
+        </FluentStack>
+    </FluentCard>
+</FluentStack>

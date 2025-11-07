@@ -1,30 +1,42 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">NBT.WebUI</a>
-    </div>
-</div>
+<FluentNavMenu Width="250" Collapsible="true" Title="Navigation">
+    <FluentNavLink Href="/"  Match="NavLinkMatch.All">
+        🏠 Home
+    </FluentNavLink>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+    <FluentNavGroup Title="About NBT"  Expanded="false">
+        <FluentNavLink Href="/about" >
+            📄 About Us
+        </FluentNavLink>
+        <FluentNavLink Href="/about/history" >
+            📜 Our History
+        </FluentNavLink>
+        <FluentNavLink Href="/about/team" >
+            👥 Our Team
+        </FluentNavLink>
+    </FluentNavGroup>
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
+    <FluentNavLink Href="/applicants" >
+        👤 For Applicants
+    </FluentNavLink>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
+    <FluentNavLink Href="/educators" >
+        📚 For Educators
+    </FluentNavLink>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-    </nav>
-</div>
+    <FluentNavLink Href="/institutions" >
+        🏛️ For Institutions
+    </FluentNavLink>
+
+    <FluentNavLink Href="/news" >
+        📰 What's New
+    </FluentNavLink>
+
+    <FluentNavLink Href="/resources" >
+        📁 Resources
+    </FluentNavLink>
+
+    <FluentNavLink Href="/contact" >
+        📧 Contact Us
+    </FluentNavLink>
+</FluentNavMenu>
 
