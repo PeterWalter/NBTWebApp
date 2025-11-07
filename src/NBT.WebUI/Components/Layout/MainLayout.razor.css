@@ -12,13 +12,9 @@
     color: var(--accent-fill-rest);
 }
 
-.main-container {
-    min-height: calc(100vh - 120px);
-}
-
 .body-content {
-    flex: 1;
     padding: 2rem;
+    min-height: calc(100vh - 280px);
 }
 
 .content {

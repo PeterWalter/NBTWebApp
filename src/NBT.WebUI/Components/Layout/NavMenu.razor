@@ -1,42 +1,52 @@
-<FluentNavMenu Width="250" Collapsible="true" Title="Navigation">
-    <FluentNavLink Href="/"  Match="NavLinkMatch.All">
-        🏠 Home
-    </FluentNavLink>
+<nav class="top-nav">
+    <FluentNavMenu Width="100%" Collapsible="false">
+        <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="10" Wrap="true">
+            <FluentNavLink Href="/" Match="NavLinkMatch.All">
+                Home
+            </FluentNavLink>
 
-    <FluentNavGroup Title="About NBT"  Expanded="false">
-        <FluentNavLink Href="/about" >
-            📄 About Us
-        </FluentNavLink>
-        <FluentNavLink Href="/about/history" >
-            📜 Our History
-        </FluentNavLink>
-        <FluentNavLink Href="/about/team" >
-            👥 Our Team
-        </FluentNavLink>
-    </FluentNavGroup>
+            <FluentNavLink Href="/about">
+                About
+            </FluentNavLink>
 
-    <FluentNavLink Href="/applicants" >
-        👤 For Applicants
-    </FluentNavLink>
+            <FluentNavLink Href="/applicants">
+                For Applicants
+            </FluentNavLink>
 
-    <FluentNavLink Href="/educators" >
-        📚 For Educators
-    </FluentNavLink>
+            <FluentNavLink Href="/educators">
+                For Educators
+            </FluentNavLink>
 
-    <FluentNavLink Href="/institutions" >
-        🏛️ For Institutions
-    </FluentNavLink>
+            <FluentNavLink Href="/institutions">
+                For Institutions
+            </FluentNavLink>
 
-    <FluentNavLink Href="/news" >
-        📰 What's New
-    </FluentNavLink>
+            <FluentNavLink Href="/news">
+                What's New
+            </FluentNavLink>
 
-    <FluentNavLink Href="/resources" >
-        📁 Resources
-    </FluentNavLink>
+            <FluentNavLink Href="/resources">
+                Resources
+            </FluentNavLink>
+        </FluentStack>
+    </FluentNavMenu>
+</nav>
 
-    <FluentNavLink Href="/contact" >
-        📧 Contact Us
-    </FluentNavLink>
-</FluentNavMenu>
+<style>
+    .top-nav {
+        background-color: var(--neutral-layer-1);
+        border-bottom: 1px solid var(--neutral-stroke-divider-rest);
+        padding: 0.5rem 1rem;
+    }
+
+    .top-nav fluent-nav-menu {
+        display: flex;
+        justify-content: center;
+    }
+
+    .top-nav fluent-nav-link {
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+    }
+</style>
 

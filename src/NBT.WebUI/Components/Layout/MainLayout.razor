@@ -17,15 +17,13 @@
         </div>
     </FluentHeader>
 
-    <FluentStack Class="main-container" Orientation="Orientation.Horizontal">
-        <NavMenu />
-        
-        <FluentBodyContent Class="body-content">
-            <div class="content">
-                @Body
-            </div>
-        </FluentBodyContent>
-    </FluentStack>
+    <NavMenu />
+
+    <FluentBodyContent Class="body-content">
+        <div class="content">
+            @Body
+        </div>
+    </FluentBodyContent>
 
     <FluentFooter>
         <div class="footer-content">
@@ -40,6 +38,11 @@
         </div>
     </FluentFooter>
 </FluentLayout>
+
+<FluentToastProvider />
+<FluentDialogProvider />
+<FluentTooltipProvider />
+<FluentMessageBarProvider />
 
 <FluentToastProvider />
 <FluentDialogProvider />
