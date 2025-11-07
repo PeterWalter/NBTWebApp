@@ -1,0 +1,24 @@
+.top-nav {
+    background-color: var(--neutral-layer-1);
+    border-bottom: 1px solid var(--neutral-stroke-divider-rest);
+    padding: 0.5rem 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+.top-nav fluent-nav-link {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .top-nav {
+        padding: 0.25rem;
+    }
+    
+    .top-nav fluent-nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+    }
+}
