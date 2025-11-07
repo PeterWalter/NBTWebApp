@@ -8,6 +8,10 @@ public interface IAnnouncementService
     Task<List<AnnouncementDto>> GetAllAsync();
     Task<List<AnnouncementDto>> GetFeaturedAsync();
     Task<AnnouncementDto?> GetByIdAsync(Guid id);
+    Task<AnnouncementDto?> CreateAnnouncementAsync(AnnouncementDto announcement);
+    Task<AnnouncementDto?> UpdateAnnouncementAsync(Guid id, AnnouncementDto announcement);
+    Task<bool> DeleteAnnouncementAsync(Guid id);
+    Task<List<AnnouncementDto>> GetAllAnnouncementsAsync(); // Alias for consistency
 }
 
 public class AnnouncementService : IAnnouncementService
@@ -35,6 +39,8 @@ public class AnnouncementService : IAnnouncementService
         }
     }
 
+    public Task<List<AnnouncementDto>> GetAllAnnouncementsAsync() => GetAllAsync();
+
     public async Task<List<AnnouncementDto>> GetFeaturedAsync()
     {
         try
@@ -59,6 +65,50 @@ public class AnnouncementService : IAnnouncementService
         {
             _logger.LogError(ex, "Error fetching announcement {Id}", id);
             return null;
+        }
+    }
+
+    public async Task<AnnouncementDto?> CreateAnnouncementAsync(AnnouncementDto announcement)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/announcements", announcement);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<AnnouncementDto>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating announcement");
+            throw;
+        }
+    }
+
+    public async Task<AnnouncementDto?> UpdateAnnouncementAsync(Guid id, AnnouncementDto announcement)
+    {
+        try
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/announcements/{id}", announcement);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<AnnouncementDto>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating announcement {Id}", id);
+            throw;
+        }
+    }
+
+    public async Task<bool> DeleteAnnouncementAsync(Guid id)
+    {
+        try
+        {
+            var response = await _httpClient.DeleteAsync($"api/announcements/{id}");
+            return response.IsSuccessStatusCode;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting announcement {Id}", id);
+            return false;
         }
     }
 }

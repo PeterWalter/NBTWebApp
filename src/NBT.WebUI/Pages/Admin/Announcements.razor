@@ -1,4 +1,7 @@
 @page "/admin/announcements"
+@using NBT.WebUI.Services
+@using NBT.WebUI.Models
+@inject IAnnouncementService AnnouncementService
 @inject NavigationManager NavigationManager
 
 <PageTitle>Announcements - Admin</PageTitle>
@@ -10,25 +13,56 @@
                 <h1>Announcements</h1>
                 <p style="color: var(--neutral-foreground-hint);">Manage news and announcements</p>
             </div>
-            <FluentButton Appearance="Appearance.Accent">
+            <FluentButton Appearance="Appearance.Accent" OnClick="@ShowCreateDialog">
                 + New Announcement
             </FluentButton>
         </FluentStack>
 
-        <FluentCard>
-            <FluentMessageBar Intent="MessageIntent.Info">
-                <strong>Coming Soon:</strong> Announcement management features.
-                <br /><br />
-                <strong>Planned Features:</strong>
-                <ul style="margin-top: 8px;">
-                    <li>Create and edit announcements</li>
-                    <li>Feature/unfeature announcements</li>
-                    <li>Categorize announcements</li>
-                    <li>Schedule future publications</li>
-                    <li>Archive old announcements</li>
-                </ul>
+        @if (isLoading)
+        {
+            <FluentProgressRing />
+        }
+        else if (errorMessage != null)
+        {
+            <FluentMessageBar Intent="MessageIntent.Error">
+                @errorMessage
             </FluentMessageBar>
-        </FluentCard>
+        }
+        else if (announcements == null || !announcements.Any())
+        {
+            <FluentCard>
+                <FluentMessageBar Intent="MessageIntent.Info">
+                    No announcements yet. Click "New Announcement" to create one.
+                </FluentMessageBar>
+            </FluentCard>
+        }
+        else
+        {
+            <FluentCard>
+                <FluentDataGrid Items="@announcements.AsQueryable()" Style="width: 100%;">
+                    <PropertyColumn Property="@(a => a.Title)" Title="Title" Sortable="true" />
+                    <PropertyColumn Property="@(a => a.Category)" Title="Category" Sortable="true" />
+                    <PropertyColumn Property="@(a => a.PublicationDate)" Title="Published" Format="d" Sortable="true" />
+                    <TemplateColumn Title="Featured">
+                        @if (context.IsFeatured)
+                        {
+                            <span style="color: gold;">⭐</span>
+                        }
+                    </TemplateColumn>
+                    <TemplateColumn Title="Actions">
+                        <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => ShowEditDialog(context))">
+                            Edit
+                        </FluentButton>
+                        <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => ToggleFeatured(context))">
+                            @(context.IsFeatured ? "Unfeature" : "Feature")
+                        </FluentButton>
+                        <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => ShowDeleteDialog(context))">
+                            Delete
+                        </FluentButton>
+                    </TemplateColumn>
+                </FluentDataGrid>
+            </FluentCard>
+        }
 
         <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => NavigationManager.NavigateTo("/admin"))">
             ← Back to Dashboard
@@ -36,6 +70,179 @@
     </FluentStack>
 </div>
 
+<!-- Create/Edit Dialog -->
+<FluentDialog @bind-Hidden="@hideEditDialog" Modal="true" Style="width: 600px; max-width: 90vw;">
+    <FluentDialogHeader>
+        <h3>@(isEditMode ? "Edit Announcement" : "New Announcement")</h3>
+    </FluentDialogHeader>
+    <FluentDialogBody>
+        <FluentStack Orientation="Orientation.Vertical" Style="gap: 16px;">
+            <FluentTextField @bind-Value="@currentAnnouncement.Title" Label="Title" Required Style="width: 100%;" />
+            
+            <FluentTextArea @bind-Value="@currentAnnouncement.Content" Label="Content" Required Rows="10" Style="width: 100%;" />
+            
+            <FluentSelect TOption="string" @bind-Value="@currentAnnouncement.Category" Label="Category" Style="width: 100%;">
+                <FluentOption Value="General">General</FluentOption>
+                <FluentOption Value="News">News</FluentOption>
+                <FluentOption Value="Update">Update</FluentOption>
+                <FluentOption Value="Important">Important</FluentOption>
+            </FluentSelect>
+            
+            <FluentDatePicker @bind-Value="@publicationDate" Label="Publication Date" Style="width: 100%;" />
+            
+            <FluentCheckbox @bind-Value="@currentAnnouncement.IsFeatured" Label="Feature this announcement" />
+        </FluentStack>
+    </FluentDialogBody>
+    <FluentDialogFooter>
+        <FluentButton Appearance="Appearance.Neutral" OnClick="@(() => hideEditDialog = true)">
+            Cancel
+        </FluentButton>
+        <FluentButton Appearance="Appearance.Accent" OnClick="@SaveAnnouncement">
+            @(isEditMode ? "Update" : "Create")
+        </FluentButton>
+    </FluentDialogFooter>
+</FluentDialog>
+
+<!-- Delete Confirmation Dialog -->
+<FluentDialog @bind-Hidden="@hideDeleteDialog" Modal="true">
+    <FluentDialogHeader>
+        <h3>Confirm Delete</h3>
+    </FluentDialogHeader>
+    <FluentDialogBody>
+        <p>Are you sure you want to delete "<strong>@selectedAnnouncement?.Title</strong>"?</p>
+        <p style="color: var(--error-foreground-rest);">This action cannot be undone.</p>
+    </FluentDialogBody>
+    <FluentDialogFooter>
+        <FluentButton Appearance="Appearance.Neutral" OnClick="@(() => hideDeleteDialog = true)">
+            Cancel
+        </FluentButton>
+        <FluentButton Appearance="Appearance.Accent" OnClick="@ConfirmDelete">
+            Delete
+        </FluentButton>
+    </FluentDialogFooter>
+</FluentDialog>
+
 @code {
-    // Announcement management pending
+    private bool isLoading = true;
+    private string? errorMessage;
+    private List<AnnouncementDto> announcements = new();
+    
+    private bool hideEditDialog = true;
+    private bool hideDeleteDialog = true;
+    private bool isEditMode = false;
+    private AnnouncementDto currentAnnouncement = new();
+    private AnnouncementDto? selectedAnnouncement;
+    private DateTime? publicationDate = DateTime.Today;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            isLoading = true;
+            errorMessage = null;
+            announcements = await AnnouncementService.GetAllAnnouncementsAsync() ?? new List<AnnouncementDto>();
+            announcements = announcements.OrderByDescending(a => a.PublicationDate).ToList();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading announcements: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void ShowCreateDialog()
+    {
+        isEditMode = false;
+        currentAnnouncement = new AnnouncementDto { PublicationDate = DateTime.Today, Category = "General" };
+        publicationDate = DateTime.Today;
+        hideEditDialog = false;
+    }
+
+    private void ShowEditDialog(AnnouncementDto announcement)
+    {
+        isEditMode = true;
+        currentAnnouncement = new AnnouncementDto
+        {
+            Id = announcement.Id,
+            Title = announcement.Title,
+            Content = announcement.Content,
+            Category = announcement.Category,
+            PublicationDate = announcement.PublicationDate,
+            IsFeatured = announcement.IsFeatured
+        };
+        publicationDate = announcement.PublicationDate;
+        hideEditDialog = false;
+    }
+
+    private async Task SaveAnnouncement()
+    {
+        try
+        {
+            if (publicationDate.HasValue)
+            {
+                currentAnnouncement.PublicationDate = publicationDate.Value;
+            }
+
+            if (isEditMode)
+            {
+                await AnnouncementService.UpdateAnnouncementAsync(currentAnnouncement.Id, currentAnnouncement);
+            }
+            else
+            {
+                await AnnouncementService.CreateAnnouncementAsync(currentAnnouncement);
+            }
+            
+            hideEditDialog = true;
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error saving announcement: {ex.Message}";
+        }
+    }
+
+    private async Task ToggleFeatured(AnnouncementDto announcement)
+    {
+        try
+        {
+            announcement.IsFeatured = !announcement.IsFeatured;
+            await AnnouncementService.UpdateAnnouncementAsync(announcement.Id, announcement);
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error updating announcement: {ex.Message}";
+        }
+    }
+
+    private void ShowDeleteDialog(AnnouncementDto announcement)
+    {
+        selectedAnnouncement = announcement;
+        hideDeleteDialog = false;
+    }
+
+    private async Task ConfirmDelete()
+    {
+        if (selectedAnnouncement != null)
+        {
+            try
+            {
+                await AnnouncementService.DeleteAnnouncementAsync(selectedAnnouncement.Id);
+                hideDeleteDialog = true;
+                await LoadData();
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Error deleting announcement: {ex.Message}";
+            }
+        }
+    }
 }
