@@ -16,30 +16,8 @@ BEGIN
 END
 GO
 
--- Create the database
-CREATE DATABASE NBTWebsite
-ON PRIMARY 
-(
-    NAME = N'NBTWebsite_Data',
-    FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\NBTWebsite.mdf',
-    SIZE = 100MB,
-    MAXSIZE = UNLIMITED,
-    FILEGROWTH = 10MB
-)
-LOG ON 
-(
-    NAME = N'NBTWebsite_Log',
-    FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\NBTWebsite_log.ldf',
-    SIZE = 50MB,
-    MAXSIZE = 500MB,
-    FILEGROWTH = 10MB
-);
-GO
-
--- Set database options
-ALTER DATABASE NBTWebsite SET RECOVERY FULL;
-ALTER DATABASE NBTWebsite SET AUTO_CREATE_STATISTICS ON;
-ALTER DATABASE NBTWebsite SET AUTO_UPDATE_STATISTICS ON;
+-- Create the database (LocalDB)
+CREATE DATABASE NBTWebsite;
 GO
 
 USE NBTWebsite;
