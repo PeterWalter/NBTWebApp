@@ -1,0 +1,264 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  SOLUTION_PATH: 'NBTWebApp.sln'
+  BUILD_CONFIGURATION: 'Release'
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.SOLUTION_PATH }}
+      
+    - name: Build solution
+      run: dotnet build ${{ env.SOLUTION_PATH }} --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore
+      
+    - name: Run tests
+      run: dotnet test ${{ env.SOLUTION_PATH }} --configuration ${{ env.BUILD_CONFIGURATION }} --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger trx --results-directory ./TestResults
+      
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: ./TestResults
+        retention-days: 30
+        
+    - name: Publish WebAPI
+      run: dotnet publish src/NBT.WebAPI/NBT.WebAPI.csproj --configuration ${{ env.BUILD_CONFIGURATION }} --no-build --output ./publish/webapi
+      
+    - name: Publish WebUI
+      run: dotnet publish src/NBT.WebUI/NBT.WebUI.csproj --configuration ${{ env.BUILD_CONFIGURATION }} --no-build --output ./publish/webui
+      
+    - name: Upload WebAPI artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: webapi-artifact
+        path: ./publish/webapi
+        retention-days: 7
+        
+    - name: Upload WebUI artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: webui-artifact
+        path: ./publish/webui
+        retention-days: 7
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.SOLUTION_PATH }}
+      
+    - name: Run security scan
+      run: |
+        dotnet list ${{ env.SOLUTION_PATH }} package --vulnerable --include-transitive 2>&1 | tee security-scan.log
+        if grep -q "has the following vulnerable packages" security-scan.log; then
+          echo "⚠️ Vulnerable packages detected"
+          exit 1
+        fi
+        
+    - name: Upload security scan results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: security-scan-results
+        path: security-scan.log
+        retention-days: 30
+
+  code-quality:
+    name: Code Quality Analysis
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.SOLUTION_PATH }}
+      
+    - name: Build with warnings as errors
+      run: dotnet build ${{ env.SOLUTION_PATH }} --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore /p:TreatWarningsAsErrors=true
+      
+    - name: Code formatting check
+      run: dotnet format ${{ env.SOLUTION_PATH }} --verify-no-changes --verbosity diagnostic
+
+  deploy-dev:
+    name: Deploy to Development
+    runs-on: ubuntu-latest
+    needs: [build, security-scan, code-quality]
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    environment:
+      name: Development
+      url: ${{ steps.deploy-webapi.outputs.webapp-url }}
+    
+    steps:
+    - name: Download WebAPI artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: webapi-artifact
+        path: ./webapi
+        
+    - name: Download WebUI artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: webui-artifact
+        path: ./webui
+        
+    - name: Azure Login
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS_DEV }}
+        
+    - name: Deploy WebAPI to Azure App Service
+      id: deploy-webapi
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: nbt-website-api-dev
+        package: ./webapi
+        
+    - name: Deploy WebUI to Azure App Service
+      id: deploy-webui
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: nbt-website-ui-dev
+        package: ./webui
+        
+    - name: Azure Logout
+      run: az logout
+
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [build, security-scan, code-quality]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment:
+      name: Staging
+      url: ${{ steps.deploy-webapi.outputs.webapp-url }}
+    
+    steps:
+    - name: Download WebAPI artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: webapi-artifact
+        path: ./webapi
+        
+    - name: Download WebUI artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: webui-artifact
+        path: ./webui
+        
+    - name: Azure Login
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS_STAGING }}
+        
+    - name: Deploy WebAPI to Azure App Service
+      id: deploy-webapi
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: nbt-website-api-staging
+        package: ./webapi
+        
+    - name: Deploy WebUI to Azure App Service
+      id: deploy-webui
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: nbt-website-ui-staging
+        package: ./webui
+        
+    - name: Azure Logout
+      run: az logout
+      
+    - name: Run smoke tests
+      run: |
+        echo "Running smoke tests against staging environment..."
+        curl -f https://nbt-website-api-staging.azurewebsites.net/health || exit 1
+        curl -f https://nbt-website-ui-staging.azurewebsites.net || exit 1
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment:
+      name: Production
+      url: ${{ steps.deploy-webapi.outputs.webapp-url }}
+    
+    steps:
+    - name: Download WebAPI artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: webapi-artifact
+        path: ./webapi
+        
+    - name: Download WebUI artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: webui-artifact
+        path: ./webui
+        
+    - name: Azure Login
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS_PROD }}
+        
+    - name: Deploy WebAPI to Azure App Service
+      id: deploy-webapi
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: nbt-website-api-prod
+        package: ./webapi
+        
+    - name: Deploy WebUI to Azure App Service
+      id: deploy-webui
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: nbt-website-ui-prod
+        package: ./webui
+        
+    - name: Azure Logout
+      run: az logout
+      
+    - name: Run smoke tests
+      run: |
+        echo "Running smoke tests against production environment..."
+        curl -f https://nbt-website-api-prod.azurewebsites.net/health || exit 1
+        curl -f https://nbt-website-ui-prod.azurewebsites.net || exit 1
