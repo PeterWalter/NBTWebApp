@@ -1,36 +1,36 @@
 @page "/admin/users"
+@inject NavigationManager NavigationManager
 
-<PageTitle>User Management - Admin - NBT Website</PageTitle>
+<PageTitle>User Management - Admin</PageTitle>
 
-<FluentStack Orientation="Orientation.Vertical" Style="gap: 24px;">
-    <FluentStack HorizontalAlignment="HorizontalAlignment.SpaceBetween" VerticalAlignment="VerticalAlignment.Center">
+<div style="padding: 24px;">
+    <FluentStack Orientation="Orientation.Vertical" Style="gap: 24px;">
         <div>
             <h1>User Management</h1>
-            <p style="color: var(--neutral-foreground-hint); margin-top: 4px;">
-                Manage user accounts and permissions
-            </p>
+            <p style="color: var(--neutral-foreground-hint);">Manage user accounts and permissions</p>
         </div>
-        <FluentButton Appearance="Appearance.Accent" IconStart="@(new Icons.Regular.Size20.PersonAdd())">
-            Add User
+
+        <FluentCard>
+            <FluentMessageBar Intent="MessageIntent.Info">
+                <strong>Coming Soon:</strong> User management features will be implemented after authentication UI integration.
+                <br /><br />
+                <strong>Planned Features:</strong>
+                <ul style="margin-top: 8px;">
+                    <li>View all registered users</li>
+                    <li>Assign/remove roles (Admin, ContentEditor, Educator, Institution, User)</li>
+                    <li>Enable/disable user accounts</li>
+                    <li>Reset user passwords</li>
+                    <li>View user activity logs</li>
+                </ul>
+            </FluentMessageBar>
+        </FluentCard>
+
+        <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => NavigationManager.NavigateTo("/admin"))">
+            ← Back to Dashboard
         </FluentButton>
     </FluentStack>
-
-    <FluentCard>
-        <FluentMessageBar Intent="MessageIntent.Info">
-            User management features will be implemented with the Authentication UI integration.
-            <br /><br />
-            <strong>Planned Features:</strong>
-            <ul>
-                <li>View all registered users</li>
-                <li>Assign/remove roles (Admin, ContentEditor, Educator, Institution, User)</li>
-                <li>Enable/disable user accounts</li>
-                <li>Reset user passwords</li>
-                <li>View user activity logs</li>
-            </ul>
-        </FluentMessageBar>
-    </FluentCard>
-</FluentStack>
+</div>
 
 @code {
-    // User management implementation pending authentication UI integration
+    // User management implementation pending
 }

@@ -1,0 +1,32 @@
+@page "/admin/resources"
+@inject NavigationManager NavigationManager
+
+<PageTitle>Resources - Admin</PageTitle>
+
+<div style="padding: 24px;">
+    <FluentStack Orientation="Orientation.Vertical" Style="gap: 24px;">
+        <FluentStack HorizontalAlignment="HorizontalAlignment.SpaceBetween">
+            <div>
+                <h1>Downloadable Resources</h1>
+                <p style="color: var(--neutral-foreground-hint);">Manage resource files</p>
+            </div>
+            <FluentButton Appearance="Appearance.Accent">
+                + Upload Resource
+            </FluentButton>
+        </FluentStack>
+
+        <FluentCard>
+            <FluentMessageBar Intent="MessageIntent.Info">
+                Resource management UI coming soon. This will include file upload, categorization, and download tracking.
+            </FluentMessageBar>
+        </FluentCard>
+
+        <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => NavigationManager.NavigateTo("/admin"))">
+            ← Back to Dashboard
+        </FluentButton>
+    </FluentStack>
+</div>
+
+@code {
+    // Resource management implementation pending
+}

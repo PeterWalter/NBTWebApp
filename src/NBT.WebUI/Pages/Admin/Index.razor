@@ -1,222 +1,100 @@
 @page "/admin"
-@using NBT.WebUI.Services
-@using NBT.WebUI.Models
-@inject AnnouncementService AnnouncementService
-@inject ContactInquiryService ContactInquiryService
-@inject ResourceService ResourceService
+@inject NavigationManager NavigationManager
 
 <PageTitle>Admin Dashboard - NBT Website</PageTitle>
 
-<FluentStack Orientation="Orientation.Vertical" Style="gap: 24px;">
-    <FluentStack HorizontalAlignment="HorizontalAlignment.SpaceBetween" VerticalAlignment="VerticalAlignment.Center">
-        <div>
-            <h1>Dashboard</h1>
-            <p style="color: var(--neutral-foreground-hint); margin-top: 4px;">
-                Welcome to the NBT Admin Portal
-            </p>
-        </div>
-        <FluentButton Appearance="Appearance.Accent" IconStart="@(new Icons.Regular.Size20.ChartMultiple())">
-            View Analytics
-        </FluentButton>
-    </FluentStack>
+<div style="padding: 24px;">
+    <FluentStack Orientation="Orientation.Vertical" Style="gap: 24px;">
+        <FluentStack HorizontalAlignment="HorizontalAlignment.SpaceBetween">
+            <div>
+                <h1>Admin Dashboard</h1>
+                <p style="color: var(--neutral-foreground-hint); margin-top: 4px;">
+                    Welcome to the NBT Admin Portal
+                </p>
+            </div>
+        </FluentStack>
 
-    @if (isLoading)
-    {
-        <FluentProgressRing />
-    }
-    else
-    {
         <!-- Statistics Cards -->
         <FluentGrid Spacing="3">
             <FluentGridItem xs="12" sm="6" md="3">
                 <FluentCard Style="height: 100%;">
-                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 12px;">
-                        <FluentStack HorizontalAlignment="HorizontalAlignment.SpaceBetween">
-                            <FluentIcon Value="@(new Icons.Regular.Size24.Megaphone())" Color="Color.Accent" />
-                            <FluentBadge Appearance="Appearance.Accent">Active</FluentBadge>
-                        </FluentStack>
-                        <div>
-                            <div style="font-size: 32px; font-weight: 600;">@stats.TotalAnnouncements</div>
-                            <div style="color: var(--neutral-foreground-hint);">Announcements</div>
-                        </div>
-                    </FluentStack>
+                    <h3 style="margin-top: 0;">Content Management</h3>
+                    <p style="color: var(--neutral-foreground-hint);">Manage pages and announcements</p>
+                    <FluentButton Appearance="Appearance.Accent" OnClick="@(() => NavigationManager.NavigateTo("/admin/content-pages"))">
+                        Go
+                    </FluentButton>
                 </FluentCard>
             </FluentGridItem>
 
             <FluentGridItem xs="12" sm="6" md="3">
                 <FluentCard Style="height: 100%;">
-                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 12px;">
-                        <FluentStack HorizontalAlignment="HorizontalAlignment.SpaceBetween">
-                            <FluentIcon Value="@(new Icons.Regular.Size24.Mail())" Color="Color.Info" />
-                            <FluentBadge Appearance="Appearance.Lightweight" BackgroundColor="@stats.PendingColor">@stats.PendingInquiries New</FluentBadge>
-                        </FluentStack>
-                        <div>
-                            <div style="font-size: 32px; font-weight: 600;">@stats.TotalInquiries</div>
-                            <div style="color: var(--neutral-foreground-hint);">Contact Inquiries</div>
-                        </div>
-                    </FluentStack>
+                    <h3 style="margin-top: 0;">Announcements</h3>
+                    <p style="color: var(--neutral-foreground-hint);">News and updates</p>
+                    <FluentButton Appearance="Appearance.Accent" OnClick="@(() => NavigationManager.NavigateTo("/admin/announcements"))">
+                        Manage
+                    </FluentButton>
                 </FluentCard>
             </FluentGridItem>
 
             <FluentGridItem xs="12" sm="6" md="3">
                 <FluentCard Style="height: 100%;">
-                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 12px;">
-                        <FluentStack HorizontalAlignment="HorizontalAlignment.SpaceBetween">
-                            <FluentIcon Value="@(new Icons.Regular.Size24.DocumentBulletList())" Color="Color.Success" />
-                            <FluentBadge Appearance="Appearance.Accent">@stats.ActiveResources Active</FluentBadge>
-                        </FluentStack>
-                        <div>
-                            <div style="font-size: 32px; font-weight: 600;">@stats.TotalResources</div>
-                            <div style="color: var(--neutral-foreground-hint);">Resources</div>
-                        </div>
-                    </FluentStack>
+                    <h3 style="margin-top: 0;">Inquiries</h3>
+                    <p style="color: var(--neutral-foreground-hint);">Customer messages</p>
+                    <FluentButton Appearance="Appearance.Accent" OnClick="@(() => NavigationManager.NavigateTo("/admin/inquiries"))">
+                        View
+                    </FluentButton>
                 </FluentCard>
             </FluentGridItem>
 
             <FluentGridItem xs="12" sm="6" md="3">
                 <FluentCard Style="height: 100%;">
-                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 12px;">
-                        <FluentStack HorizontalAlignment="HorizontalAlignment.SpaceBetween">
-                            <FluentIcon Value="@(new Icons.Regular.Size24.CloudArrowDown())" Color="Color.Warning" />
-                        </FluentStack>
-                        <div>
-                            <div style="font-size: 32px; font-weight: 600;">@stats.TotalDownloads</div>
-                            <div style="color: var(--neutral-foreground-hint);">Total Downloads</div>
-                        </div>
-                    </FluentStack>
+                    <h3 style="margin-top: 0;">Resources</h3>
+                    <p style="color: var(--neutral-foreground-hint);">File management</p>
+                    <FluentButton Appearance="Appearance.Accent" OnClick="@(() => NavigationManager.NavigateTo("/admin/resources"))">
+                        Manage
+                    </FluentButton>
                 </FluentCard>
             </FluentGridItem>
         </FluentGrid>
 
-        <!-- Quick Actions -->
+        <!-- Navigation -->
         <FluentCard>
-            <h3>Quick Actions</h3>
-            <FluentGrid Spacing="2" Style="margin-top: 16px;">
-                <FluentGridItem xs="12" sm="6" md="4">
-                    <FluentButton Appearance="Appearance.Outline" Style="width: 100%;" 
-                                  IconStart="@(new Icons.Regular.Size20.Add())"
-                                  OnClick="@(() => NavigationManager.NavigateTo("/admin/announcements/new"))">
-                        New Announcement
-                    </FluentButton>
-                </FluentGridItem>
-                <FluentGridItem xs="12" sm="6" md="4">
-                    <FluentButton Appearance="Appearance.Outline" Style="width: 100%;" 
-                                  IconStart="@(new Icons.Regular.Size20.Add())"
-                                  OnClick="@(() => NavigationManager.NavigateTo("/admin/resources/new"))">
-                        Upload Resource
-                    </FluentButton>
-                </FluentGridItem>
-                <FluentGridItem xs="12" sm="6" md="4">
-                    <FluentButton Appearance="Appearance.Outline" Style="width: 100%;" 
-                                  IconStart="@(new Icons.Regular.Size20.PersonAdd())"
-                                  OnClick="@(() => NavigationManager.NavigateTo("/admin/users/new"))">
-                        Add User
-                    </FluentButton>
-                </FluentGridItem>
-            </FluentGrid>
+            <h3>Management Sections</h3>
+            <FluentStack Orientation="Orientation.Vertical" Style="gap: 8px; margin-top: 16px;">
+                <FluentButton Appearance="Appearance.Outline" Style="width: 100%; justify-content: flex-start;"
+                              OnClick="@(() => NavigationManager.NavigateTo("/admin/content-pages"))">
+                    📄 Content Pages
+                </FluentButton>
+                <FluentButton Appearance="Appearance.Outline" Style="width: 100%; justify-content: flex-start;"
+                              OnClick="@(() => NavigationManager.NavigateTo("/admin/announcements"))">
+                    📢 Announcements
+                </FluentButton>
+                <FluentButton Appearance="Appearance.Outline" Style="width: 100%; justify-content: flex-start;"
+                              OnClick="@(() => NavigationManager.NavigateTo("/admin/inquiries"))">
+                    ✉️ Contact Inquiries
+                </FluentButton>
+                <FluentButton Appearance="Appearance.Outline" Style="width: 100%; justify-content: flex-start;"
+                              OnClick="@(() => NavigationManager.NavigateTo("/admin/resources"))">
+                    📦 Resources
+                </FluentButton>
+                <FluentButton Appearance="Appearance.Outline" Style="width: 100%; justify-content: flex-start;"
+                              OnClick="@(() => NavigationManager.NavigateTo("/admin/users"))">
+                    👥 Users
+                </FluentButton>
+            </FluentStack>
         </FluentCard>
 
-        <!-- Recent Activity -->
-        <FluentGrid Spacing="3">
-            <FluentGridItem xs="12" md="8">
-                <FluentCard>
-                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 16px;">
-                        <h3>Recent Announcements</h3>
-                        @if (recentAnnouncements != null && recentAnnouncements.Any())
-                        {
-                            <FluentDataGrid Items="@recentAnnouncements.AsQueryable()" GridTemplateColumns="1fr auto auto">
-                                <PropertyColumn Property="@(a => a.Title)" Title="Title" />
-                                <PropertyColumn Property="@(a => a.PublicationDate)" Title="Published" Format="d" />
-                                <TemplateColumn Title="Actions">
-                                    <FluentButton Appearance="Appearance.Lightweight" IconStart="@(new Icons.Regular.Size16.Edit())">
-                                        Edit
-                                    </FluentButton>
-                                </TemplateColumn>
-                            </FluentDataGrid>
-                        }
-                        else
-                        {
-                            <FluentLabel>No announcements yet</FluentLabel>
-                        }
-                    </FluentStack>
-                </FluentCard>
-            </FluentGridItem>
-
-            <FluentGridItem xs="12" md="4">
-                <FluentCard>
-                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 16px;">
-                        <h3>System Status</h3>
-                        <FluentStack Orientation="Orientation.Vertical" Style="gap: 12px;">
-                            <FluentStack>
-                                <FluentIcon Value="@(new Icons.Regular.Size20.CheckmarkCircle())" Color="Color.Success" />
-                                <span>Database: Connected</span>
-                            </FluentStack>
-                            <FluentStack>
-                                <FluentIcon Value="@(new Icons.Regular.Size20.CheckmarkCircle())" Color="Color.Success" />
-                                <span>API: Operational</span>
-                            </FluentStack>
-                            <FluentStack>
-                                <FluentIcon Value="@(new Icons.Regular.Size20.CheckmarkCircle())" Color="Color.Success" />
-                                <span>Storage: Available</span>
-                            </FluentStack>
-                        </FluentStack>
-                    </FluentStack>
-                </FluentCard>
-            </FluentGridItem>
-        </FluentGrid>
-    }
-</FluentStack>
+        <FluentCard>
+            <FluentStack Style="gap: 12px;">
+                <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => NavigationManager.NavigateTo("/"))">
+                    ← Back to Site
+                </FluentButton>
+            </FluentStack>
+        </FluentCard>
+    </FluentStack>
+</div>
 
 @code {
-    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
-
-    private bool isLoading = true;
-    private DashboardStats stats = new();
-    private List<AnnouncementDto> recentAnnouncements = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            // Load statistics
-            var announcements = await AnnouncementService.GetAllAnnouncementsAsync();
-            var inquiries = await ContactInquiryService.GetAllInquiriesAsync();
-            var resources = await ResourceService.GetAllResourcesAsync();
-
-            stats = new DashboardStats
-            {
-                TotalAnnouncements = announcements?.Count ?? 0,
-                TotalInquiries = inquiries?.Count ?? 0,
-                PendingInquiries = inquiries?.Count(i => i.Status == "Pending") ?? 0,
-                TotalResources = resources?.Count ?? 0,
-                ActiveResources = resources?.Count(r => r.IsActive) ?? 0,
-                TotalDownloads = resources?.Sum(r => r.DownloadCount) ?? 0
-            };
-
-            // Get recent announcements
-            recentAnnouncements = announcements?
-                .OrderByDescending(a => a.PublicationDate)
-                .Take(5)
-                .ToList() ?? new List<AnnouncementDto>();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error loading dashboard: {ex.Message}");
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
-
-    private class DashboardStats
-    {
-        public int TotalAnnouncements { get; set; }
-        public int TotalInquiries { get; set; }
-        public int PendingInquiries { get; set; }
-        public int TotalResources { get; set; }
-        public int ActiveResources { get; set; }
-        public int TotalDownloads { get; set; }
-        public string PendingColor => PendingInquiries > 0 ? "orange" : "green";
-    }
+    // Admin dashboard - static version
+    // TODO: Add statistics from API once admin endpoints are implemented
 }

@@ -1,196 +1,37 @@
 @page "/admin/inquiries"
-@using NBT.WebUI.Services
-@using NBT.WebUI.Models
-@inject ContactInquiryService ContactInquiryService
+@inject NavigationManager NavigationManager
 
-<PageTitle>Contact Inquiries - Admin - NBT Website</PageTitle>
+<PageTitle>Contact Inquiries - Admin</PageTitle>
 
-<FluentStack Orientation="Orientation.Vertical" Style="gap: 24px;">
-    <div>
-        <h1>Contact Inquiries</h1>
-        <p style="color: var(--neutral-foreground-hint); margin-top: 4px;">
-            Manage customer inquiries and support requests
-        </p>
-    </div>
-
-    @if (isLoading)
-    {
-        <FluentProgressRing />
-    }
-    else if (inquiries == null || !inquiries.Any())
-    {
-        <FluentMessageBar Intent="MessageIntent.Info">
-            No inquiries found.
-        </FluentMessageBar>
-    }
-    else
-    {
-        <!-- Filter Tabs -->
-        <FluentCard Style="margin-bottom: 16px;">
-            <FluentStack>
-                <FluentButton Appearance="@(currentFilter == "All" ? Appearance.Accent : Appearance.Neutral)" 
-                              OnClick="@(() => FilterBy("All"))">
-                    All (@inquiries.Count)
-                </FluentButton>
-                <FluentButton Appearance="@(currentFilter == "Pending" ? Appearance.Accent : Appearance.Neutral)" 
-                              OnClick="@(() => FilterBy("Pending"))">
-                    Pending (@inquiries.Count(i => i.Status == "Pending"))
-                </FluentButton>
-                <FluentButton Appearance="@(currentFilter == "In Progress" ? Appearance.Accent : Appearance.Neutral)" 
-                              OnClick="@(() => FilterBy("In Progress"))">
-                    In Progress (@inquiries.Count(i => i.Status == "In Progress"))
-                </FluentButton>
-                <FluentButton Appearance="@(currentFilter == "Resolved" ? Appearance.Accent : Appearance.Neutral)" 
-                              OnClick="@(() => FilterBy("Resolved"))">
-                    Resolved (@inquiries.Count(i => i.Status == "Resolved"))
-                </FluentButton>
-            </FluentStack>
-        </FluentCard>
+<div style="padding: 24px;">
+    <FluentStack Orientation="Orientation.Vertical" Style="gap: 24px;">
+        <div>
+            <h1>Contact Inquiries</h1>
+            <p style="color: var(--neutral-foreground-hint);">Manage customer inquiries and support requests</p>
+        </div>
 
         <FluentCard>
-            <FluentDataGrid Items="@filteredInquiries.AsQueryable()" GridTemplateColumns="0.5fr 1fr 1fr 1fr 1fr 0.5fr auto" Style="width: 100%;">
-                <PropertyColumn Property="@(i => i.ReferenceNumber)" Title="Ref #" Sortable="true" />
-                <PropertyColumn Property="@(i => i.Name)" Title="Name" Sortable="true" />
-                <PropertyColumn Property="@(i => i.Email)" Title="Email" Sortable="true" />
-                <PropertyColumn Property="@(i => i.InquiryType)" Title="Type" Sortable="true">
-                    <TemplateColumn>
-                        <FluentBadge Appearance="Appearance.Lightweight">@context.InquiryType</FluentBadge>
-                    </TemplateColumn>
-                </PropertyColumn>
-                <PropertyColumn Property="@(i => i.SubmissionDateTime)" Title="Submitted" Format="g" Sortable="true" />
-                <PropertyColumn Property="@(i => i.Status)" Title="Status" Sortable="true">
-                    <TemplateColumn>
-                        <FluentBadge Appearance="@GetStatusAppearance(context.Status)">
-                            @context.Status
-                        </FluentBadge>
-                    </TemplateColumn>
-                </PropertyColumn>
-                <TemplateColumn Title="Actions">
-                    <FluentButton Appearance="Appearance.Lightweight" 
-                                  IconStart="@(new Icons.Regular.Size16.Eye())"
-                                  OnClick="@(() => ViewDetails(context))" 
-                                  Title="View Details">
-                    </FluentButton>
-                </TemplateColumn>
-            </FluentDataGrid>
+            <FluentMessageBar Intent="MessageIntent.Info">
+                <strong>Coming Soon:</strong> Contact inquiry management features.
+                <br /><br />
+                <strong>Planned Features:</strong>
+                <ul style="margin-top: 8px;">
+                    <li>View all inquiries</li>
+                    <li>Filter by status (Pending, In Progress, Resolved)</li>
+                    <li>View inquiry details</li>
+                    <li>Update inquiry status</li>
+                    <li>Search by reference number</li>
+                    <li>Export inquiries</li>
+                </ul>
+            </FluentMessageBar>
         </FluentCard>
-    }
-</FluentStack>
 
-<!-- Inquiry Details Dialog -->
-<FluentDialog @bind-Hidden="@hideDetailsDialog" Modal="true" Style="width: 600px; max-width: 90vw;">
-    <FluentDialogHeader>
-        <FluentLabel Typo="Typography.PaneHeader">Inquiry Details</FluentLabel>
-    </FluentDialogHeader>
-    <FluentDialogBody>
-        @if (selectedInquiry != null)
-        {
-            <FluentStack Orientation="Orientation.Vertical" Style="gap: 16px;">
-                <div>
-                    <FluentLabel Weight="FontWeight.Bold">Reference Number</FluentLabel>
-                    <p>@selectedInquiry.ReferenceNumber</p>
-                </div>
-                <div>
-                    <FluentLabel Weight="FontWeight.Bold">Name</FluentLabel>
-                    <p>@selectedInquiry.Name</p>
-                </div>
-                <div>
-                    <FluentLabel Weight="FontWeight.Bold">Email</FluentLabel>
-                    <p>@selectedInquiry.Email</p>
-                </div>
-                @if (!string.IsNullOrEmpty(selectedInquiry.Phone))
-                {
-                    <div>
-                        <FluentLabel Weight="FontWeight.Bold">Phone</FluentLabel>
-                        <p>@selectedInquiry.Phone</p>
-                    </div>
-                }
-                <div>
-                    <FluentLabel Weight="FontWeight.Bold">Inquiry Type</FluentLabel>
-                    <p><FluentBadge>@selectedInquiry.InquiryType</FluentBadge></p>
-                </div>
-                <div>
-                    <FluentLabel Weight="FontWeight.Bold">Subject</FluentLabel>
-                    <p>@selectedInquiry.Subject</p>
-                </div>
-                <div>
-                    <FluentLabel Weight="FontWeight.Bold">Message</FluentLabel>
-                    <FluentTextArea Value="@selectedInquiry.Message" Readonly="true" Style="width: 100%; min-height: 150px;" />
-                </div>
-                <div>
-                    <FluentLabel Weight="FontWeight.Bold">Submitted</FluentLabel>
-                    <p>@selectedInquiry.SubmissionDateTime.ToString("f")</p>
-                </div>
-            </FluentStack>
-        }
-    </FluentDialogBody>
-    <FluentDialogFooter>
-        <FluentButton Appearance="Appearance.Neutral" OnClick="@(() => hideDetailsDialog = true)">
-            Close
+        <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => NavigationManager.NavigateTo("/admin"))">
+            ← Back to Dashboard
         </FluentButton>
-    </FluentDialogFooter>
-</FluentDialog>
+    </FluentStack>
+</div>
 
 @code {
-    private bool isLoading = true;
-    private List<ContactInquiryDto> inquiries = new();
-    private List<ContactInquiryDto> filteredInquiries = new();
-    private string currentFilter = "All";
-    
-    private bool hideDetailsDialog = true;
-    private ContactInquiryDto? selectedInquiry;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadData();
-    }
-
-    private async Task LoadData()
-    {
-        try
-        {
-            isLoading = true;
-            inquiries = await ContactInquiryService.GetAllInquiriesAsync() ?? new List<ContactInquiryDto>();
-            inquiries = inquiries.OrderByDescending(i => i.SubmissionDateTime).ToList();
-            FilterBy(currentFilter);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error loading inquiries: {ex.Message}");
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
-
-    private void FilterBy(string status)
-    {
-        currentFilter = status;
-        if (status == "All")
-        {
-            filteredInquiries = inquiries;
-        }
-        else
-        {
-            filteredInquiries = inquiries.Where(i => i.Status == status).ToList();
-        }
-    }
-
-    private void ViewDetails(ContactInquiryDto inquiry)
-    {
-        selectedInquiry = inquiry;
-        hideDetailsDialog = false;
-    }
-
-    private Appearance GetStatusAppearance(string status)
-    {
-        return status switch
-        {
-            "Pending" => Appearance.Accent,
-            "In Progress" => Appearance.Neutral,
-            "Resolved" => Appearance.Lightweight,
-            _ => Appearance.Outline
-        };
-    }
+    // Inquiry management implementation pending API support
 }

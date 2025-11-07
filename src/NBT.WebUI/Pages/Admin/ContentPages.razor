@@ -1,180 +1,41 @@
 @page "/admin/content-pages"
-@using NBT.WebUI.Services
-@using NBT.WebUI.Models
-@inject ContentPageService ContentPageService
 @inject NavigationManager NavigationManager
 
-<PageTitle>Content Pages - Admin - NBT Website</PageTitle>
+<PageTitle>Content Pages - Admin</PageTitle>
 
-<FluentStack Orientation="Orientation.Vertical" Style="gap: 24px;">
-    <FluentStack HorizontalAlignment="HorizontalAlignment.SpaceBetween" VerticalAlignment="VerticalAlignment.Center">
-        <div>
-            <h1>Content Pages</h1>
-            <p style="color: var(--neutral-foreground-hint); margin-top: 4px;">
-                Manage website content pages
-            </p>
-        </div>
-        <FluentButton Appearance="Appearance.Accent" IconStart="@(new Icons.Regular.Size20.Add())" 
-                      OnClick="@CreateNew">
-            New Page
+<div style="padding: 24px;">
+    <FluentStack Orientation="Orientation.Vertical" Style="gap: 24px;">
+        <FluentStack HorizontalAlignment="HorizontalAlignment.SpaceBetween">
+            <div>
+                <h1>Content Pages</h1>
+                <p style="color: var(--neutral-foreground-hint);">Manage website content pages</p>
+            </div>
+            <FluentButton Appearance="Appearance.Accent">
+                + New Page
+            </FluentButton>
+        </FluentStack>
+
+        <FluentCard>
+            <FluentMessageBar Intent="MessageIntent.Info">
+                <strong>Coming Soon:</strong> Content page management features.
+                <br /><br />
+                <strong>Planned Features:</strong>
+                <ul style="margin-top: 8px;">
+                    <li>Create and edit pages</li>
+                    <li>Publish/unpublish pages</li>
+                    <li>SEO meta tags management</li>
+                    <li>Content versioning</li>
+                    <li>Preview before publish</li>
+                </ul>
+            </FluentMessageBar>
+        </FluentCard>
+
+        <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => NavigationManager.NavigateTo("/admin"))">
+            ← Back to Dashboard
         </FluentButton>
     </FluentStack>
-
-    @if (isLoading)
-    {
-        <FluentProgressRing />
-    }
-    else if (contentPages == null || !contentPages.Any())
-    {
-        <FluentMessageBar Intent="MessageIntent.Info">
-            No content pages found. Click "New Page" to create one.
-        </FluentMessageBar>
-    }
-    else
-    {
-        <FluentCard>
-            <FluentDataGrid Items="@contentPages.AsQueryable()" GridTemplateColumns="2fr 1fr 1fr 1fr auto" Style="width: 100%;">
-                <PropertyColumn Property="@(c => c.Title)" Title="Title" Sortable="true">
-                    <ColumnOptions>
-                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <FluentSearch @bind-Value="titleFilter" 
-                                          @bind-Value:after="FilterData"
-                                          Placeholder="Filter by title..." 
-                                          Style="width: 100%;" />
-                        </div>
-                    </ColumnOptions>
-                </PropertyColumn>
-                <PropertyColumn Property="@(c => c.Slug)" Title="Slug" Sortable="true" />
-                <PropertyColumn Property="@(c => c.IsPublished)" Title="Status" Sortable="true">
-                    <TemplateColumn>
-                        @if (context.IsPublished)
-                        {
-                            <FluentBadge Appearance="Appearance.Accent">Published</FluentBadge>
-                        }
-                        else
-                        {
-                            <FluentBadge Appearance="Appearance.Neutral">Draft</FluentBadge>
-                        }
-                    </TemplateColumn>
-                </PropertyColumn>
-                <PropertyColumn Property="@(c => c.LastModifiedDate)" Title="Modified" Format="g" Sortable="true" />
-                <TemplateColumn Title="Actions">
-                    <FluentStack>
-                        <FluentButton Appearance="Appearance.Lightweight" 
-                                      IconStart="@(new Icons.Regular.Size16.Edit())"
-                                      OnClick="@(() => Edit(context.Id))" 
-                                      Title="Edit">
-                        </FluentButton>
-                        <FluentButton Appearance="Appearance.Lightweight" 
-                                      IconStart="@(new Icons.Regular.Size16.Delete())"
-                                      OnClick="@(() => ShowDeleteDialog(context))" 
-                                      Title="Delete">
-                        </FluentButton>
-                    </FluentStack>
-                </TemplateColumn>
-            </FluentDataGrid>
-        </FluentCard>
-    }
-</FluentStack>
-
-<!-- Delete Confirmation Dialog -->
-<FluentDialog @bind-Hidden="@hideDeleteDialog" Modal="true">
-    <FluentDialogHeader>
-        <FluentStack VerticalAlignment="VerticalAlignment.Center">
-            <FluentIcon Value="@(new Icons.Regular.Size24.Warning())" Color="Color.Error" />
-            <FluentLabel Typo="Typography.PaneHeader">Confirm Delete</FluentLabel>
-        </FluentStack>
-    </FluentDialogHeader>
-    <FluentDialogBody>
-        <p>Are you sure you want to delete the page "<strong>@selectedPage?.Title</strong>"?</p>
-        <p style="color: var(--error-foreground-rest);">This action cannot be undone.</p>
-    </FluentDialogBody>
-    <FluentDialogFooter>
-        <FluentButton Appearance="Appearance.Neutral" OnClick="@(() => hideDeleteDialog = true)">
-            Cancel
-        </FluentButton>
-        <FluentButton Appearance="Appearance.Accent" OnClick="@ConfirmDelete">
-            Delete
-        </FluentButton>
-    </FluentDialogFooter>
-</FluentDialog>
+</div>
 
 @code {
-    private bool isLoading = true;
-    private List<ContentPageDto> contentPages = new();
-    private List<ContentPageDto> filteredPages = new();
-    private string titleFilter = string.Empty;
-    
-    private bool hideDeleteDialog = true;
-    private ContentPageDto? selectedPage;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadData();
-    }
-
-    private async Task LoadData()
-    {
-        try
-        {
-            isLoading = true;
-            contentPages = await ContentPageService.GetAllContentPagesAsync() ?? new List<ContentPageDto>();
-            filteredPages = contentPages;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error loading content pages: {ex.Message}");
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
-
-    private void FilterData()
-    {
-        if (string.IsNullOrWhiteSpace(titleFilter))
-        {
-            filteredPages = contentPages;
-        }
-        else
-        {
-            filteredPages = contentPages
-                .Where(p => p.Title.Contains(titleFilter, StringComparison.OrdinalIgnoreCase))
-                .ToList();
-        }
-    }
-
-    private void CreateNew()
-    {
-        NavigationManager.NavigateTo("/admin/content-pages/new");
-    }
-
-    private void Edit(int id)
-    {
-        NavigationManager.NavigateTo($"/admin/content-pages/edit/{id}");
-    }
-
-    private void ShowDeleteDialog(ContentPageDto page)
-    {
-        selectedPage = page;
-        hideDeleteDialog = false;
-    }
-
-    private async Task ConfirmDelete()
-    {
-        if (selectedPage != null)
-        {
-            try
-            {
-                await ContentPageService.DeleteContentPageAsync(selectedPage.Id);
-                await LoadData();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error deleting page: {ex.Message}");
-            }
-        }
-        hideDeleteDialog = true;
-    }
+    // Content page management pending API enhancements
 }
