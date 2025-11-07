@@ -4,9 +4,8 @@ using NBT.WebUI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+// Add services to the container - Static SSR (no interactive components)
+builder.Services.AddRazorComponents();
 
 // Add Fluent UI
 builder.Services.AddFluentUIComponents();
@@ -14,7 +13,7 @@ builder.Services.AddFluentUIComponents();
 // Add HTTP Client for API calls
 builder.Services.AddHttpClient("NBT.WebAPI", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? "http://localhost:5046/");
+    client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? "http://localhost:5000/");
 });
 
 // Register application services
@@ -30,13 +29,12 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
+    app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+app.MapRazorComponents<App>();
 
 app.Run();
