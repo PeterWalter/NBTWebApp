@@ -5,7 +5,7 @@ namespace NBT.Domain.Entities;
 /// <summary>
 /// Represents a content page on the website (e.g., About, Policies).
 /// </summary>
-public class ContentPage : BaseEntity, IAuditableEntity
+public class ContentPage : BaseEntity
 {
     /// <summary>
     /// Gets or sets the page title.
@@ -41,8 +41,4 @@ public class ContentPage : BaseEntity, IAuditableEntity
     /// Gets or sets the page status (Draft, Published, Archived).
     /// </summary>
     public string Status { get; set; } = "Draft";
-
-    // IAuditableEntity implementation
-    public string? CreatedBy { get; set; }
-    public string? LastModifiedBy { get; set; }
 }

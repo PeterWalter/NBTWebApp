@@ -21,11 +21,24 @@ public class ApplicationDbContext : IdentityDbContext<User, Microsoft.AspNetCore
         _currentUserService = currentUserService;
     }
 
+    // Existing entities
     public DbSet<ContentPage> ContentPages { get; set; } = null!;
     public DbSet<Announcement> Announcements { get; set; } = null!;
     public DbSet<ContactInquiry> ContactInquiries { get; set; } = null!;
     public new DbSet<User> Users { get; set; } = null!;
     public DbSet<DownloadableResource> DownloadableResources { get; set; } = null!;
+    public DbSet<SystemSetting> SystemSettings { get; set; } = null!;
+
+    // NBT Core entities
+    public DbSet<Student> Students { get; set; } = null!;
+    public DbSet<Registration> Registrations { get; set; } = null!;
+    public DbSet<Payment> Payments { get; set; } = null!;
+    public DbSet<TestSession> TestSessions { get; set; } = null!;
+    public DbSet<Venue> Venues { get; set; } = null!;
+    public DbSet<Room> Rooms { get; set; } = null!;
+    public DbSet<RoomAllocation> RoomAllocations { get; set; } = null!;
+    public DbSet<TestResult> TestResults { get; set; } = null!;
+    public DbSet<AuditLog> AuditLogs { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

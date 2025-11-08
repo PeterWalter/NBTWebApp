@@ -9,14 +9,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Configure Blazor Hub connection with longer timeouts and keep-alive
+// Configure Blazor Hub connection with extended timeouts
 builder.Services.AddServerSideBlazor(options =>
 {
     options.DetailedErrors = builder.Environment.IsDevelopment();
     options.DisconnectedCircuitMaxRetained = 100;
-    options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromMinutes(3);
-    options.JSInteropDefaultCallTimeout = TimeSpan.FromMinutes(1);
-    options.MaxBufferedUnacknowledgedRenderBatches = 10;
+    options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromMinutes(5);
+    options.JSInteropDefaultCallTimeout = TimeSpan.FromMinutes(2);
+    options.MaxBufferedUnacknowledgedRenderBatches = 20;
+})
+.AddHubOptions(options =>
+{
+    options.ClientTimeoutInterval = TimeSpan.FromMinutes(1);
+    options.HandshakeTimeout = TimeSpan.FromSeconds(30);
+    options.KeepAliveInterval = TimeSpan.FromSeconds(15);
+    options.MaximumReceiveMessageSize = 128 * 1024;
 });
 
 // Add Fluent UI

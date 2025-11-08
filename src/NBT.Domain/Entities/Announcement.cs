@@ -6,7 +6,7 @@ namespace NBT.Domain.Entities;
 /// <summary>
 /// Represents an announcement or news item.
 /// </summary>
-public class Announcement : BaseEntity, IAuditableEntity
+public class Announcement : BaseEntity
 {
     /// <summary>
     /// Gets or sets the announcement title.
@@ -42,8 +42,4 @@ public class Announcement : BaseEntity, IAuditableEntity
     /// Gets or sets whether the announcement is featured on the homepage.
     /// </summary>
     public bool IsFeatured { get; set; }
-
-    // IAuditableEntity implementation
-    public string? CreatedBy { get; set; }
-    public string? LastModifiedBy { get; set; }
 }

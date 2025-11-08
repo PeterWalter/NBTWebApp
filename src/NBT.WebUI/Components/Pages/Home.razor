@@ -146,7 +146,7 @@
     .cost-value {
         font-weight: 700;
         font-size: 1rem;
-        color: #fbbf24;
+        color: #34d399;
     }
     
     .social-links {
@@ -161,25 +161,27 @@
     }
     
     .social-icon {
-        width: 40px;
-        height: 40px;
-        background: rgba(255, 255, 255, 0.2);
+        width: 45px;
+        height: 45px;
+        background: rgba(255, 255, 255, 0.9);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
-        font-size: 1.2rem;
+        color: #667eea;
+        font-size: 1.3rem;
         transition: all 0.3s ease;
         backdrop-filter: blur(10px);
-        border: 2px solid rgba(255, 255, 255, 0.3);
+        border: 2px solid white;
         text-decoration: none;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
     }
     
     .social-icon:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: scale(1.1);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        background: white;
+        transform: scale(1.15);
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        color: #764ba2;
     }
     
     @@keyframes float {
@@ -435,10 +437,10 @@
         <FluentGridItem xs="12" sm="6" md="4">
             <div class="audience-card">
                 <FluentStack Orientation="Orientation.Vertical" VerticalGap="10">
-                    <h3 style="color: #667eea; font-weight: 700; font-size: 1.1rem; margin: 0;">📝 For Applicants</h3>
+                    <h3 style="color: #667eea; font-weight: 700; font-size: 1.1rem; margin: 0;">📝 Applicants</h3>
                     <p style="line-height: 1.5; color: #555; font-size: 0.95rem; margin: 0;">Register for the NBT, view test dates, and retrieve your results.</p>
                     <FluentButton Appearance="Appearance.Accent" Href="/applicants" Style="background: #667eea; padding: 8px 20px;">
-                        Go to Applicants
+                        View Options
                     </FluentButton>
                 </FluentStack>
             </div>
@@ -447,10 +449,10 @@
         <FluentGridItem xs="12" sm="6" md="4">
             <div class="audience-card">
                 <FluentStack Orientation="Orientation.Vertical" VerticalGap="10">
-                    <h3 style="color: #764ba2; font-weight: 700; font-size: 1.1rem; margin: 0;">👨‍🏫 For Educators</h3>
+                    <h3 style="color: #764ba2; font-weight: 700; font-size: 1.1rem; margin: 0;">👨‍🏫 Educators</h3>
                     <p style="line-height: 1.5; color: #555; font-size: 0.95rem; margin: 0;">Access resources and research publications for supporting students.</p>
                     <FluentButton Appearance="Appearance.Accent" Href="/educators" Style="background: #764ba2; padding: 8px 20px;">
-                        Go to Educators
+                        View Options
                     </FluentButton>
                 </FluentStack>
             </div>
@@ -459,10 +461,10 @@
         <FluentGridItem xs="12" sm="6" md="4">
             <div class="audience-card">
                 <FluentStack Orientation="Orientation.Vertical" VerticalGap="10">
-                    <h3 style="color: #667eea; font-weight: 700; font-size: 1.1rem; margin: 0;">🏛️ For Institutions</h3>
+                    <h3 style="color: #667eea; font-weight: 700; font-size: 1.1rem; margin: 0;">🏛️ Institutions</h3>
                     <p style="line-height: 1.5; color: #555; font-size: 0.95rem; margin: 0;">Information about using NBT results in admissions processes.</p>
                     <FluentButton Appearance="Appearance.Accent" Href="/institutions" Style="background: #667eea; padding: 8px 20px;">
-                        Go to Institutions
+                        View Options
                     </FluentButton>
                 </FluentStack>
             </div>

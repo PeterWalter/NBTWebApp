@@ -5,7 +5,7 @@ namespace NBT.Domain.Entities;
 /// <summary>
 /// Represents a downloadable resource (e.g., PDF guides for educators).
 /// </summary>
-public class DownloadableResource : BaseEntity, IAuditableEntity
+public class DownloadableResource : BaseEntity
 {
     /// <summary>
     /// Gets or sets the resource title.
@@ -51,8 +51,4 @@ public class DownloadableResource : BaseEntity, IAuditableEntity
     /// Gets or sets the resource status (Active, Archived).
     /// </summary>
     public string Status { get; set; } = "Active";
-
-    // IAuditableEntity implementation
-    public string? CreatedBy { get; set; }
-    public string? LastModifiedBy { get; set; }
 }

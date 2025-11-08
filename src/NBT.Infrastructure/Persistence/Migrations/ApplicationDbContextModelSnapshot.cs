@@ -17,7 +17,7 @@ namespace NBT.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.11")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -218,6 +218,103 @@ namespace NBT.Infrastructure.Persistence.Migrations
                     b.ToTable("Announcements", (string)null);
                 });
 
+            modelBuilder.Entity("NBT.Domain.Entities.AuditLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("AfterValue")
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeValue")
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<Guid?>("EntityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EntityType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Action")
+                        .HasDatabaseName("IX_AuditLogs_Action");
+
+                    b.HasIndex("EntityId")
+                        .HasDatabaseName("IX_AuditLogs_EntityId");
+
+                    b.HasIndex("EntityType")
+                        .HasDatabaseName("IX_AuditLogs_EntityType");
+
+                    b.HasIndex("Timestamp")
+                        .HasDatabaseName("IX_AuditLogs_Timestamp");
+
+                    b.HasIndex("UserEmail")
+                        .HasDatabaseName("IX_AuditLogs_UserEmail");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_AuditLogs_UserId");
+
+                    b.HasIndex("EntityType", "EntityId")
+                        .HasDatabaseName("IX_AuditLogs_Entity");
+
+                    b.HasIndex("Timestamp", "Action")
+                        .HasDatabaseName("IX_AuditLogs_TimeAction");
+
+                    b.ToTable("AuditLogs", (string)null);
+                });
+
             modelBuilder.Entity("NBT.Domain.Entities.ContactInquiry", b =>
                 {
                     b.Property<Guid>("Id")
@@ -226,6 +323,9 @@ namespace NBT.Infrastructure.Persistence.Migrations
 
                     b.Property<Guid?>("AssignedToId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -239,6 +339,9 @@ namespace NBT.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("LastModifiedDate")
                         .HasColumnType("datetime2");
@@ -426,6 +529,671 @@ namespace NBT.Infrastructure.Persistence.Migrations
                     b.ToTable("DownloadableResources", (string)null);
                 });
 
+            modelBuilder.Entity("NBT.Domain.Entities.Payment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("EasyPayReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("EasyPayTransactionId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime?>("PaidDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("RefundReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("RefundedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("RegistrationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EasyPayReference")
+                        .HasDatabaseName("IX_Payments_EasyPayRef");
+
+                    b.HasIndex("InvoiceNumber")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Payments_InvoiceNumber");
+
+                    b.HasIndex("PaidDate")
+                        .HasDatabaseName("IX_Payments_PaidDate");
+
+                    b.HasIndex("RegistrationId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Payments_RegistrationId");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("IX_Payments_Status");
+
+                    b.ToTable("Payments", (string)null);
+                });
+
+            modelBuilder.Entity("NBT.Domain.Entities.Registration", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CancellationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CancellationReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("ConfirmationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<bool>("IsRemoteWriter")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("RegistrationDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("RegistrationNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("RemoteLocation")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("SpecialSessionType")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TestSessionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TestTypesSelected")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RegistrationDate")
+                        .HasDatabaseName("IX_Registrations_Date");
+
+                    b.HasIndex("RegistrationNumber")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Registrations_Number");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("IX_Registrations_Status");
+
+                    b.HasIndex("StudentId")
+                        .HasDatabaseName("IX_Registrations_StudentId");
+
+                    b.HasIndex("TestSessionId")
+                        .HasDatabaseName("IX_Registrations_SessionId");
+
+                    b.ToTable("Registrations", (string)null);
+                });
+
+            modelBuilder.Entity("NBT.Domain.Entities.Room", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ComputerCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<bool>("HasComputers")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsAccessible")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("RoomName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("RoomNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("RoomType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("Available");
+
+                    b.Property<Guid>("VenueId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("IX_Rooms_Status");
+
+                    b.HasIndex("VenueId")
+                        .HasDatabaseName("IX_Rooms_VenueId");
+
+                    b.HasIndex("VenueId", "RoomNumber")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Rooms_VenueRoom")
+                        .HasFilter("[RoomNumber] IS NOT NULL");
+
+                    b.ToTable("Rooms", (string)null);
+                });
+
+            modelBuilder.Entity("NBT.Domain.Entities.RoomAllocation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("AllocationDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid>("RoomId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SeatNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TestSessionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomId")
+                        .HasDatabaseName("IX_RoomAllocations_RoomId");
+
+                    b.HasIndex("StudentId")
+                        .HasDatabaseName("IX_RoomAllocations_StudentId");
+
+                    b.HasIndex("TestSessionId")
+                        .HasDatabaseName("IX_RoomAllocations_SessionId");
+
+                    b.HasIndex("TestSessionId", "StudentId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_RoomAllocations_SessionStudent");
+
+                    b.ToTable("RoomAllocations", (string)null);
+                });
+
+            modelBuilder.Entity("NBT.Domain.Entities.Student", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CountryOfOrigin")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int?>("Grade")
+                        .HasColumnType("int");
+
+                    b.Property<string>("HomeLanguage")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("IDNumber")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nchar(13)")
+                        .IsFixedLength();
+
+                    b.Property<int>("IDType")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NBTNumber")
+                        .IsRequired()
+                        .HasMaxLength(9)
+                        .HasColumnType("nchar(9)")
+                        .IsFixedLength();
+
+                    b.Property<string>("Nationality")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("PostalCode")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Province")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("SchoolName")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("SpecialAccommodation")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Students_Email");
+
+                    b.HasIndex("IDNumber")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Students_IDNumber");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_Students_IsActive");
+
+                    b.HasIndex("NBTNumber")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Students_NBTNumber");
+
+                    b.HasIndex("FirstName", "LastName")
+                        .HasDatabaseName("IX_Students_FullName");
+
+                    b.ToTable("Students", (string)null);
+                });
+
+            modelBuilder.Entity("NBT.Domain.Entities.SystemSetting", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SystemSettings");
+                });
+
+            modelBuilder.Entity("NBT.Domain.Entities.TestResult", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<bool>("IsReleased")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Percentile")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PerformanceBand")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("RawScore")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<DateTime?>("ReleasedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ResultDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("TestDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("TestSessionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TestType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsReleased")
+                        .HasDatabaseName("IX_TestResults_Released");
+
+                    b.HasIndex("StudentId")
+                        .HasDatabaseName("IX_TestResults_StudentId");
+
+                    b.HasIndex("TestDate")
+                        .HasDatabaseName("IX_TestResults_Date");
+
+                    b.HasIndex("TestSessionId")
+                        .HasDatabaseName("IX_TestResults_SessionId");
+
+                    b.HasIndex("StudentId", "TestType")
+                        .HasDatabaseName("IX_TestResults_StudentTest");
+
+                    b.ToTable("TestResults", (string)null);
+                });
+
+            modelBuilder.Entity("NBT.Domain.Entities.TestSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int>("CurrentRegistrations")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<bool>("IsSpecialSession")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("SessionCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("SessionDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("SessionName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("SpecialSessionNotes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<Guid>("VenueId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SessionCode")
+                        .IsUnique()
+                        .HasDatabaseName("IX_TestSessions_Code");
+
+                    b.HasIndex("SessionDate")
+                        .HasDatabaseName("IX_TestSessions_Date");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("IX_TestSessions_Status");
+
+                    b.HasIndex("VenueId")
+                        .HasDatabaseName("IX_TestSessions_VenueId");
+
+                    b.HasIndex("SessionDate", "VenueId")
+                        .HasDatabaseName("IX_TestSessions_DateVenue");
+
+                    b.ToTable("TestSessions", (string)null);
+                });
+
             modelBuilder.Entity("NBT.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -546,6 +1314,108 @@ namespace NBT.Infrastructure.Persistence.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("NBT.Domain.Entities.Venue", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ContactEmail")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ContactPerson")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ContactPhone")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<bool>("IsAccessible")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("PostalCode")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Province")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("Active");
+
+                    b.Property<int>("TotalCapacity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("VenueCode")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("VenueName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("City")
+                        .HasDatabaseName("IX_Venues_City");
+
+                    b.HasIndex("Province")
+                        .HasDatabaseName("IX_Venues_Province");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("IX_Venues_Status");
+
+                    b.HasIndex("VenueCode")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Venues_Code");
+
+                    b.ToTable("Venues", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
@@ -595,6 +1465,137 @@ namespace NBT.Infrastructure.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("NBT.Domain.Entities.Payment", b =>
+                {
+                    b.HasOne("NBT.Domain.Entities.Registration", "Registration")
+                        .WithOne("Payment")
+                        .HasForeignKey("NBT.Domain.Entities.Payment", "RegistrationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Registration");
+                });
+
+            modelBuilder.Entity("NBT.Domain.Entities.Registration", b =>
+                {
+                    b.HasOne("NBT.Domain.Entities.Student", "Student")
+                        .WithMany("Registrations")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("NBT.Domain.Entities.TestSession", "TestSession")
+                        .WithMany("Registrations")
+                        .HasForeignKey("TestSessionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+
+                    b.Navigation("TestSession");
+                });
+
+            modelBuilder.Entity("NBT.Domain.Entities.Room", b =>
+                {
+                    b.HasOne("NBT.Domain.Entities.Venue", "Venue")
+                        .WithMany("Rooms")
+                        .HasForeignKey("VenueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Venue");
+                });
+
+            modelBuilder.Entity("NBT.Domain.Entities.RoomAllocation", b =>
+                {
+                    b.HasOne("NBT.Domain.Entities.Room", "Room")
+                        .WithMany("RoomAllocations")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NBT.Domain.Entities.Student", "Student")
+                        .WithMany("RoomAllocations")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NBT.Domain.Entities.TestSession", "TestSession")
+                        .WithMany("RoomAllocations")
+                        .HasForeignKey("TestSessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Room");
+
+                    b.Navigation("Student");
+
+                    b.Navigation("TestSession");
+                });
+
+            modelBuilder.Entity("NBT.Domain.Entities.TestResult", b =>
+                {
+                    b.HasOne("NBT.Domain.Entities.Student", "Student")
+                        .WithMany("TestResults")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("NBT.Domain.Entities.TestSession", "TestSession")
+                        .WithMany()
+                        .HasForeignKey("TestSessionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+
+                    b.Navigation("TestSession");
+                });
+
+            modelBuilder.Entity("NBT.Domain.Entities.TestSession", b =>
+                {
+                    b.HasOne("NBT.Domain.Entities.Venue", "Venue")
+                        .WithMany("TestSessions")
+                        .HasForeignKey("VenueId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Venue");
+                });
+
+            modelBuilder.Entity("NBT.Domain.Entities.Registration", b =>
+                {
+                    b.Navigation("Payment");
+                });
+
+            modelBuilder.Entity("NBT.Domain.Entities.Room", b =>
+                {
+                    b.Navigation("RoomAllocations");
+                });
+
+            modelBuilder.Entity("NBT.Domain.Entities.Student", b =>
+                {
+                    b.Navigation("Registrations");
+
+                    b.Navigation("RoomAllocations");
+
+                    b.Navigation("TestResults");
+                });
+
+            modelBuilder.Entity("NBT.Domain.Entities.TestSession", b =>
+                {
+                    b.Navigation("Registrations");
+
+                    b.Navigation("RoomAllocations");
+                });
+
+            modelBuilder.Entity("NBT.Domain.Entities.Venue", b =>
+                {
+                    b.Navigation("Rooms");
+
+                    b.Navigation("TestSessions");
                 });
 #pragma warning restore 612, 618
         }

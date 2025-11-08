@@ -34,6 +34,56 @@ public interface IApplicationDbContext
     DbSet<DownloadableResource> DownloadableResources { get; set; }
 
     /// <summary>
+    /// Gets or sets the SystemSettings DbSet.
+    /// </summary>
+    DbSet<SystemSetting> SystemSettings { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Students DbSet.
+    /// </summary>
+    DbSet<Student> Students { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Registrations DbSet.
+    /// </summary>
+    DbSet<Registration> Registrations { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Payments DbSet.
+    /// </summary>
+    DbSet<Payment> Payments { get; set; }
+
+    /// <summary>
+    /// Gets or sets the TestSessions DbSet.
+    /// </summary>
+    DbSet<TestSession> TestSessions { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Venues DbSet.
+    /// </summary>
+    DbSet<Venue> Venues { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Rooms DbSet.
+    /// </summary>
+    DbSet<Room> Rooms { get; set; }
+
+    /// <summary>
+    /// Gets or sets the RoomAllocations DbSet.
+    /// </summary>
+    DbSet<RoomAllocation> RoomAllocations { get; set; }
+
+    /// <summary>
+    /// Gets or sets the TestResults DbSet.
+    /// </summary>
+    DbSet<TestResult> TestResults { get; set; }
+
+    /// <summary>
+    /// Gets or sets the AuditLogs DbSet.
+    /// </summary>
+    DbSet<AuditLog> AuditLogs { get; set; }
+
+    /// <summary>
     /// Saves all changes made in this context to the database.
     /// </summary>
     /// <param name="cancellationToken">Cancellation token.</param>

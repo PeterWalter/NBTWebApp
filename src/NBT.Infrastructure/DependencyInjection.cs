@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NBT.Application.Announcements.Interfaces;
 using NBT.Application.Announcements.Services;
 using NBT.Application.Authentication.Interfaces;
+using NBT.Application.Bookings.Services;
 using NBT.Application.Common.Interfaces;
 using NBT.Application.ContactInquiries.Interfaces;
 using NBT.Application.ContactInquiries.Services;
@@ -12,11 +13,14 @@ using NBT.Application.ContentPages.Interfaces;
 using NBT.Application.ContentPages.Services;
 using NBT.Application.Resources.Interfaces;
 using NBT.Application.Resources.Services;
+using NBT.Application.Students.Services;
+using NBT.Domain.Common;
 using NBT.Domain.Entities;
 using NBT.Infrastructure.Authentication;
 using NBT.Infrastructure.Persistence;
 using NBT.Infrastructure.Repositories;
 using NBT.Infrastructure.Services;
+using NBT.Infrastructure.Services.Bookings;
 
 namespace NBT.Infrastructure;
 
@@ -66,6 +70,8 @@ public static class DependencyInjection
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IFileStorageService, FileStorageService>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<INBTNumberGenerator, NBTNumberGenerator>();
+        services.AddScoped<ILuhnValidator, LuhnValidator>();
 
         // Authentication Services
         services.AddScoped<IJwtTokenService, JwtTokenService>();
@@ -79,6 +85,8 @@ public static class DependencyInjection
         services.AddScoped<IAnnouncementService, AnnouncementService>();
         services.AddScoped<IContactInquiryService, ContactInquiryService>();
         services.AddScoped<IDownloadableResourceService, DownloadableResourceService>();
+        services.AddScoped<IStudentService, StudentService>();
+        services.AddScoped<IBookingValidationService, BookingValidationService>();
 
         return services;
     }
