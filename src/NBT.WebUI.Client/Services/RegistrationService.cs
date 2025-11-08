@@ -39,6 +39,7 @@ public class RegistrationService : IRegistrationService
                 schoolName = model.SchoolName,
                 schoolProvince = model.SchoolProvince,
                 gradeYear = model.GradeYear,
+                homeLanguage = model.HomeLanguage,
                 requiresAccommodation = model.RequiresAccommodation,
                 accommodationDetails = model.AccommodationDetails
             };

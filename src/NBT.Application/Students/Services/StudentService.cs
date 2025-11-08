@@ -136,6 +136,7 @@ public class StudentService : IStudentService
             PostalCode = dto.PostalCode,
             SchoolName = dto.SchoolName,
             Grade = dto.GradeYear,
+            HomeLanguage = dto.HomeLanguage,
             SpecialAccommodation = dto.RequiresAccommodation ? dto.AccommodationDetails : null,
             IsActive = true
         };
@@ -166,6 +167,7 @@ public class StudentService : IStudentService
         student.PostalCode = dto.PostalCode;
         student.SchoolName = dto.SchoolName;
         student.Grade = dto.GradeYear;
+        student.HomeLanguage = dto.HomeLanguage;
         student.SpecialAccommodation = dto.RequiresAccommodation ? dto.AccommodationDetails : null;
         student.IsActive = dto.IsActive;
 
@@ -213,6 +215,13 @@ public class StudentService : IStudentService
         return await _nbtNumberGenerator.GenerateAsync(cancellationToken);
     }
 
+    public async Task<bool> CheckDuplicateAsync(string idNumber, string idType, CancellationToken cancellationToken = default)
+    {
+        var exists = await _context.Students
+            .AnyAsync(s => s.IDNumber == idNumber, cancellationToken);
+        return exists;
+    }
+
     private static StudentDto MapToDto(Student student)
     {
         return new StudentDto
@@ -239,6 +248,7 @@ public class StudentService : IStudentService
             SchoolName = student.SchoolName ?? string.Empty,
             SchoolProvince = null,
             GradeYear = student.Grade,
+            HomeLanguage = student.HomeLanguage,
             RequiresAccommodation = !string.IsNullOrEmpty(student.SpecialAccommodation),
             AccommodationDetails = student.SpecialAccommodation,
             IsActive = student.IsActive,

@@ -135,6 +135,7 @@ public class StudentsController : ControllerBase
     /// Creates a new student and generates an NBT number.
     /// </summary>
     [HttpPost]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(StudentDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody] CreateStudentDto dto, CancellationToken cancellationToken = default)
@@ -152,6 +153,26 @@ public class StudentsController : ControllerBase
         {
             _logger.LogError(ex, "Error creating student");
             return StatusCode(500, new { message = "An error occurred while creating the student." });
+        }
+    }
+
+    /// <summary>
+    /// Checks if an ID number is already registered (for duplicate prevention during registration).
+    /// </summary>
+    [HttpGet("check-duplicate")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    public async Task<IActionResult> CheckDuplicate([FromQuery] string idNumber, [FromQuery] string idType, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var exists = await _studentService.CheckDuplicateAsync(idNumber, idType, cancellationToken);
+            return Ok(new { exists });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error checking duplicate for ID {IDNumber}", idNumber);
+            return StatusCode(500, new { message = "An error occurred while checking for duplicates." });
         }
     }
 

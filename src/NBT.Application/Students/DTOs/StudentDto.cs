@@ -70,6 +70,9 @@ public class StudentDto
     [JsonPropertyName("gradeYear")]
     public int? GradeYear { get; set; }
     
+    [JsonPropertyName("homeLanguage")]
+    public string? HomeLanguage { get; set; }
+    
     [JsonPropertyName("requiresAccommodation")]
     public bool RequiresAccommodation { get; set; }
     
@@ -154,6 +157,9 @@ public class CreateStudentDto
     [JsonPropertyName("gradeYear")]
     public int? GradeYear { get; set; }
     
+    [JsonPropertyName("homeLanguage")]
+    public string? HomeLanguage { get; set; }
+    
     [JsonPropertyName("requiresAccommodation")]
     public bool RequiresAccommodation { get; set; }
     
@@ -207,6 +213,9 @@ public class UpdateStudentDto
     
     [JsonPropertyName("gradeYear")]
     public int? GradeYear { get; set; }
+    
+    [JsonPropertyName("homeLanguage")]
+    public string? HomeLanguage { get; set; }
     
     [JsonPropertyName("requiresAccommodation")]
     public bool RequiresAccommodation { get; set; }

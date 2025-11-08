@@ -15,4 +15,5 @@ public interface IStudentService
     Task<bool> ValidateNBTNumberAsync(string nbtNumber, CancellationToken cancellationToken = default);
     Task<bool> ValidateSAIDNumberAsync(string saIdNumber, CancellationToken cancellationToken = default);
     Task<string> GenerateNBTNumberAsync(CancellationToken cancellationToken = default);
+    Task<bool> CheckDuplicateAsync(string idNumber, string idType, CancellationToken cancellationToken = default);
 }
