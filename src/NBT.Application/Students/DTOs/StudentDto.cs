@@ -34,6 +34,12 @@ public class StudentDto
     [JsonPropertyName("gender")]
     public string Gender { get; set; } = string.Empty;
     
+    [JsonPropertyName("age")]
+    public int? Age { get; set; }
+    
+    [JsonPropertyName("ethnicity")]
+    public string? Ethnicity { get; set; }
+    
     [JsonPropertyName("email")]
     public string Email { get; set; } = string.Empty;
     
@@ -78,6 +84,24 @@ public class StudentDto
     
     [JsonPropertyName("accommodationDetails")]
     public string? AccommodationDetails { get; set; }
+    
+    [JsonPropertyName("motivationForTesting")]
+    public string? MotivationForTesting { get; set; }
+    
+    [JsonPropertyName("careerInterests")]
+    public string? CareerInterests { get; set; }
+    
+    [JsonPropertyName("preferredStudyField")]
+    public string? PreferredStudyField { get; set; }
+    
+    [JsonPropertyName("hasAccessToComputer")]
+    public bool HasAccessToComputer { get; set; }
+    
+    [JsonPropertyName("hasInternetAccess")]
+    public bool HasInternetAccess { get; set; }
+    
+    [JsonPropertyName("additionalComments")]
+    public string? AdditionalComments { get; set; }
     
     [JsonPropertyName("isActive")]
     public bool IsActive { get; set; }
@@ -121,6 +145,12 @@ public class CreateStudentDto
     [JsonPropertyName("gender")]
     public string Gender { get; set; } = string.Empty;
     
+    [JsonPropertyName("age")]
+    public int? Age { get; set; }
+    
+    [JsonPropertyName("ethnicity")]
+    public string? Ethnicity { get; set; }
+    
     [JsonPropertyName("email")]
     public string Email { get; set; } = string.Empty;
     
@@ -165,6 +195,24 @@ public class CreateStudentDto
     
     [JsonPropertyName("accommodationDetails")]
     public string? AccommodationDetails { get; set; }
+    
+    [JsonPropertyName("motivationForTesting")]
+    public string? MotivationForTesting { get; set; }
+    
+    [JsonPropertyName("careerInterests")]
+    public string? CareerInterests { get; set; }
+    
+    [JsonPropertyName("preferredStudyField")]
+    public string? PreferredStudyField { get; set; }
+    
+    [JsonPropertyName("hasAccessToComputer")]
+    public bool HasAccessToComputer { get; set; }
+    
+    [JsonPropertyName("hasInternetAccess")]
+    public bool HasInternetAccess { get; set; }
+    
+    [JsonPropertyName("additionalComments")]
+    public string? AdditionalComments { get; set; }
 }
 
 public class UpdateStudentDto

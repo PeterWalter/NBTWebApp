@@ -27,6 +27,7 @@ public class RegistrationService : IRegistrationService
                 countryOfOrigin = model.CountryOfOrigin,
                 dateOfBirth = model.DateOfBirth,
                 gender = model.Gender,
+                ethnicity = model.Ethnicity,
                 email = model.Email,
                 phoneNumber = model.PhoneNumber,
                 alternativePhoneNumber = model.AlternativePhoneNumber,
@@ -40,6 +41,12 @@ public class RegistrationService : IRegistrationService
                 schoolProvince = model.SchoolProvince,
                 gradeYear = model.GradeYear,
                 homeLanguage = model.HomeLanguage,
+                motivationForTesting = model.MotivationForTesting,
+                careerInterests = model.CareerInterests,
+                preferredStudyField = model.PreferredStudyField,
+                hasAccessToComputer = model.HasAccessToComputer,
+                hasInternetAccess = model.HasInternetAccess,
+                additionalComments = model.AdditionalComments,
                 requiresAccommodation = model.RequiresAccommodation,
                 accommodationDetails = model.AccommodationDetails
             };

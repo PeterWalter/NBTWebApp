@@ -31,6 +31,9 @@ public class RegistrationFormModel
     [Required(ErrorMessage = "Gender is required")]
     public string Gender { get; set; } = string.Empty;
     
+    [Required(ErrorMessage = "Ethnicity is required")]
+    public string Ethnicity { get; set; } = string.Empty;
+    
     // Step 3: Contact Information
     [Required(ErrorMessage = "Email is required")]
     [EmailAddress(ErrorMessage = "Invalid email format")]
@@ -66,7 +69,15 @@ public class RegistrationFormModel
     
     public string? HomeLanguage { get; set; }
     
-    // Step 6: Special Accommodations
+    // Step 6: Survey Questions
+    public string? MotivationForTesting { get; set; }
+    public string? CareerInterests { get; set; }
+    public string? PreferredStudyField { get; set; }
+    public bool HasAccessToComputer { get; set; }
+    public bool HasInternetAccess { get; set; }
+    public string? AdditionalComments { get; set; }
+    
+    // Step 7: Special Accommodations
     public bool RequiresAccommodation { get; set; }
     
     public string? AccommodationDetails { get; set; }

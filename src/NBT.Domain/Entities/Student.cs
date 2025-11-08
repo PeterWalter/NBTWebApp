@@ -105,6 +105,18 @@ public class Student : BaseEntity
     public string Gender { get; set; } = string.Empty;
 
     /// <summary>
+    /// Gets or sets the student's age (calculated from date of birth).
+    /// </summary>
+    public int? Age { get; set; }
+
+    /// <summary>
+    /// Gets or sets the student's ethnicity.
+    /// Values: "Black African", "Coloured", "Indian/Asian", "White", "Other", "Prefer not to say"
+    /// </summary>
+    [StringLength(50)]
+    public string? Ethnicity { get; set; }
+
+    /// <summary>
     /// Gets or sets the student's physical address.
     /// </summary>
     [StringLength(255)]
@@ -151,6 +163,41 @@ public class Student : BaseEntity
     /// </summary>
     [StringLength(500)]
     public string? SpecialAccommodation { get; set; }
+
+    // Survey fields
+    /// <summary>
+    /// Gets or sets the student's motivation for testing.
+    /// </summary>
+    [StringLength(1000)]
+    public string? MotivationForTesting { get; set; }
+
+    /// <summary>
+    /// Gets or sets the student's career interests.
+    /// </summary>
+    [StringLength(500)]
+    public string? CareerInterests { get; set; }
+
+    /// <summary>
+    /// Gets or sets the student's preferred study field.
+    /// </summary>
+    [StringLength(200)]
+    public string? PreferredStudyField { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the student has access to a computer.
+    /// </summary>
+    public bool HasAccessToComputer { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the student has internet access.
+    /// </summary>
+    public bool HasInternetAccess { get; set; }
+
+    /// <summary>
+    /// Gets or sets any additional comments from the student.
+    /// </summary>
+    [StringLength(1000)]
+    public string? AdditionalComments { get; set; }
 
     /// <summary>
     /// Gets or sets whether the student's account is active.
