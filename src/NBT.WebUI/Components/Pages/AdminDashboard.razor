@@ -1,0 +1,99 @@
+@page "/admin"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@using NBT.WebUI.Services
+@inject IAnnouncementService AnnouncementService
+@inject NavigationManager Navigation
+@attribute [Authorize(Roles = "Admin")]
+
+<PageTitle>Admin Dashboard - NBT Website</PageTitle>
+
+<div class="admin-container">
+    <h1>Admin Dashboard</h1>
+    <p>Manage your NBT website content</p>
+
+    <FluentTabs>
+        <FluentTab Label="Announcements">
+            <div class="tab-content">
+                <div class="tab-header">
+                    <h2>Announcements</h2>
+                    <FluentButton Appearance="Appearance.Accent" OnClick="@(() => Navigation.NavigateTo("/admin/announcements"))">
+                        Manage Announcements
+                    </FluentButton>
+                </div>
+                <p>Create and manage announcements for the website.</p>
+            </div>
+        </FluentTab>
+
+        <FluentTab Label="Content Pages">
+            <div class="tab-content">
+                <div class="tab-header">
+                    <h2>Content Pages</h2>
+                    <FluentButton Appearance="Appearance.Accent" OnClick="@(() => Navigation.NavigateTo("/admin/content"))">
+                        Manage Content
+                    </FluentButton>
+                </div>
+                <p>Edit website content pages.</p>
+            </div>
+        </FluentTab>
+
+        <FluentTab Label="Resources">
+            <div class="tab-content">
+                <div class="tab-header">
+                    <h2>Resources</h2>
+                    <FluentButton Appearance="Appearance.Accent" OnClick="@(() => Navigation.NavigateTo("/admin/resources"))">
+                        Manage Resources
+                    </FluentButton>
+                </div>
+                <p>Upload and manage downloadable resources.</p>
+            </div>
+        </FluentTab>
+
+        <FluentTab Label="Contact Inquiries">
+            <div class="tab-content">
+                <div class="tab-header">
+                    <h2>Contact Inquiries</h2>
+                    <FluentButton Appearance="Appearance.Accent" OnClick="@(() => Navigation.NavigateTo("/admin/inquiries"))">
+                        View Inquiries
+                    </FluentButton>
+                </div>
+                <p>View and respond to contact form submissions.</p>
+            </div>
+        </FluentTab>
+
+        <FluentTab Label="Users">
+            <div class="tab-content">
+                <div class="tab-header">
+                    <h2>User Management</h2>
+                    <FluentButton Appearance="Appearance.Accent" OnClick="@(() => Navigation.NavigateTo("/admin/users"))">
+                        Manage Users
+                    </FluentButton>
+                </div>
+                <p>Manage user accounts and permissions.</p>
+            </div>
+        </FluentTab>
+    </FluentTabs>
+</div>
+
+<style>
+    .admin-container {
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .tab-content {
+        padding: 2rem;
+    }
+
+    .tab-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .tab-header h2 {
+        margin: 0;
+    }
+</style>

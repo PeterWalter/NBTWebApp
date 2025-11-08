@@ -1,5 +1,7 @@
 @page "/"
-@inject HttpClient Http
+@rendermode InteractiveServer
+@using System.Net.Http
+@inject IHttpClientFactory HttpClientFactory
 
 <PageTitle>Home - National Benchmark Tests</PageTitle>
 
@@ -476,7 +478,9 @@
     {
         try
         {
-            announcements = await Http.GetFromJsonAsync<List<AnnouncementDto>>("http://localhost:5000/api/Announcements") ?? new();
+            using var httpClient = HttpClientFactory.CreateClient();
+            httpClient.BaseAddress = new Uri("http://localhost:5000/");
+            announcements = await httpClient.GetFromJsonAsync<List<AnnouncementDto>>("api/Announcements") ?? new();
         }
         catch (Exception)
         {

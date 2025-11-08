@@ -1,0 +1,37 @@
+@page "/institution-dashboard"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Institution")]
+
+<PageTitle>Institution Dashboard - NBT Website</PageTitle>
+
+<div class="dashboard-container">
+    <FluentCard Class="dashboard-card">
+        <h1>Institution Dashboard</h1>
+        <p>Manage your institution's NBT activities</p>
+        
+        <FluentDivider />
+        
+        <div class="dashboard-section">
+            <h2>Student Management</h2>
+            <p>Manage student registrations and bookings.</p>
+            <FluentButton Appearance="Appearance.Accent">View Students</FluentButton>
+        </div>
+        
+        <div class="dashboard-section">
+            <h2>Test Sessions</h2>
+            <p>Schedule and manage test sessions.</p>
+            <FluentButton Appearance="Appearance.Accent">View Sessions</FluentButton>
+        </div>
+        
+        <div class="dashboard-section">
+            <h2>Reports</h2>
+            <p>Access institutional reports and analytics.</p>
+            <FluentButton Appearance="Appearance.Accent">View Reports</FluentButton>
+        </div>
+    </FluentCard>
+</div>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+}

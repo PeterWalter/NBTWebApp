@@ -1,0 +1,37 @@
+@page "/student-dashboard"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Student")]
+
+<PageTitle>Student Dashboard - NBT Website</PageTitle>
+
+<div class="dashboard-container">
+    <FluentCard Class="dashboard-card">
+        <h1>Student Dashboard</h1>
+        <p>Welcome to your student portal</p>
+        
+        <FluentDivider />
+        
+        <div class="dashboard-section">
+            <h2>My Tests</h2>
+            <p>View your scheduled tests and results.</p>
+            <FluentButton Appearance="Appearance.Accent">View My Tests</FluentButton>
+        </div>
+        
+        <div class="dashboard-section">
+            <h2>Test Results</h2>
+            <p>Check your test results and performance.</p>
+            <FluentButton Appearance="Appearance.Accent">View Results</FluentButton>
+        </div>
+        
+        <div class="dashboard-section">
+            <h2>Resources</h2>
+            <p>Access study materials and preparation guides.</p>
+            <FluentButton Appearance="Appearance.Accent" OnClick="@(() => Navigation.NavigateTo("/resources"))">View Resources</FluentButton>
+        </div>
+    </FluentCard>
+</div>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+}

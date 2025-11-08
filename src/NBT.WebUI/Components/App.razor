@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="app.css" />
     <link rel="stylesheet" href="NBT.WebUI.styles.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
-    <HeadOutlet @rendermode="InteractiveAuto" />
+    <HeadOutlet />
 </head>
 <body>
-    <Routes @rendermode="InteractiveAuto" />
+    <Routes />
     
     <div id="blazor-error-ui">
         An unhandled error has occurred.
@@ -19,5 +19,15 @@
     </div>
 
     <script src="_framework/blazor.web.js"></script>
+    <script>
+        Blazor.start({
+            circuit: {
+                reconnectionOptions: {
+                    maxRetries: 8,
+                    retryIntervalMilliseconds: 3000
+                }
+            }
+        });
+    </script>
 </body>
 </html>

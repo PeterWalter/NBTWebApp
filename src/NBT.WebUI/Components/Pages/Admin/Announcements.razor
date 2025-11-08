@@ -1,0 +1,232 @@
+@page "/admin/announcements"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@using NBT.WebUI.Services
+@using NBT.WebUI.Models
+@inject IAnnouncementService AnnouncementService
+@attribute [Authorize(Roles = "Admin")]
+
+<PageTitle>Manage Announcements - Admin</PageTitle>
+
+<div class="admin-page">
+    <div class="page-header">
+        <h1>Manage Announcements</h1>
+        <FluentButton Appearance="Appearance.Accent" OnClick="@(() => ShowCreateDialog())">
+            Create New
+        </FluentButton>
+    </div>
+
+    @if (_isLoading)
+    {
+        <FluentProgressRing />
+    }
+    else if (_announcements?.Any() == true)
+    {
+        <FluentDataGrid Items="@_announcements.AsQueryable()" Style="width: 100%;">
+            <PropertyColumn Property="@(a => a.Title)" Sortable="true" />
+            <PropertyColumn Property="@(a => a.Category)" Sortable="true" />
+            <PropertyColumn Property="@(a => a.PublicationDate)" Format="yyyy-MM-dd" Sortable="true" Title="Published" />
+            <PropertyColumn Property="@(a => a.Status)" Sortable="true" Title="Status" />
+            <TemplateColumn Title="Actions">
+                <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => EditAnnouncement(context))">
+                    Edit
+                </FluentButton>
+                <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => DeleteAnnouncement(context.Id))">
+                    Delete
+                </FluentButton>
+            </TemplateColumn>
+        </FluentDataGrid>
+    }
+    else
+    {
+        <p>No announcements found.</p>
+    }
+</div>
+
+<FluentDialog @bind-Hidden="@_dialogHidden" Modal="true">
+    <FluentDialogHeader>
+        <h2>@(_editingId != Guid.Empty ? "Edit" : "Create") Announcement</h2>
+    </FluentDialogHeader>
+    <FluentDialogBody>
+        @if (_errorMessage != null)
+        {
+            <FluentMessageBar Intent="MessageIntent.Error">@_errorMessage</FluentMessageBar>
+        }
+        
+        <EditForm Model="@_editingDto" OnValidSubmit="@SaveAnnouncement" FormName="AnnouncementForm">
+            <DataAnnotationsValidator />
+            <FluentValidationSummary />
+
+            <FluentTextField @bind-Value="_editingDto!.Title" Label="Title" Required Style="width: 100%; margin-bottom: 1rem;" />
+            <FluentTextField @bind-Value="_editingDto.Summary" Label="Summary" Required Style="width: 100%; margin-bottom: 1rem;" />
+            <FluentTextArea @bind-Value="_editingDto.FullContent" Label="Full Content" Required Style="width: 100%; margin-bottom: 1rem;" Rows="5" />
+            
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label>Category</label>
+                <InputSelect @bind-Value="_editingDto.Category" class="form-control">
+                    <option value="@AnnouncementCategory.GeneralNews">General News</option>
+                    <option value="@AnnouncementCategory.PolicyUpdate">Policy Update</option>
+                    <option value="@AnnouncementCategory.TestDates">Test Dates</option>
+                    <option value="@AnnouncementCategory.FeeChanges">Fee Changes</option>
+                </InputSelect>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label>Status</label>
+                <InputSelect @bind-Value="_editingDto.Status" class="form-control">
+                    <option value="Draft">Draft</option>
+                    <option value="Published">Published</option>
+                </InputSelect>
+            </div>
+            
+            <FluentCheckbox @bind-Value="_editingDto.IsFeatured" Label="Featured" Style="margin-bottom: 1rem;" />
+
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem;">
+                <FluentButton Type="ButtonType.Button" Appearance="Appearance.Neutral" OnClick="@CancelEdit">
+                    Cancel
+                </FluentButton>
+                <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent" Loading="@_isSaving">
+                    @(_isSaving ? "Saving..." : "Save")
+                </FluentButton>
+            </div>
+        </EditForm>
+    </FluentDialogBody>
+</FluentDialog>
+
+@code {
+    private List<AnnouncementDto>? _announcements;
+    private Guid _editingId = Guid.Empty;
+    private EditDto _editingDto = new();
+    private bool _dialogHidden = true;
+    private bool _isLoading = true;
+    private bool _isSaving = false;
+    private string? _errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAnnouncements();
+    }
+
+    private async Task LoadAnnouncements()
+    {
+        try
+        {
+            _isLoading = true;
+            _announcements = await AnnouncementService.GetAllAnnouncementsAsync();
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Error loading announcements: {ex.Message}";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private void ShowCreateDialog()
+    {
+        _editingId = Guid.Empty;
+        _editingDto = new EditDto
+        {
+            PublicationDate = DateTime.Now,
+            Status = "Draft",
+            Category = AnnouncementCategory.GeneralNews
+        };
+        _dialogHidden = false;
+    }
+
+    private void EditAnnouncement(AnnouncementDto announcement)
+    {
+        _editingId = announcement.Id;
+        _editingDto = new EditDto
+        {
+            Title = announcement.Title,
+            Summary = announcement.Summary,
+            FullContent = announcement.FullContent,
+            Category = announcement.Category,
+            PublicationDate = announcement.PublicationDate,
+            Status = announcement.Status,
+            IsFeatured = announcement.IsFeatured
+        };
+        _dialogHidden = false;
+    }
+
+    private async Task SaveAnnouncement()
+    {
+        try
+        {
+            _isSaving = true;
+            _errorMessage = null;
+
+            if (_editingId != Guid.Empty)
+            {
+                var updateDto = new UpdateAnnouncementDto
+                {
+                    Title = _editingDto.Title,
+                    Summary = _editingDto.Summary,
+                    FullContent = _editingDto.FullContent,
+                    Category = _editingDto.Category,
+                    Status = _editingDto.Status,
+                    IsFeatured = _editingDto.IsFeatured
+                };
+                await AnnouncementService.UpdateAnnouncementAsync(_editingId, updateDto);
+            }
+            else
+            {
+                var createDto = new CreateAnnouncementDto
+                {
+                    Title = _editingDto.Title,
+                    Summary = _editingDto.Summary,
+                    FullContent = _editingDto.FullContent,
+                    Category = _editingDto.Category,
+                    PublicationDate = _editingDto.PublicationDate,
+                    Status = _editingDto.Status,
+                    IsFeatured = _editingDto.IsFeatured
+                };
+                await AnnouncementService.CreateAnnouncementAsync(createDto);
+            }
+
+            _dialogHidden = true;
+            await LoadAnnouncements();
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Error saving announcement: {ex.Message}";
+        }
+        finally
+        {
+            _isSaving = false;
+        }
+    }
+
+    private async Task DeleteAnnouncement(Guid id)
+    {
+        try
+        {
+            await AnnouncementService.DeleteAnnouncementAsync(id);
+            await LoadAnnouncements();
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Error deleting announcement: {ex.Message}";
+        }
+    }
+
+    private void CancelEdit()
+    {
+        _dialogHidden = true;
+        _editingId = Guid.Empty;
+    }
+
+    public class EditDto
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Summary { get; set; } = string.Empty;
+        public string FullContent { get; set; } = string.Empty;
+        public AnnouncementCategory Category { get; set; }
+        public DateTime? PublicationDate { get; set; }
+        public string Status { get; set; } = "Draft";
+        public bool IsFeatured { get; set; }
+    }
+}
