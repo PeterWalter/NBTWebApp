@@ -1,7 +1,51 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Home - NBT Registration System</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="home-container">
+    <div class="hero-section">
+        <h1>National Benchmark Tests</h1>
+        <p class="hero-subtitle">Your gateway to higher education assessment</p>
+        
+        <div class="cta-section">
+            <FluentButton Appearance="Appearance.Accent" 
+                        Style="font-size: 1.2rem; padding: 1rem 2rem;"
+                        OnClick="@(() => Navigation.NavigateTo("/register"))">
+                <FluentIcon Value="@(new Icons.Regular.Size24.PersonAdd())" Slot="start" />
+                Register Now
+            </FluentButton>
+            <p class="cta-info">Start your NBT journey today</p>
+        </div>
+    </div>
 
-Welcome to your new app.
+    <div class="features-section">
+        <FluentCard class="feature-card">
+            <FluentIcon Value="@(new Icons.Regular.Size48.Person())" Color="Color.Accent" />
+            <h3>Easy Registration</h3>
+            <p>Complete your registration in minutes with our guided wizard</p>
+        </FluentCard>
+
+        <FluentCard class="feature-card">
+            <FluentIcon Value="@(new Icons.Regular.Size48.Calendar())" Color="Color.Accent" />
+            <h3>Flexible Booking</h3>
+            <p>Choose from multiple test venues and dates that suit your schedule</p>
+        </FluentCard>
+
+        <FluentCard class="feature-card">
+            <FluentIcon Value="@(new Icons.Regular.Size48.Document())" Color="Color.Accent" />
+            <h3>Secure Results</h3>
+            <p>Access your results securely online when they're ready</p>
+        </FluentCard>
+    </div>
+
+    <div class="info-section">
+        <FluentMessageBar Intent="MessageIntent.Info">
+            <strong>Important:</strong> Make sure you have your ID document ready before starting registration.
+            You can register with a South African ID, Foreign ID, or Passport.
+        </FluentMessageBar>
+    </div>
+</div>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+}
