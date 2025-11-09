@@ -1,29 +1,10 @@
 @inherits LayoutComponentBase
 
+@inject NavigationManager Navigation
+
 <FluentLayout>
     <FluentHeader>
-        <div class="header-container">
-            <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Start" VerticalAlignment="VerticalAlignment.Center">
-                <div class="header-icons">
-                    <img src="/images/cea-badge.png" alt="CEA" class="header-icon" onerror="this.style.display='none'" />
-                    <img src="/images/nbt-icon.png" alt="NBT" class="header-icon" onerror="this.style.display='none'" />
-                </div>
-                <FluentNavLink Href="/" >
-                    <span class="site-title">🎓 National Benchmark Tests</span>
-                </FluentNavLink>
-            </FluentStack>
-            <FluentSpacer />
-            <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.End" VerticalGap="10">
-                <FluentButton Appearance="Appearance.Outline" 
-                              Href="/login"
-                              Class="login-btn">
-                    🔐 Login
-                </FluentButton>
-                <FluentButton Appearance="Appearance.Lightweight" Href="/contact" >
-                    📧 Contact Us
-                </FluentButton>
-            </FluentStack>
-        </div>
+        <LandingHeader />
     </FluentHeader>
 
     <NavMenu />
@@ -33,26 +14,10 @@
             @Body
         </div>
     </FluentBodyContent>
-
-    <FluentFooter>
-        <div class="footer-content">
-            <FluentStack Orientation="Orientation.Vertical" HorizontalAlignment="HorizontalAlignment.Center">
-                <p>&copy; @DateTime.Now.Year National Benchmark Tests. All rights reserved.</p>
-                <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="20">
-                    <FluentAnchor Href="/privacy">Privacy Policy</FluentAnchor>
-                    <FluentAnchor Href="/terms">Terms of Service</FluentAnchor>
-                    <FluentAnchor Href="/accessibility">Accessibility</FluentAnchor>
-                </FluentStack>
-            </FluentStack>
-        </div>
-    </FluentFooter>
 </FluentLayout>
 
-<FluentToastProvider />
-<FluentDialogProvider />
-<FluentTooltipProvider />
-<FluentMessageBarProvider />
-
+<!-- Providers -->
+<FluentMenuProvider />
 <FluentToastProvider />
 <FluentDialogProvider />
 <FluentTooltipProvider />

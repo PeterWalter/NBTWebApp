@@ -32,16 +32,16 @@
                 <FluentIcon Value="@(new Icons.Regular.Size48.Person())" Color="Color.Accent" />
                 <h2>For Applicants</h2>
             </div>
-            <FluentNavMenu>
-                <FluentNavLink Href="/register" Icon="@(new Icons.Regular.Size20.PersonAdd())">Register for NBT</FluentNavLink>
-                <FluentNavLink Href="/login" Icon="@(new Icons.Regular.Size20.SignIn())">Sign In / My Account</FluentNavLink>
-                <FluentNavLink Href="/about/tests" Icon="@(new Icons.Regular.Size20.BookInformation())">About the Tests</FluentNavLink>
-                <FluentNavLink Href="/about/test-dates" Icon="@(new Icons.Regular.Size20.Calendar())">Test Dates & Venues</FluentNavLink>
-                <FluentNavLink Href="/about/fees" Icon="@(new Icons.Regular.Size20.Money())">Test Fees</FluentNavLink>
-                <FluentNavLink Href="/about/results" Icon="@(new Icons.Regular.Size20.DocumentCheckmark())">Understanding Results</FluentNavLink>
-                <FluentNavLink Href="/about/special-needs" Icon="@(new Icons.Regular.Size20.Accessibility())">Special Needs Accommodation</FluentNavLink>
-                <FluentNavLink Href="/faq" Icon="@(new Icons.Regular.Size20.QuestionCircle())">FAQs</FluentNavLink>
-            </FluentNavMenu>
+            <ul class="link-list">
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.PersonAdd())" /><FluentAnchor Href="/register">Register for NBT</FluentAnchor></li>
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.SignIn())" /><FluentAnchor Href="/login">Sign In / My Account</FluentAnchor></li>
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.BookInformation())" /><FluentAnchor Href="/about/tests">About the Tests</FluentAnchor></li>
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.Calendar())" /><FluentAnchor Href="/about/test-dates">Test Dates & Venues</FluentAnchor></li>
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.Money())" /><FluentAnchor Href="/about/fees">Test Fees</FluentAnchor></li>
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.DocumentCheckmark())" /><FluentAnchor Href="/about/results">Understanding Results</FluentAnchor></li>
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.Accessibility())" /><FluentAnchor Href="/about/special-needs">Special Needs Accommodation</FluentAnchor></li>
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.QuestionCircle())" /><FluentAnchor Href="/faq">FAQs</FluentAnchor></li>
+            </ul>
         </FluentCard>
 
         <FluentCard class="audience-card">
@@ -49,14 +49,14 @@
                 <FluentIcon Value="@(new Icons.Regular.Size48.Building())" Color="Color.Accent" />
                 <h2>For Institutions</h2>
             </div>
-            <FluentNavMenu>
-                <FluentNavLink Href="/institutions/about" Icon="@(new Icons.Regular.Size20.Info())">About NBT for Institutions</FluentNavLink>
-                <FluentNavLink Href="/institutions/using-results" Icon="@(new Icons.Regular.Size20.DocumentData())">Using NBT Results</FluentNavLink>
-                <FluentNavLink Href="/institutions/request-results" Icon="@(new Icons.Regular.Size20.DocumentArrowDown())">Request Results</FluentNavLink>
-                <FluentNavLink Href="/institutions/research" Icon="@(new Icons.Regular.Size20.BeakerSettings())">Research & Validation</FluentNavLink>
-                <FluentNavLink Href="/institutions/partnership" Icon="@(new Icons.Regular.Size20.Handshake())">Partnership Opportunities</FluentNavLink>
-                <FluentNavLink Href="/institutions/contact" Icon="@(new Icons.Regular.Size20.Mail())">Contact Us</FluentNavLink>
-            </FluentNavMenu>
+            <ul class="link-list">
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.Info())" /><FluentAnchor Href="/institutions/about">About NBT for Institutions</FluentAnchor></li>
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.DocumentData())" /><FluentAnchor Href="/institutions/using-results">Using NBT Results</FluentAnchor></li>
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.DocumentArrowDown())" /><FluentAnchor Href="/institutions/request-results">Request Results</FluentAnchor></li>
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.BeakerSettings())" /><FluentAnchor Href="/institutions/research">Research & Validation</FluentAnchor></li>
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.Handshake())" /><FluentAnchor Href="/institutions/partnership">Partnership Opportunities</FluentAnchor></li>
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.Mail())" /><FluentAnchor Href="/institutions/contact">Contact Us</FluentAnchor></li>
+            </ul>
         </FluentCard>
 
         <FluentCard class="audience-card">
@@ -64,14 +64,14 @@
                 <FluentIcon Value="@(new Icons.Regular.Size48.Hat())" Color="Color.Accent" />
                 <h2>For Educators</h2>
             </div>
-            <FluentNavMenu>
-                <FluentNavLink Href="/educators/about" Icon="@(new Icons.Regular.Size20.Info())">About NBT for Educators</FluentNavLink>
-                <FluentNavLink Href="/educators/preparing-students" Icon="@(new Icons.Regular.Size20.BookOpen())">Preparing Students</FluentNavLink>
-                <FluentNavLink Href="/educators/sample-questions" Icon="@(new Icons.Regular.Size20.QuizNew())">Sample Questions</FluentNavLink>
-                <FluentNavLink Href="/educators/resources" Icon="@(new Icons.Regular.Size20.Folder())">Teaching Resources</FluentNavLink>
-                <FluentNavLink Href="/educators/workshops" Icon="@(new Icons.Regular.Size20.PeopleTeam())">Workshops & Training</FluentNavLink>
-                <FluentNavLink Href="/educators/contact" Icon="@(new Icons.Regular.Size20.Mail())">Contact Us</FluentNavLink>
-            </FluentNavMenu>
+            <ul class="link-list">
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.Info())" /><FluentAnchor Href="/educators/about">About NBT for Educators</FluentAnchor></li>
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.BookOpen())" /><FluentAnchor Href="/educators/preparing-students">Preparing Students</FluentAnchor></li>
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.QuizNew())" /><FluentAnchor Href="/educators/sample-questions">Sample Questions</FluentAnchor></li>
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.Folder())" /><FluentAnchor Href="/educators/resources">Teaching Resources</FluentAnchor></li>
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.PeopleTeam())" /><FluentAnchor Href="/educators/workshops">Workshops & Training</FluentAnchor></li>
+                <li><FluentIcon Value="@(new Icons.Regular.Size20.Mail())" /><FluentAnchor Href="/educators/contact">Contact Us</FluentAnchor></li>
+            </ul>
         </FluentCard>
     </section>
 

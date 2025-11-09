@@ -83,14 +83,34 @@
     color: var(--accent-fill-rest);
 }
 
-.audience-card fluent-nav-menu {
-    width: 100%;
+.link-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-.audience-card fluent-nav-link {
-    margin: 0.5rem 0;
+.link-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
     padding: 0.75rem;
+    margin: 0.5rem 0;
     border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.link-list li:hover {
+    background-color: var(--neutral-fill-hover);
+}
+
+.link-list li fluent-icon {
+    flex-shrink: 0;
+    color: var(--accent-fill-rest);
+}
+
+.link-list li fluent-anchor {
+    flex: 1;
+    font-size: 1rem;
 }
 
 .info-section {
