@@ -17,5 +17,7 @@ builder.Services.AddFluentUIComponents();
 
 // Register application services
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+builder.Services.AddScoped<IVenueService, VenueService>();
+builder.Services.AddScoped<IRoomService, RoomService>();
 
 await builder.Build().RunAsync();

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.FluentUI.AspNetCore.Components;
 using NBT.WebUI.Components;
 using NBT.WebUI.Services;
+using NBT.WebUI.Services.Bookings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,6 +65,23 @@ builder.Services.AddHttpClient<IResourceService, ResourceService>(client =>
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 builder.Services.AddHttpClient<IContactInquiryService, ContactInquiryService>(client =>
+{
+    client.BaseAddress = new Uri(apiUrl);
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+builder.Services.AddHttpClient<IRegistrationService, RegistrationService>(client =>
+{
+    client.BaseAddress = new Uri(apiUrl);
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+builder.Services.AddHttpClient<BookingApiService>(client =>
+{
+    client.BaseAddress = new Uri(apiUrl);
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+builder.Services.AddHttpClient<PaymentApiService>(client =>
 {
     client.BaseAddress = new Uri(apiUrl);
     client.Timeout = TimeSpan.FromSeconds(30);

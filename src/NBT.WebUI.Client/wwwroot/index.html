@@ -29,6 +29,29 @@
     </div>
     <script src="_content/Microsoft.FluentUI.AspNetCore.Components/js/initializersLoader.webview.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script>
+        window.downloadFile = function (filename, base64String, contentType) {
+            const blob = base64ToBlob(base64String, contentType);
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        };
+
+        function base64ToBlob(base64, contentType) {
+            const byteCharacters = atob(base64);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            return new Blob([byteArray], { type: contentType });
+        }
+    </script>
 </body>
 
 </html>

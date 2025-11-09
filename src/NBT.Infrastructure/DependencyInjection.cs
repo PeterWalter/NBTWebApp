@@ -11,9 +11,11 @@ using NBT.Application.ContactInquiries.Interfaces;
 using NBT.Application.ContactInquiries.Services;
 using NBT.Application.ContentPages.Interfaces;
 using NBT.Application.ContentPages.Services;
+using NBT.Application.Reports;
 using NBT.Application.Resources.Interfaces;
 using NBT.Application.Resources.Services;
 using NBT.Application.Students.Services;
+using NBT.Application.Venues.Services;
 using NBT.Domain.Common;
 using NBT.Domain.Entities;
 using NBT.Infrastructure.Authentication;
@@ -21,6 +23,9 @@ using NBT.Infrastructure.Persistence;
 using NBT.Infrastructure.Repositories;
 using NBT.Infrastructure.Services;
 using NBT.Infrastructure.Services.Bookings;
+using NBT.Infrastructure.Services.Payments;
+using NBT.Infrastructure.Services.Reports;
+using NBT.Infrastructure.Services.Venues;
 
 namespace NBT.Infrastructure;
 
@@ -87,6 +92,16 @@ public static class DependencyInjection
         services.AddScoped<IDownloadableResourceService, DownloadableResourceService>();
         services.AddScoped<IStudentService, StudentService>();
         services.AddScoped<IBookingValidationService, BookingValidationService>();
+        services.AddScoped<IBookingService, BookingService>();
+        services.AddScoped<IPaymentService, PaymentService>();
+        
+        // Reporting Services
+        services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<IPdfService, PdfService>();
+        
+        // Venue Management Services
+        services.AddScoped<IVenueService, VenueService>();
+        services.AddScoped<IRoomService, RoomService>();
 
         return services;
     }

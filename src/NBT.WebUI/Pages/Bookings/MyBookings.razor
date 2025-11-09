@@ -1,0 +1,161 @@
+@page "/bookings/my-bookings"
+@inject BookingApiService BookingService
+@inject NavigationManager Navigation
+@inject ILogger<MyBookings> Logger
+@attribute [Authorize]
+
+<PageTitle>My Bookings - NBT</PageTitle>
+
+<div class="page-container">
+    <FluentStack Orientation="Orientation.Vertical" VerticalGap="20">
+        <FluentLabel Typo="Typography.H3">My Bookings</FluentLabel>
+
+        @if (isLoading)
+        {
+            <FluentProgressRing></FluentProgressRing>
+        }
+        else if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <FluentMessageBar Intent="MessageIntent.Error">@errorMessage</FluentMessageBar>
+        }
+        else if (bookings == null || !bookings.Any())
+        {
+            <FluentMessageBar Intent="MessageIntent.Info">
+                You have no bookings yet. 
+                <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => Navigation.NavigateTo("/bookings/new"))">
+                    Book a test
+                </FluentButton>
+            </FluentMessageBar>
+        }
+        else
+        {
+            <FluentDataGrid Items="@bookings.AsQueryable()" GridTemplateColumns="1fr 1fr 1fr 1fr 1fr 1fr 200px">
+                <PropertyColumn Property="@(b => b.RegistrationNumber)" Title="Registration #" />
+                <PropertyColumn Property="@(b => b.SessionName)" Title="Session" />
+                <PropertyColumn Property="@(b => b.SessionDate)" Title="Date" Format="yyyy-MM-dd" />
+                <PropertyColumn Property="@(b => b.VenueName)" Title="Venue" />
+                <TemplateColumn Title="Status">
+                    @context.Status
+                    <FluentBadge Appearance="@GetStatusBadgeAppearance(context.Status)">
+                        @context.Status
+                    </FluentBadge>
+                </TemplateColumn>
+                <TemplateColumn Title="Payment">
+                    @if (context.Payment != null)
+                    {
+                        <FluentBadge Appearance="@GetPaymentStatusBadgeAppearance(context.Payment.Status)">
+                            @context.Payment.Status
+                        </FluentBadge>
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+                </TemplateColumn>
+                <TemplateColumn Title="Actions">
+                    <ChildContent Context="booking">
+                        <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="5">
+                            <FluentButton Appearance="Appearance.Lightweight" 
+                                         OnClick="@(() => ViewBooking(booking.Id))">
+                                View
+                            </FluentButton>
+                            @if (booking.Status == "Pending" && booking.Payment == null)
+                            {
+                                <FluentButton Appearance="Appearance.Accent" 
+                                             OnClick="@(() => PayForBooking(booking.Id))">
+                                    Pay
+                                </FluentButton>
+                            }
+                            @if (booking.Status == "Pending" || booking.Status == "Confirmed")
+                            {
+                                <FluentButton Appearance="Appearance.Lightweight" 
+                                             OnClick="@(() => CancelBooking(booking.Id))">
+                                    Cancel
+                                </FluentButton>
+                            }
+                        </FluentStack>
+                    </ChildContent>
+                </TemplateColumn>
+            </FluentDataGrid>
+        }
+
+        <FluentButton Appearance="Appearance.Accent" OnClick="@(() => Navigation.NavigateTo("/bookings/new"))">
+            ➕ New Booking
+        </FluentButton>
+    </FluentStack>
+</div>
+
+@code {
+    private List<BookingDto>? bookings;
+    private bool isLoading = true;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBookings();
+    }
+
+    private async Task LoadBookings()
+    {
+        isLoading = true;
+        errorMessage = null;
+
+        try
+        {
+            // TODO: Get current student ID from authentication context
+            var studentId = Guid.Empty; // Replace with actual student ID
+            
+            bookings = await BookingService.GetBookingsByStudentIdAsync(studentId);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Failed to load bookings. Please try again.";
+            Logger.LogError(ex, "Error loading bookings");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void ViewBooking(Guid bookingId)
+    {
+        Navigation.NavigateTo($"/bookings/details/{bookingId}");
+    }
+
+    private void PayForBooking(Guid bookingId)
+    {
+        Navigation.NavigateTo($"/bookings/payment/{bookingId}");
+    }
+
+    private Task CancelBooking(Guid bookingId)
+    {
+        // TODO: Show confirmation dialog and cancellation reason input
+        Navigation.NavigateTo($"/bookings/cancel/{bookingId}");
+        return Task.CompletedTask;
+    }
+
+    private Appearance GetStatusBadgeAppearance(string status)
+    {
+        return status switch
+        {
+            "Confirmed" => Appearance.Accent,
+            "Pending" => Appearance.Neutral,
+            "Cancelled" => Appearance.Lightweight,
+            "Completed" => Appearance.Accent,
+            _ => Appearance.Neutral
+        };
+    }
+
+    private Appearance GetPaymentStatusBadgeAppearance(string status)
+    {
+        return status switch
+        {
+            "Paid" => Appearance.Accent,
+            "Pending" => Appearance.Neutral,
+            "Failed" => Appearance.Lightweight,
+            "Refunded" => Appearance.Neutral,
+            _ => Appearance.Neutral
+        };
+    }
+}

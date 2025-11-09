@@ -1,0 +1,133 @@
+@page "/venues/{VenueId:guid}/rooms/create"
+@using NBT.Application.Venues.DTOs
+@using NBT.WebUI.Client.Services
+@inject IRoomService RoomService
+@inject IVenueService VenueService
+@inject NavigationManager Navigation
+@attribute [Authorize(Roles = "Admin,Staff")]
+
+<PageTitle>Add Room</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical" Style="height: 100%;">
+    <FluentToolbar Style="width: 100%;">
+        <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => Navigation.NavigateTo($"/venues/{VenueId}"))">
+            <FluentIcon Value="@(new Icons.Regular.Size20.ArrowLeft())" Slot="start" />
+            Back to Venue
+        </FluentButton>
+        <FluentSpacer />
+        <FluentLabel Typo="Typography.H3">Add Room to @venueName</FluentLabel>
+        <FluentSpacer />
+    </FluentToolbar>
+
+    <FluentCard Style="width: 100%; max-width: 800px; margin: 20px auto;">
+        <EditForm Model="@model" OnValidSubmit="@HandleSubmit">
+            <DataAnnotationsValidator />
+            <FluentValidationSummary />
+
+            <FluentStack Orientation="Orientation.Vertical">
+                <FluentTextField @bind-Value="model.RoomName" 
+                               Label="Room Name" 
+                               Required 
+                               Style="width: 100%;" 
+                               Placeholder="e.g., Computer Lab A" />
+
+                <FluentTextField @bind-Value="model.RoomNumber" 
+                               Label="Room Number" 
+                               Style="width: 100%;" 
+                               Placeholder="e.g., 101" />
+
+                <FluentStack Orientation="Orientation.Horizontal">
+                    <FluentNumberField @bind-Value="model.Capacity" 
+                                     Label="Capacity" 
+                                     Min="1"
+                                     Required 
+                                     Style="flex: 1;" />
+
+                    <FluentSelect TOption="string" @bind-Value="model.RoomType"
+                                Label="Room Type"
+                                Required
+                                Style="flex: 1;">
+                        <FluentOption Value="ComputerLab">Computer Lab</FluentOption>
+                        <FluentOption Value="Classroom">Classroom</FluentOption>
+                        <FluentOption Value="Hall">Hall</FluentOption>
+                        <FluentOption Value="ExamRoom">Exam Room</FluentOption>
+                    </FluentSelect>
+                </FluentStack>
+
+                <FluentCheckbox @bind-Value="model.HasComputers" 
+                              Label="Has Computers"
+                              @onchange="HandleHasComputersChange" />
+
+                @if (model.HasComputers)
+                {
+                    <FluentNumberField @bind-Value="model.ComputerCount" 
+                                     Label="Number of Computers" 
+                                     Min="0"
+                                     Style="width: 100%;" />
+                }
+
+                <FluentCheckbox @bind-Value="model.IsAccessible" 
+                              Label="Wheelchair Accessible" />
+
+                <FluentTextArea @bind-Value="model.Notes" 
+                              Label="Notes" 
+                              Rows="3" 
+                              Style="width: 100%;" />
+
+                <FluentStack Orientation="Orientation.Horizontal" Style="margin-top: 20px;">
+                    <FluentButton Appearance="Appearance.Accent" 
+                                Type="ButtonType.Submit" 
+                                Loading="@isSaving">
+                        <FluentIcon Value="@(new Icons.Regular.Size20.Save())" Slot="start" />
+                        Add Room
+                    </FluentButton>
+                    <FluentButton Appearance="Appearance.Neutral" 
+                                OnClick="@(() => Navigation.NavigateTo($"/venues/{VenueId}"))">
+                        Cancel
+                    </FluentButton>
+                </FluentStack>
+            </FluentStack>
+        </EditForm>
+    </FluentCard>
+</FluentStack>
+
+@code {
+    [Parameter]
+    public Guid VenueId { get; set; }
+
+    private CreateRoomDto model = new();
+    private string venueName = "";
+    private bool isSaving = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        model.VenueId = VenueId;
+        var venue = await VenueService.GetVenueByIdAsync(VenueId);
+        venueName = venue?.VenueName ?? "";
+    }
+
+    private void HandleHasComputersChange(ChangeEventArgs e)
+    {
+        if (!(bool)(e.Value ?? false))
+        {
+            model.ComputerCount = null;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        isSaving = true;
+        try
+        {
+            var result = await RoomService.CreateRoomAsync(model);
+            if (result != null)
+            {
+                Navigation.NavigateTo($"/venues/{VenueId}");
+            }
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+}

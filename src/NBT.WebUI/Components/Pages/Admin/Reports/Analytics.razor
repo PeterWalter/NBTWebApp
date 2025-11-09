@@ -1,0 +1,295 @@
+@page "/admin/analytics"
+@using Microsoft.AspNetCore.Authorization
+@using System.Net.Http.Json
+@attribute [Authorize(Roles = "Admin,Staff")]
+@inject HttpClient Http
+@inject IToastService ToastService
+@rendermode InteractiveAuto
+
+<PageTitle>Analytics Dashboard - NBT Admin</PageTitle>
+
+<div style="padding: 2rem; max-width: 1400px; margin: 0 auto;">
+    <FluentStack Orientation="Orientation.Vertical" Style="gap: 2rem;">
+        <FluentLabel Typo="Typography.H3">
+            Analytics Dashboard
+        </FluentLabel>
+
+        @if (isLoading)
+        {
+            <FluentProgressRing />
+            <FluentLabel>Loading analytics data...</FluentLabel>
+        }
+        else if (summary != null)
+        {
+            <!-- Summary Cards -->
+            <FluentGrid Spacing="3">
+                <FluentGridItem xs="12" sm="6" md="3">
+                    <FluentCard Style="height: 100%;">
+                        <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Right" VerticalAlignment="VerticalAlignment.Center">
+                            <FluentStack Orientation="Orientation.Vertical">
+                                <FluentLabel Typo="Typography.Body">Total Registrations</FluentLabel>
+                                <FluentLabel Typo="Typography.H4">@summary.TotalRegistrations</FluentLabel>
+                            </FluentStack>
+                            <span style="font-size: 2rem;">👥</span>
+                        </FluentStack>
+                    </FluentCard>
+                </FluentGridItem>
+
+                <FluentGridItem xs="12" sm="6" md="3">
+                    <FluentCard Style="height: 100%;">
+                        <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Right" VerticalAlignment="VerticalAlignment.Center">
+                            <FluentStack Orientation="Orientation.Vertical">
+                                <FluentLabel Typo="Typography.Body">Total Payments</FluentLabel>
+                                <FluentLabel Typo="Typography.H4">@summary.TotalPayments</FluentLabel>
+                            </FluentStack>
+                            <span style="font-size: 2rem;">💳</span>
+                        </FluentStack>
+                    </FluentCard>
+                </FluentGridItem>
+
+                <FluentGridItem xs="12" sm="6" md="3">
+                    <FluentCard Style="height: 100%;">
+                        <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Right" VerticalAlignment="VerticalAlignment.Center">
+                            <FluentStack Orientation="Orientation.Vertical">
+                                <FluentLabel Typo="Typography.Body">Total Revenue</FluentLabel>
+                                <FluentLabel Typo="Typography.H4">R @summary.TotalRevenue.ToString("N2")</FluentLabel>
+                            </FluentStack>
+                            <span style="font-size: 2rem;">💰</span>
+                        </FluentStack>
+                    </FluentCard>
+                </FluentGridItem>
+
+                <FluentGridItem xs="12" sm="6" md="3">
+                    <FluentCard Style="height: 100%;">
+                        <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Right" VerticalAlignment="VerticalAlignment.Center">
+                            <FluentStack Orientation="Orientation.Vertical">
+                                <FluentLabel Typo="Typography.Body">Total Results</FluentLabel>
+                                <FluentLabel Typo="Typography.H4">@summary.TotalResults</FluentLabel>
+                            </FluentStack>
+                            <span style="font-size: 2rem;">📋</span>
+                        </FluentStack>
+                    </FluentCard>
+                </FluentGridItem>
+
+                <!-- Payment Status Breakdown -->
+                <FluentGridItem xs="12" md="6">
+                    <FluentCard Style="height: 100%;">
+                        <FluentLabel Typo="Typography.H5" Style="margin-bottom: 1rem;">Payment Status</FluentLabel>
+                        <FluentStack Orientation="Orientation.Vertical" Style="gap: 0.5rem;">
+                            <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Right">
+                                <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" Style="gap: 0.5rem;">
+                                    <span>✅</span>
+                                    <FluentLabel>Completed</FluentLabel>
+                                </FluentStack>
+                                <FluentBadge Appearance="Appearance.Accent">@summary.CompletedPayments</FluentBadge>
+                            </FluentStack>
+                            <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Right">
+                                <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" Style="gap: 0.5rem;">
+                                    <span>⏳</span>
+                                    <FluentLabel>Pending</FluentLabel>
+                                </FluentStack>
+                                <FluentBadge Appearance="Appearance.Neutral">@summary.PendingPayments</FluentBadge>
+                            </FluentStack>
+                            <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Right">
+                                <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" Style="gap: 0.5rem;">
+                                    <span>❌</span>
+                                    <FluentLabel>Failed</FluentLabel>
+                                </FluentStack>
+                                <FluentBadge Appearance="Appearance.Lightweight">@summary.FailedPayments</FluentBadge>
+                            </FluentStack>
+                        </FluentStack>
+                    </FluentCard>
+                </FluentGridItem>
+
+                <!-- Results Status -->
+                <FluentGridItem xs="12" md="6">
+                    <FluentCard Style="height: 100%;">
+                        <FluentLabel Typo="Typography.H5" Style="margin-bottom: 1rem;">Results Status</FluentLabel>
+                        <FluentStack Orientation="Orientation.Vertical" Style="gap: 0.5rem;">
+                            <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Right">
+                                <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" Style="gap: 0.5rem;">
+                                    <span>📤</span>
+                                    <FluentLabel>Released</FluentLabel>
+                                </FluentStack>
+                                <FluentBadge Appearance="Appearance.Accent">@summary.ReleasedResults</FluentBadge>
+                            </FluentStack>
+                            <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Right">
+                                <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" Style="gap: 0.5rem;">
+                                    <span>⌛</span>
+                                    <FluentLabel>Pending</FluentLabel>
+                                </FluentStack>
+                                <FluentBadge Appearance="Appearance.Neutral">@summary.PendingResults</FluentBadge>
+                            </FluentStack>
+                        </FluentStack>
+                    </FluentCard>
+                </FluentGridItem>
+
+                <!-- Registration Trends -->
+                <FluentGridItem xs="12">
+                    <FluentCard>
+                        <FluentLabel Typo="Typography.H5" Style="margin-bottom: 1rem;">Registration Trends (Last 30 Days)</FluentLabel>
+                        @if (summary.RegistrationTrends.Any())
+                        {
+                            <FluentDataGrid Items="@summary.RegistrationTrends.AsQueryable()" GridTemplateColumns="1fr 2fr" Style="width: 100%;">
+                                <PropertyColumn Property="@(t => t.Date)" Format="yyyy-MM-dd" Title="Date" />
+                                <TemplateColumn Title="Registrations">
+                                    <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" Style="gap: 1rem;">
+                                        <FluentProgress Min="0" Max="@GetMaxTrendCount()" Value="@context.Count" Width="300px" />
+                                        <FluentLabel>@context.Count</FluentLabel>
+                                    </FluentStack>
+                                </TemplateColumn>
+                            </FluentDataGrid>
+                        }
+                        else
+                        {
+                            <FluentLabel>No registration data available</FluentLabel>
+                        }
+                    </FluentCard>
+                </FluentGridItem>
+
+                <!-- Test Type Distribution -->
+                <FluentGridItem xs="12" md="6">
+                    <FluentCard Style="height: 100%;">
+                        <FluentLabel Typo="Typography.H5" Style="margin-bottom: 1rem;">Test Type Distribution</FluentLabel>
+                        @if (summary.TestTypeDistribution.Any())
+                        {
+                            <FluentStack Orientation="Orientation.Vertical" Style="gap: 0.5rem;">
+                                @foreach (var test in summary.TestTypeDistribution)
+                                {
+                                    <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Right">
+                                        <FluentLabel>@test.TestType</FluentLabel>
+                                        <FluentBadge Appearance="Appearance.Accent">@test.Count</FluentBadge>
+                                    </FluentStack>
+                                }
+                            </FluentStack>
+                        }
+                        else
+                        {
+                            <FluentLabel>No test type data available</FluentLabel>
+                        }
+                    </FluentCard>
+                </FluentGridItem>
+
+                <!-- Session Utilization -->
+                <FluentGridItem xs="12" md="6">
+                    <FluentCard Style="height: 100%;">
+                        <FluentLabel Typo="Typography.H5" Style="margin-bottom: 1rem;">Upcoming Session Utilization</FluentLabel>
+                        @if (summary.SessionUtilization.Any())
+                        {
+                            <FluentStack Orientation="Orientation.Vertical" Style="gap: 1rem;">
+                                @foreach (var session in summary.SessionUtilization.Take(5))
+                                {
+                                    <div>
+                                        <FluentLabel Typo="Typography.Body">@session.SessionName</FluentLabel>
+                                        <FluentProgress Min="0" Max="100" Value="@((int)session.UtilizationPercentage)" />
+                                        <FluentLabel Typo="Typography.Body">
+                                            <small>@session.Bookings / @session.Capacity (@session.UtilizationPercentage.ToString("F1")%)</small>
+                                        </FluentLabel>
+                                    </div>
+                                }
+                            </FluentStack>
+                        }
+                        else
+                        {
+                            <FluentLabel>No session data available</FluentLabel>
+                        }
+                    </FluentCard>
+                </FluentGridItem>
+
+                <!-- Actions -->
+                <FluentGridItem xs="12">
+                    <FluentStack Orientation="Orientation.Horizontal" Style="gap: 0.5rem;">
+                        <FluentButton Appearance="Appearance.Accent" 
+                                    OnClick="LoadDashboardData">
+                            🔄 Refresh Data
+                        </FluentButton>
+                        <FluentButton Appearance="Appearance.Outline" 
+                                    Href="/admin/reports">
+                            📥 Export Reports
+                        </FluentButton>
+                    </FluentStack>
+                </FluentGridItem>
+            </FluentGrid>
+        }
+    </FluentStack>
+</div>
+
+@code {
+    private DashboardSummary? summary;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDashboardData();
+    }
+
+    private async Task LoadDashboardData()
+    {
+        isLoading = true;
+        try
+        {
+            summary = await Http.GetFromJsonAsync<DashboardSummary>("/api/reports/summary");
+            ToastService.ShowSuccess("Dashboard data loaded");
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Error loading dashboard: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private int GetMaxTrendCount()
+    {
+        return summary?.RegistrationTrends.Any() == true 
+            ? summary.RegistrationTrends.Max(t => t.Count) 
+            : 100;
+    }
+
+    public class DashboardSummary
+    {
+        public int TotalRegistrations { get; set; }
+        public int TotalPayments { get; set; }
+        public decimal TotalRevenue { get; set; }
+        public int PendingPayments { get; set; }
+        public int CompletedPayments { get; set; }
+        public int FailedPayments { get; set; }
+        public int TotalResults { get; set; }
+        public int ReleasedResults { get; set; }
+        public int PendingResults { get; set; }
+        public List<RegistrationTrend> RegistrationTrends { get; set; } = new();
+        public List<PaymentStatus> PaymentStatusBreakdown { get; set; } = new();
+        public List<SessionUtilization> SessionUtilization { get; set; } = new();
+        public List<TestTypeDistribution> TestTypeDistribution { get; set; } = new();
+    }
+
+    public class RegistrationTrend
+    {
+        public DateTime Date { get; set; }
+        public int Count { get; set; }
+    }
+
+    public class PaymentStatus
+    {
+        public string Status { get; set; } = string.Empty;
+        public int Count { get; set; }
+        public decimal TotalAmount { get; set; }
+    }
+
+    public class SessionUtilization
+    {
+        public string SessionName { get; set; } = string.Empty;
+        public DateTime SessionDate { get; set; }
+        public int Capacity { get; set; }
+        public int Bookings { get; set; }
+        public double UtilizationPercentage { get; set; }
+    }
+
+    public class TestTypeDistribution
+    {
+        public string TestType { get; set; } = string.Empty;
+        public int Count { get; set; }
+    }
+}

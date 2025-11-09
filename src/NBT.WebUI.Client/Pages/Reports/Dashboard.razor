@@ -1,0 +1,129 @@
+@page "/reports/dashboard"
+@inject HttpClient Http
+@inject ILogger<Dashboard> Logger
+@attribute [Authorize(Roles = "Admin,Staff")]
+
+<PageTitle>Reports Dashboard - NBT</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical" Style="padding: 20px;">
+    <FluentLabel Typo="Typography.H3">Reports Dashboard</FluentLabel>
+
+    @if (isLoading)
+    {
+        <FluentProgressRing />
+    }
+    else if (summary != null)
+    {
+        <!-- Summary Cards -->
+        <FluentGrid Spacing="3" Style="margin-top: 20px;">
+            <FluentGridItem xs="12" sm="6" md="3">
+                <FluentCard Style="padding: 20px; text-align: center;">
+                    <FluentLabel Typo="Typography.H4">@summary.TotalRegistrations</FluentLabel>
+                    <FluentLabel>Total Registrations</FluentLabel>
+                </FluentCard>
+            </FluentGridItem>
+
+            <FluentGridItem xs="12" sm="6" md="3">
+                <FluentCard Style="padding: 20px; text-align: center;">
+                    <FluentLabel Typo="Typography.H4">@summary.CompletedPayments</FluentLabel>
+                    <FluentLabel>Completed Payments</FluentLabel>
+                </FluentCard>
+            </FluentGridItem>
+
+            <FluentGridItem xs="12" sm="6" md="3">
+                <FluentCard Style="padding: 20px; text-align: center;">
+                    <FluentLabel Typo="Typography.H4">R @summary.TotalRevenue.ToString("N2")</FluentLabel>
+                    <FluentLabel>Total Revenue</FluentLabel>
+                </FluentCard>
+            </FluentGridItem>
+
+            <FluentGridItem xs="12" sm="6" md="3">
+                <FluentCard Style="padding: 20px; text-align: center;">
+                    <FluentLabel Typo="Typography.H4">@summary.ReleasedResults</FluentLabel>
+                    <FluentLabel>Released Results</FluentLabel>
+                </FluentCard>
+            </FluentGridItem>
+        </FluentGrid>
+
+        <!-- Payment Status Breakdown -->
+        <FluentCard Style="margin-top: 30px; padding: 20px;">
+            <FluentLabel Typo="Typography.H5">Payment Status Breakdown</FluentLabel>
+            @if (summary.PaymentStatusBreakdown.Any())
+            {
+                <FluentDataGrid Items="@summary.PaymentStatusBreakdown.AsQueryable()" Style="margin-top: 15px;">
+                    <PropertyColumn Property="@(p => p.Status)" Title="Status" />
+                    <PropertyColumn Property="@(p => p.Count)" Title="Count" />
+                    <PropertyColumn Property="@(p => p.TotalAmount)" Title="Total Amount" Format="C2" />
+                </FluentDataGrid>
+            }
+        </FluentCard>
+
+        <!-- Session Utilization -->
+        <FluentCard Style="margin-top: 30px; padding: 20px;">
+            <FluentLabel Typo="Typography.H5">Upcoming Session Utilization</FluentLabel>
+            @if (summary.SessionUtilization.Any())
+            {
+                <FluentDataGrid Items="@summary.SessionUtilization.AsQueryable()" Style="margin-top: 15px;">
+                    <PropertyColumn Property="@(s => s.SessionName)" Title="Session" />
+                    <PropertyColumn Property="@(s => s.SessionDate)" Title="Date" Format="yyyy-MM-dd" />
+                    <PropertyColumn Property="@(s => s.Capacity)" Title="Capacity" />
+                    <PropertyColumn Property="@(s => s.Bookings)" Title="Bookings" />
+                    <TemplateColumn Title="Utilization">
+                        <FluentProgressRing Value="@((int)context.UtilizationPercentage)" 
+                                          Visible="true" 
+                                          Style="width: 50px; height: 50px;">
+                            @context.UtilizationPercentage.ToString("F1")%
+                        </FluentProgressRing>
+                    </TemplateColumn>
+                </FluentDataGrid>
+            }
+        </FluentCard>
+
+        <!-- Test Type Distribution -->
+        <FluentCard Style="margin-top: 30px; padding: 20px;">
+            <FluentLabel Typo="Typography.H5">Test Type Distribution</FluentLabel>
+            @if (summary.TestTypeDistribution.Any())
+            {
+                <FluentDataGrid Items="@summary.TestTypeDistribution.AsQueryable()" Style="margin-top: 15px;">
+                    <PropertyColumn Property="@(t => t.TestType)" Title="Test Type" />
+                    <PropertyColumn Property="@(t => t.Count)" Title="Count" />
+                </FluentDataGrid>
+            }
+        </FluentCard>
+    }
+    else if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <FluentMessageBar Intent="MessageIntent.Error">@errorMessage</FluentMessageBar>
+    }
+</FluentStack>
+
+@code {
+    private DashboardSummaryDto? summary;
+    private bool isLoading = true;
+    private string errorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDashboard();
+    }
+
+    private async Task LoadDashboard()
+    {
+        isLoading = true;
+        errorMessage = string.Empty;
+
+        try
+        {
+            summary = await Http.GetFromJsonAsync<DashboardSummaryDto>("api/reports/summary");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error loading dashboard");
+            errorMessage = "Failed to load dashboard data.";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

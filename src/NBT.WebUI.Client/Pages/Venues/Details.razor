@@ -1,0 +1,168 @@
+@page "/venues/{Id:guid}"
+@using NBT.Application.Venues.DTOs
+@using NBT.WebUI.Client.Services
+@inject IVenueService VenueService
+@inject IRoomService RoomService
+@inject NavigationManager Navigation
+@attribute [Authorize(Roles = "Admin,Staff")]
+
+<PageTitle>Venue Details</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical" Style="height: 100%;">
+    <FluentToolbar Style="width: 100%;">
+        <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => Navigation.NavigateTo("/venues"))">
+            <FluentIcon Value="@(new Icons.Regular.Size20.ArrowLeft())" Slot="start" />
+            Back to Venues
+        </FluentButton>
+        <FluentSpacer />
+        <FluentLabel Typo="Typography.H3">Venue Details</FluentLabel>
+        <FluentSpacer />
+        <FluentButton Appearance="Appearance.Accent" OnClick="@(() => Navigation.NavigateTo($"/venues/edit/{Id}"))">
+            <FluentIcon Value="@(new Icons.Regular.Size20.Edit())" Slot="start" />
+            Edit Venue
+        </FluentButton>
+    </FluentToolbar>
+
+    @if (isLoading)
+    {
+        <FluentProgressRing />
+    }
+    else if (venue == null)
+    {
+        <FluentMessageBar Intent="MessageIntent.Error">Venue not found</FluentMessageBar>
+    }
+    else
+    {
+        <FluentGrid Style="margin-top: 20px;">
+            <FluentGridItem xs="12" md="6">
+                <FluentCard>
+                    <FluentLabel Typo="Typography.H4">Venue Information</FluentLabel>
+                    <FluentDivider Style="margin: 10px 0;" />
+                    
+                    <FluentStack Orientation="Orientation.Vertical">
+                        <FluentLabel Weight="FontWeight.Bold">Venue Code:</FluentLabel>
+                        <FluentLabel>@venue.VenueCode</FluentLabel>
+
+                        <FluentLabel Weight="FontWeight.Bold" Style="margin-top: 10px;">Venue Name:</FluentLabel>
+                        <FluentLabel>@venue.VenueName</FluentLabel>
+
+                        <FluentLabel Weight="FontWeight.Bold" Style="margin-top: 10px;">Address:</FluentLabel>
+                        <FluentLabel>@venue.Address</FluentLabel>
+                        <FluentLabel>@venue.City, @venue.Province @venue.PostalCode</FluentLabel>
+
+                        <FluentLabel Weight="FontWeight.Bold" Style="margin-top: 10px;">Status:</FluentLabel>
+                        <FluentBadge Appearance="@(venue.Status == "Active" ? Appearance.Accent : Appearance.Neutral)">
+                            @venue.Status
+                        </FluentBadge>
+
+                        <FluentLabel Weight="FontWeight.Bold" Style="margin-top: 10px;">Wheelchair Accessible:</FluentLabel>
+                        <FluentLabel>@(venue.IsAccessible ? "Yes" : "No")</FluentLabel>
+
+                        <FluentLabel Weight="FontWeight.Bold" Style="margin-top: 10px;">Total Capacity:</FluentLabel>
+                        <FluentLabel>@venue.TotalCapacity</FluentLabel>
+                    </FluentStack>
+                </FluentCard>
+            </FluentGridItem>
+
+            <FluentGridItem xs="12" md="6">
+                <FluentCard>
+                    <FluentLabel Typo="Typography.H4">Contact Information</FluentLabel>
+                    <FluentDivider Style="margin: 10px 0;" />
+                    
+                    <FluentStack Orientation="Orientation.Vertical">
+                        @if (!string.IsNullOrWhiteSpace(venue.ContactPerson))
+                        {
+                            <FluentLabel Weight="FontWeight.Bold">Contact Person:</FluentLabel>
+                            <FluentLabel>@venue.ContactPerson</FluentLabel>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(venue.ContactEmail))
+                        {
+                            <FluentLabel Weight="FontWeight.Bold" Style="margin-top: 10px;">Email:</FluentLabel>
+                            <FluentLabel>@venue.ContactEmail</FluentLabel>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(venue.ContactPhone))
+                        {
+                            <FluentLabel Weight="FontWeight.Bold" Style="margin-top: 10px;">Phone:</FluentLabel>
+                            <FluentLabel>@venue.ContactPhone</FluentLabel>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(venue.Notes))
+                        {
+                            <FluentLabel Weight="FontWeight.Bold" Style="margin-top: 10px;">Notes:</FluentLabel>
+                            <FluentLabel>@venue.Notes</FluentLabel>
+                        }
+                    </FluentStack>
+                </FluentCard>
+            </FluentGridItem>
+
+            <FluentGridItem xs="12">
+                <FluentCard Style="margin-top: 20px;">
+                    <FluentStack Orientation="Orientation.Horizontal">
+                        <FluentLabel Typo="Typography.H4">Rooms (@rooms?.Count ?? 0)</FluentLabel>
+                        <FluentSpacer />
+                        <FluentButton Appearance="Appearance.Accent" 
+                                    OnClick="@(() => Navigation.NavigateTo($"/venues/{Id}/rooms/create"))">
+                            <FluentIcon Value="@(new Icons.Regular.Size20.Add())" Slot="start" />
+                            Add Room
+                        </FluentButton>
+                    </FluentStack>
+                    <FluentDivider Style="margin: 10px 0;" />
+
+                    @if (rooms == null || !rooms.Any())
+                    {
+                        <FluentMessageBar Intent="MessageIntent.Info">
+                            No rooms configured for this venue.
+                        </FluentMessageBar>
+                    }
+                    else
+                    {
+                        <FluentDataGrid Items="@rooms.AsQueryable()" GridTemplateColumns="1fr 1fr 1fr 1fr 1fr 1fr 100px">
+                            <PropertyColumn Property="@(r => r.RoomName)" Sortable="true" Title="Room Name" />
+                            <PropertyColumn Property="@(r => r.RoomNumber)" Sortable="true" Title="Room Number" />
+                            <PropertyColumn Property="@(r => r.RoomType)" Sortable="true" Title="Type" />
+                            <PropertyColumn Property="@(r => r.Capacity)" Sortable="true" Title="Capacity" />
+                            <TemplateColumn Title="Computers">
+                                @(context.HasComputers ? $"Yes ({context.ComputerCount})" : "No")
+                            </TemplateColumn>
+                            <TemplateColumn Title="Status">
+                                <FluentBadge Appearance="@(context.Status == "Available" ? Appearance.Accent : Appearance.Neutral)">
+                                    @context.Status
+                                </FluentBadge>
+                            </TemplateColumn>
+                            <TemplateColumn Title="Actions">
+                                <FluentButton Appearance="Appearance.Lightweight" 
+                                            OnClick="@(() => Navigation.NavigateTo($"/venues/{Id}/rooms/edit/{context.Id}"))">
+                                    <FluentIcon Value="@(new Icons.Regular.Size16.Edit())" />
+                                </FluentButton>
+                            </TemplateColumn>
+                        </FluentDataGrid>
+                    }
+                </FluentCard>
+            </FluentGridItem>
+        </FluentGrid>
+    }
+</FluentStack>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private VenueDto? venue;
+    private List<RoomDto>? rooms;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+        venue = await VenueService.GetVenueByIdAsync(Id);
+        rooms = await RoomService.GetRoomsByVenueIdAsync(Id);
+        isLoading = false;
+    }
+}

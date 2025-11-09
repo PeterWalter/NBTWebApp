@@ -1,0 +1,186 @@
+@page "/admin/bookings"
+@inject BookingApiService BookingService
+@inject NavigationManager Navigation
+@inject ILogger<Index> Logger
+@attribute [Authorize(Roles = "Admin,Staff")]
+
+<PageTitle>Manage Bookings - NBT Admin</PageTitle>
+
+<div class="page-container">
+    <FluentStack Orientation="Orientation.Vertical" VerticalGap="20">
+        <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.SpaceBetween">
+            <FluentLabel Typo="Typography.H3">Manage Bookings</FluentLabel>
+        </FluentStack>
+
+        <!-- Filters -->
+        <FluentCard>
+            <FluentStack Orientation="Orientation.Vertical" VerticalGap="15">
+                <FluentLabel Typo="Typography.H5">Filters</FluentLabel>
+                
+                <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="15" Wrap="true">
+                    <FluentTextField @bind-Value="studentNameFilter" 
+                                    Placeholder="Student Name"
+                                    Style="width: 200px;" />
+                    
+                    <FluentTextField @bind-Value="nbtNumberFilter" 
+                                    Placeholder="NBT Number"
+                                    Style="width: 150px;" />
+                    
+                    <FluentSelect TOption="string" @bind-Value="statusFilter" Style="width: 150px;">
+                        <FluentOption Value="">All Statuses</FluentOption>
+                        <FluentOption Value="Pending">Pending</FluentOption>
+                        <FluentOption Value="Confirmed">Confirmed</FluentOption>
+                        <FluentOption Value="Cancelled">Cancelled</FluentOption>
+                        <FluentOption Value="Completed">Completed</FluentOption>
+                    </FluentSelect>
+
+                    <FluentButton Appearance="Appearance.Accent" OnClick="ApplyFilters">
+                        🔍 Apply Filters
+                    </FluentButton>
+
+                    <FluentButton Appearance="Appearance.Lightweight" OnClick="ClearFilters">
+                        Clear
+                    </FluentButton>
+                </FluentStack>
+            </FluentStack>
+        </FluentCard>
+
+        @if (isLoading)
+        {
+            <FluentProgressRing></FluentProgressRing>
+        }
+        else if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <FluentMessageBar Intent="MessageIntent.Error">@errorMessage</FluentMessageBar>
+        }
+        else if (bookings == null || !bookings.Items.Any())
+        {
+            <FluentMessageBar Intent="MessageIntent.Info">
+                No bookings found matching the current filters.
+            </FluentMessageBar>
+        }
+        else
+        {
+            <FluentDataGrid Items="@bookings.Items.AsQueryable()" GridTemplateColumns="150px 200px 150px 200px 150px 120px 120px 150px">
+                <PropertyColumn Property="@(b => b.RegistrationNumber)" Title="Registration #" />
+                <PropertyColumn Property="@(b => b.StudentName)" Title="Student" />
+                <PropertyColumn Property="@(b => b.StudentNBTNumber)" Title="NBT #" />
+                <PropertyColumn Property="@(b => b.SessionName)" Title="Session" />
+                <PropertyColumn Property="@(b => b.SessionDate)" Title="Date" Format="yyyy-MM-dd" />
+                <PropertyColumn Property="@(b => b.VenueName)" Title="Venue" />
+                <TemplateColumn Title="Status">
+                    <FluentBadge Appearance="@GetStatusBadgeAppearance(context.Status)">
+                        @context.Status
+                    </FluentBadge>
+                </TemplateColumn>
+                <TemplateColumn Title="Actions">
+                    <FluentButton Appearance="Appearance.Lightweight" 
+                                 OnClick="@(() => ViewBooking(context.Id))">
+                        View Details
+                    </FluentButton>
+                </TemplateColumn>
+            </FluentDataGrid>
+
+            <!-- Pagination -->
+            <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center" HorizontalGap="10">
+                <FluentButton Appearance="Appearance.Lightweight" 
+                             Disabled="@(!bookings.HasPreviousPage)"
+                             OnClick="@(() => ChangePage(currentPage - 1))">
+                    Previous
+                </FluentButton>
+                
+                <FluentLabel>Page @currentPage of @bookings.TotalPages</FluentLabel>
+                
+                <FluentButton Appearance="Appearance.Lightweight" 
+                             Disabled="@(!bookings.HasNextPage)"
+                             OnClick="@(() => ChangePage(currentPage + 1))">
+                    Next
+                </FluentButton>
+            </FluentStack>
+
+            <FluentLabel Typo="Typography.Body">
+                Showing @bookings.Items.Count of @bookings.TotalCount bookings
+            </FluentLabel>
+        }
+    </FluentStack>
+</div>
+
+@code {
+    private PaginatedList<BookingDto>? bookings;
+    private bool isLoading = true;
+    private string? errorMessage;
+    
+    private int currentPage = 1;
+    private int pageSize = 20;
+    private string? studentNameFilter;
+    private string? nbtNumberFilter;
+    private string? statusFilter;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBookings();
+    }
+
+    private async Task LoadBookings()
+    {
+        isLoading = true;
+        errorMessage = null;
+
+        try
+        {
+            bookings = await BookingService.GetAllBookingsAsync(
+                currentPage, 
+                pageSize, 
+                studentNameFilter, 
+                nbtNumberFilter, 
+                statusFilter);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Failed to load bookings. Please try again.";
+            Logger.LogError(ex, "Error loading bookings");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task ApplyFilters()
+    {
+        currentPage = 1;
+        await LoadBookings();
+    }
+
+    private async Task ClearFilters()
+    {
+        currentPage = 1;
+        studentNameFilter = null;
+        nbtNumberFilter = null;
+        statusFilter = null;
+        await LoadBookings();
+    }
+
+    private async Task ChangePage(int page)
+    {
+        currentPage = page;
+        await LoadBookings();
+    }
+
+    private void ViewBooking(Guid bookingId)
+    {
+        Navigation.NavigateTo($"/admin/bookings/details/{bookingId}");
+    }
+
+    private Appearance GetStatusBadgeAppearance(string status)
+    {
+        return status switch
+        {
+            "Confirmed" => Appearance.Accent,
+            "Pending" => Appearance.Neutral,
+            "Cancelled" => Appearance.Lightweight,
+            "Completed" => Appearance.Accent,
+            _ => Appearance.Neutral
+        };
+    }
+}

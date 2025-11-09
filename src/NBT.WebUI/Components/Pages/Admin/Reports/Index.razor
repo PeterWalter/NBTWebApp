@@ -1,0 +1,160 @@
+@page "/admin/reports"
+@using Microsoft.AspNetCore.Authorization
+@using System.Net.Http.Headers
+@using Microsoft.JSInterop
+@attribute [Authorize(Roles = "Admin,Staff")]
+@inject HttpClient Http
+@inject IToastService ToastService
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveAuto
+
+<PageTitle>Reports - NBT Admin</PageTitle>
+
+<div style="padding: 2rem; max-width: 1400px; margin: 0 auto;">
+    <FluentStack Orientation="Orientation.Vertical" Style="gap: 2rem;">
+        <FluentLabel Typo="Typography.H3">
+            📊 Reports & Analytics
+        </FluentLabel>
+
+        <FluentGrid Spacing="3">
+            <!-- Registration Reports -->
+            <FluentGridItem xs="12" md="6">
+                <FluentCard Style="height: 100%;">
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 1rem;">
+                        <FluentLabel Typo="Typography.H5">
+                            👥 Registration Reports
+                        </FluentLabel>
+                        <FluentLabel Typo="Typography.Body">Export all student registrations with details</FluentLabel>
+                        <FluentStack Orientation="Orientation.Horizontal" Style="gap: 0.5rem;">
+                            <FluentButton Appearance="Appearance.Accent" 
+                                        OnClick="@(() => DownloadReport("registrations"))"
+                                        Disabled="@isDownloading">
+                                📥 Download Excel
+                            </FluentButton>
+                        </FluentStack>
+                    </FluentStack>
+                </FluentCard>
+            </FluentGridItem>
+
+            <!-- Payment Reports -->
+            <FluentGridItem xs="12" md="6">
+                <FluentCard Style="height: 100%;">
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 1rem;">
+                        <FluentLabel Typo="Typography.H5">
+                            💳 Payment Reports
+                        </FluentLabel>
+                        <FluentLabel Typo="Typography.Body">Export all payment transactions and statuses</FluentLabel>
+                        <FluentStack Orientation="Orientation.Horizontal" Style="gap: 0.5rem;">
+                            <FluentButton Appearance="Appearance.Accent" 
+                                        OnClick="@(() => DownloadReport("payments"))"
+                                        Disabled="@isDownloading">
+                                📥 Download Excel
+                            </FluentButton>
+                        </FluentStack>
+                    </FluentStack>
+                </FluentCard>
+            </FluentGridItem>
+
+            <!-- Results Reports -->
+            <FluentGridItem xs="12" md="6">
+                <FluentCard Style="height: 100%;">
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 1rem;">
+                        <FluentLabel Typo="Typography.H5">
+                            📋 Test Results Reports
+                        </FluentLabel>
+                        <FluentLabel Typo="Typography.Body">Export all test results and scores</FluentLabel>
+                        <FluentStack Orientation="Orientation.Horizontal" Style="gap: 0.5rem;">
+                            <FluentButton Appearance="Appearance.Accent" 
+                                        OnClick="@(() => DownloadReport("results"))"
+                                        Disabled="@isDownloading">
+                                📥 Download Excel
+                            </FluentButton>
+                        </FluentStack>
+                    </FluentStack>
+                </FluentCard>
+            </FluentGridItem>
+
+            <!-- Session Utilization Reports -->
+            <FluentGridItem xs="12" md="6">
+                <FluentCard Style="height: 100%;">
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 1rem;">
+                        <FluentLabel Typo="Typography.H5">
+                            📅 Session Utilization
+                        </FluentLabel>
+                        <FluentLabel Typo="Typography.Body">Export session booking and capacity data</FluentLabel>
+                        <FluentStack Orientation="Orientation.Horizontal" Style="gap: 0.5rem;">
+                            <FluentButton Appearance="Appearance.Accent" 
+                                        OnClick="@(() => DownloadReport("sessions"))"
+                                        Disabled="@isDownloading">
+                                📥 Download Excel
+                            </FluentButton>
+                        </FluentStack>
+                    </FluentStack>
+                </FluentCard>
+            </FluentGridItem>
+
+            <!-- Quick Links -->
+            <FluentGridItem xs="12">
+                <FluentCard>
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 1rem;">
+                        <FluentLabel Typo="Typography.H5">
+                            📈 Analytics Dashboard
+                        </FluentLabel>
+                        <FluentLabel Typo="Typography.Body">View real-time analytics, charts, and trends</FluentLabel>
+                        <FluentStack Orientation="Orientation.Horizontal" Style="gap: 0.5rem;">
+                            <FluentButton Appearance="Appearance.Outline" 
+                                        Href="/admin/analytics">
+                                📊 View Dashboard
+                            </FluentButton>
+                        </FluentStack>
+                    </FluentStack>
+                </FluentCard>
+            </FluentGridItem>
+        </FluentGrid>
+
+        @if (isDownloading)
+        {
+            <FluentStack Orientation="Orientation.Vertical" HorizontalAlignment="HorizontalAlignment.Center" Style="gap: 0.5rem;">
+                <FluentProgressRing />
+                <FluentLabel>Generating report...</FluentLabel>
+            </FluentStack>
+        }
+    </FluentStack>
+</div>
+
+@code {
+    private bool isDownloading = false;
+
+    private async Task DownloadReport(string reportType)
+    {
+        isDownloading = true;
+        try
+        {
+            var url = $"/api/reports/{reportType}";
+            
+            var response = await Http.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var fileBytes = await response.Content.ReadAsByteArrayAsync();
+                var fileName = response.Content.Headers.ContentDisposition?.FileName?.Trim('"') ?? $"{reportType}.xlsx";
+                
+                // Trigger download
+                await JSRuntime.InvokeVoidAsync("downloadFile", fileName, fileBytes);
+                
+                ToastService.ShowSuccess($"{reportType} report downloaded successfully!");
+            }
+            else
+            {
+                ToastService.ShowError("Failed to generate report");
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Error: {ex.Message}");
+        }
+        finally
+        {
+            isDownloading = false;
+        }
+    }
+}

@@ -1,0 +1,113 @@
+@page "/reports/payments"
+@inject HttpClient Http
+@inject IJSRuntime JS
+@inject ILogger<PaymentReport> Logger
+@attribute [Authorize(Roles = "Admin,Staff")]
+
+<PageTitle>Payment Report - NBT</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical" Style="padding: 20px;">
+    <FluentLabel Typo="Typography.H3">Payment Report</FluentLabel>
+
+    <FluentCard Style="margin-top: 20px; padding: 20px;">
+        <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="10">
+            <FluentDatePicker Label="Start Date" 
+                            @bind-Value="startDate" 
+                            Style="width: 200px;" />
+            
+            <FluentDatePicker Label="End Date" 
+                            @bind-Value="endDate" 
+                            Style="width: 200px;" />
+
+            <FluentButton Appearance="Appearance.Accent" 
+                        OnClick="GenerateReport"
+                        Disabled="isGenerating">
+                <FluentIcon Value="@(new Icons.Regular.Size20.DocumentTable())" Slot="start" />
+                @(isGenerating ? "Generating..." : "Generate Excel Report")
+            </FluentButton>
+        </FluentStack>
+
+        @if (!string.IsNullOrEmpty(successMessage))
+        {
+            <FluentMessageBar Intent="MessageIntent.Success" Style="margin-top: 15px;">
+                @successMessage
+            </FluentMessageBar>
+        }
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <FluentMessageBar Intent="MessageIntent.Error" Style="margin-top: 15px;">
+                @errorMessage
+            </FluentMessageBar>
+        }
+    </FluentCard>
+
+    <FluentCard Style="margin-top: 20px; padding: 20px;">
+        <FluentLabel Typo="Typography.H5">Report Information</FluentLabel>
+        <FluentLabel Style="margin-top: 10px;">
+            This report includes:
+        </FluentLabel>
+        <ul style="margin-top: 10px;">
+            <li>Invoice Number</li>
+            <li>NBT Number and Student Name</li>
+            <li>Payment Amount</li>
+            <li>Payment Status</li>
+            <li>Payment Method</li>
+            <li>Payment Date</li>
+            <li>EasyPay Reference</li>
+        </ul>
+    </FluentCard>
+</FluentStack>
+
+@code {
+    private DateTime? startDate;
+    private DateTime? endDate;
+    private bool isGenerating = false;
+    private string successMessage = string.Empty;
+    private string errorMessage = string.Empty;
+
+    private async Task GenerateReport()
+    {
+        isGenerating = true;
+        successMessage = string.Empty;
+        errorMessage = string.Empty;
+
+        try
+        {
+            var queryParams = new List<string>();
+            if (startDate.HasValue)
+                queryParams.Add($"startDate={startDate.Value:yyyy-MM-dd}");
+            if (endDate.HasValue)
+                queryParams.Add($"endDate={endDate.Value:yyyy-MM-dd}");
+
+            var queryString = queryParams.Any() ? "?" + string.Join("&", queryParams) : "";
+            var url = $"api/reports/payments{queryString}";
+
+            var response = await Http.GetAsync(url);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var fileBytes = await response.Content.ReadAsByteArrayAsync();
+                var fileName = $"Payments_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+                
+                await JS.InvokeVoidAsync("downloadFile", fileName, Convert.ToBase64String(fileBytes), 
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                
+                successMessage = "Report generated successfully!";
+            }
+            else
+            {
+                errorMessage = "Failed to generate report.";
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error generating payment report");
+            errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            isGenerating = false;
+        }
+    }
+}

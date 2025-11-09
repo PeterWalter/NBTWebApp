@@ -1,0 +1,163 @@
+@page "/venues/edit/{Id:guid}"
+@using NBT.Application.Venues.DTOs
+@using NBT.WebUI.Client.Services
+@inject IVenueService VenueService
+@inject NavigationManager Navigation
+@attribute [Authorize(Roles = "Admin,Staff")]
+
+<PageTitle>Edit Venue</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical" Style="height: 100%;">
+    <FluentToolbar Style="width: 100%;">
+        <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => Navigation.NavigateTo($"/venues/{Id}"))">
+            <FluentIcon Value="@(new Icons.Regular.Size20.ArrowLeft())" Slot="start" />
+            Back to Details
+        </FluentButton>
+        <FluentSpacer />
+        <FluentLabel Typo="Typography.H3">Edit Venue</FluentLabel>
+        <FluentSpacer />
+    </FluentToolbar>
+
+    @if (isLoading)
+    {
+        <FluentProgressRing />
+    }
+    else if (model == null)
+    {
+        <FluentMessageBar Intent="MessageIntent.Error">Venue not found</FluentMessageBar>
+    }
+    else
+    {
+        <FluentCard Style="width: 100%; max-width: 800px; margin: 20px auto;">
+            <EditForm Model="@model" OnValidSubmit="@HandleSubmit">
+                <DataAnnotationsValidator />
+                <FluentValidationSummary />
+
+                <FluentStack Orientation="Orientation.Vertical">
+                    <FluentTextField @bind-Value="model.VenueName" 
+                                   Label="Venue Name" 
+                                   Required 
+                                   Style="width: 100%;" />
+
+                    <FluentTextField @bind-Value="model.VenueCode" 
+                                   Label="Venue Code" 
+                                   Required 
+                                   Style="width: 100%;" />
+
+                    <FluentTextField @bind-Value="model.Address" 
+                                   Label="Address" 
+                                   Required 
+                                   Style="width: 100%;" />
+
+                    <FluentStack Orientation="Orientation.Horizontal">
+                        <FluentTextField @bind-Value="model.City" 
+                                       Label="City" 
+                                       Required 
+                                       Style="flex: 1;" />
+
+                        <FluentSelect TOption="string" @bind-Value="model.Province"
+                                    Label="Province"
+                                    Required
+                                    Style="flex: 1;">
+                            <FluentOption Value="">Select Province</FluentOption>
+                            <FluentOption Value="Gauteng">Gauteng</FluentOption>
+                            <FluentOption Value="Western Cape">Western Cape</FluentOption>
+                            <FluentOption Value="KwaZulu-Natal">KwaZulu-Natal</FluentOption>
+                            <FluentOption Value="Eastern Cape">Eastern Cape</FluentOption>
+                            <FluentOption Value="Free State">Free State</FluentOption>
+                            <FluentOption Value="Limpopo">Limpopo</FluentOption>
+                            <FluentOption Value="Mpumalanga">Mpumalanga</FluentOption>
+                            <FluentOption Value="Northern Cape">Northern Cape</FluentOption>
+                            <FluentOption Value="North West">North West</FluentOption>
+                        </FluentSelect>
+
+                        <FluentTextField @bind-Value="model.PostalCode" 
+                                       Label="Postal Code" 
+                                       Style="flex: 0.5;" />
+                    </FluentStack>
+
+                    <FluentTextField @bind-Value="model.ContactPerson" 
+                                   Label="Contact Person" 
+                                   Style="width: 100%;" />
+
+                    <FluentStack Orientation="Orientation.Horizontal">
+                        <FluentTextField @bind-Value="model.ContactEmail" 
+                                       Label="Contact Email" 
+                                       Type="InputType.Email" 
+                                       Style="flex: 1;" />
+
+                        <FluentTextField @bind-Value="model.ContactPhone" 
+                                       Label="Contact Phone" 
+                                       Type="InputType.Tel" 
+                                       Style="flex: 1;" />
+                    </FluentStack>
+
+                    <FluentSelect TOption="string" @bind-Value="model.Status"
+                                Label="Status"
+                                Required
+                                Style="width: 100%;">
+                        <FluentOption Value="Active">Active</FluentOption>
+                        <FluentOption Value="Inactive">Inactive</FluentOption>
+                        <FluentOption Value="UnderMaintenance">Under Maintenance</FluentOption>
+                    </FluentSelect>
+
+                    <FluentCheckbox @bind-Value="model.IsAccessible" 
+                                  Label="Wheelchair Accessible" />
+
+                    <FluentTextArea @bind-Value="model.Notes" 
+                                  Label="Notes" 
+                                  Rows="3" 
+                                  Style="width: 100%;" />
+
+                    <FluentStack Orientation="Orientation.Horizontal" Style="margin-top: 20px;">
+                        <FluentButton Appearance="Appearance.Accent" 
+                                    Type="ButtonType.Submit" 
+                                    Loading="@isSaving">
+                            <FluentIcon Value="@(new Icons.Regular.Size20.Save())" Slot="start" />
+                            Save Changes
+                        </FluentButton>
+                        <FluentButton Appearance="Appearance.Neutral" 
+                                    OnClick="@(() => Navigation.NavigateTo($"/venues/{Id}"))">
+                            Cancel
+                        </FluentButton>
+                    </FluentStack>
+                </FluentStack>
+            </EditForm>
+        </FluentCard>
+    }
+</FluentStack>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private VenueDto? model;
+    private bool isLoading = true;
+    private bool isSaving = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        model = await VenueService.GetVenueByIdAsync(Id);
+        isLoading = false;
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (model == null) return;
+
+        isSaving = true;
+        try
+        {
+            var success = await VenueService.UpdateVenueAsync(Id, model);
+            if (success)
+            {
+                Navigation.NavigateTo($"/venues/{Id}");
+            }
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+}

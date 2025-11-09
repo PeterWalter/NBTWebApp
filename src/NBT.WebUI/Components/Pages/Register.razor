@@ -1,152 +1,736 @@
 @page "/register"
 @rendermode InteractiveServer
-@using System.ComponentModel.DataAnnotations
+@using NBT.WebUI.Services
+@using NBT.WebUI.Models
+@using Microsoft.FluentUI.AspNetCore.Components
+@inject IRegistrationService RegistrationService
 @inject NavigationManager Navigation
 
-<PageTitle>Register - NBT Website</PageTitle>
+<PageTitle>Student Registration - NBT</PageTitle>
 
-<div class="login-container">
-    <div class="login-card">
-        <div class="login-header">
-            <h1>Create Account</h1>
-            <p>Register for an NBT account</p>
-        </div>
+<div class="registration-container">
+    <FluentCard class="wizard-card">
+        <h1 class="wizard-title">
+            Student Registration
+        </h1>
 
-        @if (!string.IsNullOrEmpty(_errorMessage))
+        @if (!_registrationComplete)
         {
-            <FluentMessageBar Intent="MessageIntent.Error" Class="login-error">
-                @_errorMessage
-            </FluentMessageBar>
-        }
+            <!-- Progress Indicator -->
+            <div class="wizard-progress">
+                <div class="progress-steps">
+                    <div class="progress-step @(_currentStep == 1 ? "active" : _currentStep > 1 ? "completed" : "")">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Personal & Contact</div>
+                    </div>
+                    <div class="progress-line @(_currentStep > 1 ? "completed" : "")"></div>
+                    <div class="progress-step @(_currentStep == 2 ? "active" : _currentStep > 2 ? "completed" : "")">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Academic & Survey</div>
+                    </div>
+                    <div class="progress-line @(_currentStep > 2 ? "completed" : "")"></div>
+                    <div class="progress-step @(_currentStep == 3 ? "active" : "")">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Review</div>
+                    </div>
+                </div>
+            </div>
 
-        @if (_success)
+            <div class="wizard-content">
+                @if (_currentStep == 1)
+                {
+                    <!-- Step 1: Personal Information and Contact Details -->
+                    <div class="step-content">
+                        <h3>Personal Information & Contact Details</h3>
+                        <p class="step-description">Please provide your identity and contact information</p>
+
+                        <h4 style="margin-top: 0;">Identity Verification</h4>
+                        <FluentSelect Label="ID Type *" 
+                                    @bind-Value="_model.IDType"
+                                    TOption="string"
+                                    Items="@_idTypes"
+                                    OptionValue="@(x => x)"
+                                    OptionText="@(x => GetIDTypeLabel(x))"
+                                    Style="width: 100%; margin-bottom: 20px;" />
+
+                        <FluentTextField Label="ID Number *" 
+                                       @bind-Value="_model.IDNumber"
+                                       Style="width: 100%; margin-bottom: 20px;"
+                                       Placeholder="@GetIDPlaceholder(_model.IDType)"
+                                       Required="true"
+                                       @oninput="OnIDNumberChanged" />
+                        
+                        @if (!string.IsNullOrEmpty(_idValidationMessage))
+                        {
+                            <FluentMessageBar Intent="@(_idValidationError ? MessageIntent.Error : MessageIntent.Success)"
+                                            Style="margin-bottom: 20px;">
+                                @_idValidationMessage
+                            </FluentMessageBar>
+                        }
+
+                        @if (_model.IDType == "FOREIGN_ID" || _model.IDType == "PASSPORT")
+                        {
+                            <div class="form-row">
+                                <FluentTextField Label="Nationality *" 
+                                               @bind-Value="_model.Nationality"
+                                               Style="width: 100%;"
+                                               Required="true" />
+                                
+                                <FluentTextField Label="Country of Origin *" 
+                                               @bind-Value="_model.CountryOfOrigin"
+                                               Style="width: 100%;"
+                                               Required="true" />
+                            </div>
+                        }
+
+                        <h4 style="margin-top: 30px;">Personal Details</h4>
+                        <div class="form-row">
+                            <FluentTextField Label="First Name *" 
+                                           @bind-Value="_model.FirstName"
+                                           Style="width: 100%;"
+                                           Required="true" />
+                            
+                            <FluentTextField Label="Last Name *" 
+                                           @bind-Value="_model.LastName"
+                                           Style="width: 100%;"
+                                           Required="true" />
+                        </div>
+
+                        <div class="form-row">
+                            <FluentDatePicker Label="Date of Birth *" 
+                                            @bind-Value="_model.DateOfBirth"
+                                            Style="width: 100%;"
+                                            Required="true"
+                                            Max="@DateTime.Today.AddYears(-15)"
+                                            Disabled="@_dobExtractedFromID" />
+                            
+                            <FluentSelect Label="Gender *" 
+                                        @bind-Value="_model.Gender"
+                                        TOption="string"
+                                        Items="@_genderOptions"
+                                        OptionValue="@(x => x)"
+                                        OptionText="@(x => x)"
+                                        Style="width: 100%;"
+                                        Required="true"
+                                        Disabled="@_genderExtractedFromID" />
+                        </div>
+
+                        <FluentSelect Label="Ethnicity *" 
+                                    @bind-Value="_model.Ethnicity"
+                                    TOption="string"
+                                    Items="@_ethnicityOptions"
+                                    OptionValue="@(x => x)"
+                                    OptionText="@(x => x)"
+                                    Style="width: 100%; margin-bottom: 30px;"
+                                    Required="true" />
+
+                        <h4>Contact Information</h4>
+                        <FluentTextField Label="Email Address *" 
+                                       @bind-Value="_model.Email"
+                                       Style="width: 100%; margin-bottom: 20px;"
+                                       TextFieldType="TextFieldType.Email"
+                                       Required="true"
+                                       Placeholder="your.email@example.com" />
+
+                        <div class="form-row">
+                            <FluentTextField Label="Phone Number *" 
+                                           @bind-Value="_model.PhoneNumber"
+                                           Style="width: 100%;"
+                                           TextFieldType="TextFieldType.Tel"
+                                           Required="true"
+                                           Placeholder="0123456789" />
+                            
+                            <FluentTextField Label="Alternative Phone" 
+                                           @bind-Value="_model.AlternativePhoneNumber"
+                                           Style="width: 100%;"
+                                           TextFieldType="TextFieldType.Tel"
+                                           Placeholder="Optional" />
+                        </div>
+                    </div>
+                }
+                else if (_currentStep == 2)
+                {
+                    <!-- Step 2: Academic Information and Survey Questions -->
+                    <div class="step-content">
+                        <h3>Academic Information & Background Questionnaire</h3>
+                        <p class="step-description">Please provide your academic background and help us understand your needs</p>
+
+                        <h4 style="margin-top: 0;">Academic Details</h4>
+                        <FluentTextField Label="School Name *" 
+                                       @bind-Value="_model.SchoolName"
+                                       Style="width: 100%; margin-bottom: 20px;"
+                                       Required="true" />
+
+                        <div class="form-row">
+                            <FluentSelect Label="School Province" 
+                                        @bind-Value="_model.SchoolProvince"
+                                        TOption="string"
+                                        Items="@_provinces"
+                                        OptionValue="@(x => x)"
+                                        OptionText="@(x => x)"
+                                        Style="width: 100%;" />
+                            
+                            <FluentNumberField Label="Current Grade" 
+                                             @bind-Value="_model.GradeYear"
+                                             Style="width: 100%;"
+                                             Min="10"
+                                             Max="12" />
+                        </div>
+
+                        <FluentTextField Label="Home Language" 
+                                       @bind-Value="_model.HomeLanguage"
+                                       Style="width: 100%; margin-bottom: 20px;"
+                                       Placeholder="e.g., English, Afrikaans, Zulu" />
+
+                        <div class="form-row">
+                            <FluentTextField Label="Address Line 1" 
+                                           @bind-Value="_model.AddressLine1"
+                                           Style="width: 100%;"
+                                           Placeholder="Street address" />
+                            
+                            <FluentTextField Label="Address Line 2" 
+                                           @bind-Value="_model.AddressLine2"
+                                           Style="width: 100%;"
+                                           Placeholder="Apartment, suite, etc. (optional)" />
+                        </div>
+
+                        <div class="form-row">
+                            <FluentTextField Label="City" 
+                                           @bind-Value="_model.City"
+                                           Style="width: 100%;"
+                                           Placeholder="City" />
+                            
+                            <FluentSelect Label="Province" 
+                                        @bind-Value="_model.Province"
+                                        TOption="string"
+                                        Items="@_provinces"
+                                        OptionValue="@(x => x)"
+                                        OptionText="@(x => x)"
+                                        Style="width: 100%;" />
+                        </div>
+
+                        <div class="form-row">
+                            <FluentTextField Label="Postal Code" 
+                                           @bind-Value="_model.PostalCode"
+                                           Style="width: 100%;"
+                                           Placeholder="0000" />
+                            
+                            <FluentTextField Label="Country" 
+                                           @bind-Value="_model.Country"
+                                           Style="width: 100%;" />
+                        </div>
+
+                        <h4 style="margin-top: 30px;">Pre-Test Questionnaire</h4>
+                        <FluentTextArea Label="What motivates you to take the NBT?" 
+                                      @bind-Value="_model.MotivationForTesting"
+                                      Style="width: 100%; margin-bottom: 20px;"
+                                      Rows="3"
+                                      Placeholder="Share your reasons for taking this test" />
+
+                        <FluentTextField Label="Career Interests" 
+                                       @bind-Value="_model.CareerInterests"
+                                       Style="width: 100%; margin-bottom: 20px;"
+                                       Placeholder="What career field interests you?" />
+
+                        <FluentTextField Label="Preferred Study Field" 
+                                       @bind-Value="_model.PreferredStudyField"
+                                       Style="width: 100%; margin-bottom: 20px;"
+                                       Placeholder="What would you like to study at university?" />
+
+                        <div class="form-row">
+                            <FluentCheckbox @bind-Value="_model.HasAccessToComputer"
+                                          Label="I have access to a computer"
+                                          Style="width: 100%;" />
+                            
+                            <FluentCheckbox @bind-Value="_model.HasInternetAccess"
+                                          Label="I have internet access at home"
+                                          Style="width: 100%;" />
+                        </div>
+
+                        <FluentTextArea Label="Additional Comments" 
+                                      @bind-Value="_model.AdditionalComments"
+                                      Style="width: 100%; margin-top: 20px;"
+                                      Rows="3"
+                                      Placeholder="Any additional information you'd like to share (optional)" />
+
+                        <h4 style="margin-top: 30px;">Special Accommodations</h4>
+                        <FluentCheckbox @bind-Value="_model.RequiresAccommodation"
+                                      Label="I require special accommodations"
+                                      Style="margin-bottom: 20px;" />
+
+                        @if (_model.RequiresAccommodation)
+                        {
+                            <FluentTextArea Label="Accommodation Details *" 
+                                          @bind-Value="_model.AccommodationDetails"
+                                          Style="width: 100%;"
+                                          Rows="4"
+                                          Placeholder="Please describe the accommodations you require (e.g., extra time, wheelchair access, braille materials)"
+                                          Required="true" />
+                            
+                            <FluentMessageBar Intent="MessageIntent.Info" Style="margin-top: 10px;">
+                                Your accommodation request will be reviewed by our team. You may be contacted for additional information.
+                            </FluentMessageBar>
+                        }
+                    </div>
+                }
+                else if (_currentStep == 3)
+                {
+                    <!-- Step 3: Review and Submit -->
+                    <div class="step-content">
+                        <h3>Review Your Information</h3>
+                        <p class="step-description">Please review all information before submitting</p>
+
+                        <div class="review-section">
+                            <h4>Identity</h4>
+                            <p><strong>ID Type:</strong> @GetIDTypeLabel(_model.IDType)</p>
+                            <p><strong>ID Number:</strong> @_model.IDNumber</p>
+                            @if (!string.IsNullOrEmpty(_model.Nationality))
+                            {
+                                <p><strong>Nationality:</strong> @_model.Nationality</p>
+                            }
+                        </div>
+
+                        <div class="review-section">
+                            <h4>Personal Information</h4>
+                            <p><strong>Name:</strong> @_model.FirstName @_model.LastName</p>
+                            <p><strong>Date of Birth:</strong> @_model.DateOfBirth?.ToString("dd MMM yyyy")</p>
+                            <p><strong>Gender:</strong> @_model.Gender</p>
+                            <p><strong>Ethnicity:</strong> @_model.Ethnicity</p>
+                        </div>
+
+                        <div class="review-section">
+                            <h4>Contact Information</h4>
+                            <p><strong>Email:</strong> @_model.Email</p>
+                            <p><strong>Phone:</strong> @_model.PhoneNumber</p>
+                        </div>
+
+                        <div class="review-section">
+                            <h4>Academic Information</h4>
+                            <p><strong>School:</strong> @_model.SchoolName</p>
+                            @if (_model.GradeYear.HasValue)
+                            {
+                                <p><strong>Grade:</strong> @_model.GradeYear</p>
+                            }
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(_model.MotivationForTesting) || !string.IsNullOrEmpty(_model.CareerInterests))
+                        {
+                            <div class="review-section">
+                                <h4>Survey Responses</h4>
+                                @if (!string.IsNullOrEmpty(_model.MotivationForTesting))
+                                {
+                                    <p><strong>Motivation:</strong> @_model.MotivationForTesting</p>
+                                }
+                                @if (!string.IsNullOrEmpty(_model.CareerInterests))
+                                {
+                                    <p><strong>Career Interests:</strong> @_model.CareerInterests</p>
+                                }
+                                @if (!string.IsNullOrEmpty(_model.PreferredStudyField))
+                                {
+                                    <p><strong>Study Field:</strong> @_model.PreferredStudyField</p>
+                                }
+                            </div>
+                        }
+
+                        @if (_model.RequiresAccommodation)
+                        {
+                            <div class="review-section">
+                                <h4>Special Accommodations</h4>
+                                <p>@_model.AccommodationDetails</p>
+                            </div>
+                        }
+
+                        @if (_isSubmitting)
+                        {
+                            <FluentProgressRing Style="margin-top: 20px;" />
+                            <p>Submitting your registration...</p>
+                        }
+
+                        @if (!string.IsNullOrEmpty(_submitError))
+                        {
+                            <FluentMessageBar Intent="MessageIntent.Error" Style="margin-top: 20px;">
+                                @_submitError
+                            </FluentMessageBar>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="wizard-navigation">
+                @if (_currentStep > 1)
+                {
+                    <FluentButton Appearance="Appearance.Neutral" 
+                                OnClick="PreviousStep"
+                                Disabled="@_isSubmitting">
+                        Previous
+                    </FluentButton>
+                }
+                
+                <div style="flex: 1;"></div>
+
+                @if (_currentStep < 3)
+                {
+                    <FluentButton Appearance="Appearance.Accent" 
+                                OnClick="NextStep"
+                                Disabled="@(!CanProceedToNextStep())">
+                        Next
+                    </FluentButton>
+                }
+                else
+                {
+                    <FluentButton Appearance="Appearance.Accent" 
+                                OnClick="HandleFinishAsync"
+                                Disabled="@_isSubmitting">
+                        Submit Registration
+                    </FluentButton>
+                }
+            </div>
+        }
+        else
         {
-            <FluentMessageBar Intent="MessageIntent.Success">
-                Registration successful! Please check your email for verification instructions.
-            </FluentMessageBar>
+            <!-- Success Message -->
+            <div class="success-content">
+                <h2>✓ Registration Successful!</h2>
+                <p class="success-message">
+                    Congratulations! Your registration has been completed successfully.
+                </p>
+                
+                <div class="nbt-number-display">
+                    <h3>Your NBT Number</h3>
+                    <div class="nbt-number">@_generatedNBTNumber</div>
+                    <p class="nbt-info">
+                        Please save this number. You will need it for all future interactions with the NBT system.
+                    </p>
+                </div>
+
+                <FluentMessageBar Intent="MessageIntent.Info" Style="margin-top: 20px;">
+                    A confirmation email has been sent to @_model.Email with your NBT number and next steps.
+                </FluentMessageBar>
+
+                <div class="action-buttons">
+                    <FluentButton Appearance="Appearance.Accent" 
+                                OnClick="@(() => Navigation.NavigateTo("/login"))">
+                        Proceed to Login
+                    </FluentButton>
+                    <FluentButton Appearance="Appearance.Neutral" 
+                                OnClick="@(() => Navigation.NavigateTo("/"))">
+                        Return to Home
+                    </FluentButton>
+                </div>
+            </div>
         }
-
-        <EditForm Model="@_registerModel" OnValidSubmit="@HandleRegisterAsync" FormName="RegisterForm">
-            <DataAnnotationsValidator />
-            
-            <div class="form-group">
-                <FluentTextField 
-                    @bind-Value="_registerModel.FirstName"
-                    Label="First Name"
-                    Required="true"
-                    Style="width: 100%;" />
-                <ValidationMessage For="@(() => _registerModel.FirstName)" />
-            </div>
-
-            <div class="form-group">
-                <FluentTextField 
-                    @bind-Value="_registerModel.LastName"
-                    Label="Last Name"
-                    Required="true"
-                    Style="width: 100%;" />
-                <ValidationMessage For="@(() => _registerModel.LastName)" />
-            </div>
-
-            <div class="form-group">
-                <FluentTextField 
-                    @bind-Value="_registerModel.Email"
-                    Label="Email Address"
-                    Placeholder="your.email@example.com"
-                    Required="true"
-                    Style="width: 100%;" />
-                <ValidationMessage For="@(() => _registerModel.Email)" />
-            </div>
-
-            <div class="form-group">
-                <FluentTextField 
-                    @bind-Value="_registerModel.Password"
-                    Label="Password"
-                    Placeholder="Minimum 6 characters"
-                    TextFieldType="TextFieldType.Password"
-                    Required="true"
-                    Style="width: 100%;" />
-                <ValidationMessage For="@(() => _registerModel.Password)" />
-            </div>
-
-            <div class="form-group">
-                <FluentTextField 
-                    @bind-Value="_registerModel.ConfirmPassword"
-                    Label="Confirm Password"
-                    TextFieldType="TextFieldType.Password"
-                    Required="true"
-                    Style="width: 100%;" />
-                <ValidationMessage For="@(() => _registerModel.ConfirmPassword)" />
-            </div>
-
-            <div class="form-actions">
-                <FluentButton 
-                    Type="ButtonType.Submit"
-                    Appearance="Appearance.Accent"
-                    Loading="@_isLoading"
-                    Disabled="@_isLoading"
-                    Style="width: 100%;">
-                    @(_isLoading ? "Creating Account..." : "Register")
-                </FluentButton>
-            </div>
-        </EditForm>
-
-        <div class="login-footer">
-            <p>Already have an account? <FluentAnchor Href="/login">Login here</FluentAnchor></p>
-        </div>
-    </div>
+    </FluentCard>
 </div>
 
+<style>
+    .wizard-progress {
+        margin: 30px 0;
+        padding: 20px;
+    }
+
+    .progress-steps {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .progress-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+    }
+
+    .step-number {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #f3f2f1;
+        border: 2px solid #d2d0ce;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .progress-step.active .step-number {
+        background: #0078d4;
+        border-color: #0078d4;
+        color: white;
+    }
+
+    .progress-step.completed .step-number {
+        background: #107c10;
+        border-color: #107c10;
+        color: white;
+    }
+
+    .step-label {
+        font-size: 12px;
+        color: #605e5c;
+        text-align: center;
+        max-width: 120px;
+    }
+
+    .progress-step.active .step-label {
+        color: #0078d4;
+        font-weight: 600;
+    }
+
+    .progress-line {
+        width: 100px;
+        height: 2px;
+        background: #d2d0ce;
+        margin: 0 10px 20px;
+    }
+
+    .progress-line.completed {
+        background: #107c10;
+    }
+
+    .wizard-content {
+        min-height: 400px;
+        padding: 20px;
+    }
+
+    .wizard-navigation {
+        display: flex;
+        gap: 10px;
+        padding: 20px;
+        border-top: 1px solid #edebe9;
+        margin-top: 20px;
+    }
+</style>
+
 @code {
-    [SupplyParameterFromForm]
-    private RegisterModel _registerModel { get; set; } = new();
-    
-    private bool _isLoading = false;
-    private string? _errorMessage;
-    private bool _success = false;
+    private RegistrationFormModel _model = new();
+    private int _currentStep = 1;
+    private bool _registrationComplete = false;
+    private bool _isSubmitting = false;
+    private string? _submitError;
+    private string? _generatedNBTNumber;
+    private string? _idValidationMessage;
+    private bool _idValidationError = false;
+    private bool _dobExtractedFromID = false;
+    private bool _genderExtractedFromID = false;
 
-    private async Task HandleRegisterAsync()
+    private readonly List<string> _idTypes = new() { "SA_ID", "FOREIGN_ID", "PASSPORT" };
+    private readonly List<string> _genderOptions = new() { "Male", "Female", "Other" };
+    private readonly List<string> _ethnicityOptions = new() 
+    { 
+        "Black African", "Coloured", "Indian/Asian", "White", "Other", "Prefer not to say" 
+    };
+    private readonly List<string> _provinces = new()
     {
-        _isLoading = true;
-        _errorMessage = null;
-        _success = false;
+        "Eastern Cape", "Free State", "Gauteng", "KwaZulu-Natal",
+        "Limpopo", "Mpumalanga", "Northern Cape", "North West", "Western Cape"
+    };
 
-        try
+    protected override void OnInitialized()
+    {
+        _model.Country = "South Africa";
+        _model.IDType = "SA_ID";
+    }
+
+    private string GetIDTypeLabel(string idType)
+    {
+        return idType switch
         {
-            // TODO: Implement registration with API
-            await Task.Delay(1000); // Simulate API call
-            
-            _success = true;
-            await Task.Delay(2000);
-            Navigation.NavigateTo("/login");
+            "SA_ID" => "South African ID",
+            "FOREIGN_ID" => "Foreign ID",
+            "PASSPORT" => "Passport",
+            _ => idType
+        };
+    }
+
+    private string GetIDPlaceholder(string idType)
+    {
+        return idType switch
+        {
+            "SA_ID" => "13-digit SA ID Number",
+            "FOREIGN_ID" => "Foreign ID Number",
+            "PASSPORT" => "Passport Number",
+            _ => "Enter ID Number"
+        };
+    }
+
+    private async Task OnIDNumberChanged(ChangeEventArgs e)
+    {
+        var idNumber = e.Value?.ToString() ?? string.Empty;
+        _model.IDNumber = idNumber;
+        
+        if (string.IsNullOrWhiteSpace(idNumber))
+        {
+            _idValidationMessage = null;
+            _dobExtractedFromID = false;
+            _genderExtractedFromID = false;
+            return;
         }
-        catch (Exception ex)
+
+        // Extract DOB and Gender from SA ID
+        if (_model.IDType == "SA_ID" && idNumber.Length == 13 && idNumber.All(char.IsDigit))
         {
-            _errorMessage = $"Registration failed: {ex.Message}";
+            ExtractDataFromSAID(idNumber);
         }
-        finally
+        else
         {
-            _isLoading = false;
+            _dobExtractedFromID = false;
+            _genderExtractedFromID = false;
+        }
+
+        // Validate format
+        var isValid = await RegistrationService.ValidateIDNumberAsync(idNumber, _model.IDType);
+        if (!isValid)
+        {
+            _idValidationMessage = _model.IDType == "SA_ID" 
+                ? "Invalid SA ID number format or checksum" 
+                : "ID number must be between 6 and 20 characters";
+            _idValidationError = true;
+            return;
+        }
+
+        // Check for duplicates
+        var isDuplicate = await RegistrationService.CheckDuplicateAsync(idNumber, _model.IDType);
+        if (isDuplicate)
+        {
+            _idValidationMessage = "This ID number is already registered in the system";
+            _idValidationError = true;
+        }
+        else
+        {
+            _idValidationMessage = "ID number is valid and available";
+            _idValidationError = false;
         }
     }
 
-    public class RegisterModel
+    private void ExtractDataFromSAID(string idNumber)
     {
-        [Required(ErrorMessage = "First name is required")]
-        public string FirstName { get; set; } = string.Empty;
+        try
+        {
+            var year = int.Parse(idNumber.Substring(0, 2));
+            var month = int.Parse(idNumber.Substring(2, 2));
+            var day = int.Parse(idNumber.Substring(4, 2));
+            
+            var currentYearLastTwo = DateTime.Now.Year % 100;
+            var century = year > currentYearLastTwo ? 1900 : 2000;
+            var fullYear = century + year;
+            
+            _model.DateOfBirth = new DateTime(fullYear, month, day);
+            _dobExtractedFromID = true;
+            
+            var genderDigit = int.Parse(idNumber.Substring(6, 1));
+            _model.Gender = genderDigit < 5 ? "Female" : "Male";
+            _genderExtractedFromID = true;
+        }
+        catch
+        {
+            _dobExtractedFromID = false;
+            _genderExtractedFromID = false;
+        }
+    }
 
-        [Required(ErrorMessage = "Last name is required")]
-        public string LastName { get; set; } = string.Empty;
+    private bool CanProceedToNextStep()
+    {
+        if (_currentStep == 1)
+        {
+            return !string.IsNullOrWhiteSpace(_model.FirstName) &&
+                   !string.IsNullOrWhiteSpace(_model.LastName) &&
+                   !string.IsNullOrWhiteSpace(_model.IDNumber) &&
+                   !string.IsNullOrWhiteSpace(_model.Email) &&
+                   !string.IsNullOrWhiteSpace(_model.PhoneNumber) &&
+                   !string.IsNullOrWhiteSpace(_model.Gender) &&
+                   !string.IsNullOrWhiteSpace(_model.Ethnicity) &&
+                   _model.DateOfBirth.HasValue &&
+                   !_idValidationError;
+        }
+        else if (_currentStep == 2)
+        {
+            return !string.IsNullOrWhiteSpace(_model.SchoolName);
+        }
+        return true;
+    }
 
-        [Required(ErrorMessage = "Email is required")]
-        [EmailAddress(ErrorMessage = "Invalid email address")]
-        public string Email { get; set; } = string.Empty;
+    private void NextStep()
+    {
+        if (CanProceedToNextStep() && _currentStep < 3)
+        {
+            _currentStep++;
+            StateHasChanged();
+        }
+    }
 
-        [Required(ErrorMessage = "Password is required")]
-        [MinLength(6, ErrorMessage = "Password must be at least 6 characters")]
-        public string Password { get; set; } = string.Empty;
+    private void PreviousStep()
+    {
+        if (_currentStep > 1)
+        {
+            _currentStep--;
+            StateHasChanged();
+        }
+    }
 
-        [Required(ErrorMessage = "Please confirm your password")]
-        [Compare("Password", ErrorMessage = "Passwords do not match")]
-        public string ConfirmPassword { get; set; } = string.Empty;
+    private async Task HandleFinishAsync()
+    {
+        if (!ValidateRegistrationModel())
+        {
+            _submitError = "Please fill in all required fields.";
+            return;
+        }
+
+        _isSubmitting = true;
+        _submitError = null;
+
+        try
+        {
+            var result = await RegistrationService.RegisterStudentAsync(_model);
+            
+            if (result.Success)
+            {
+                _generatedNBTNumber = result.NBTNumber;
+                _registrationComplete = true;
+            }
+            else
+            {
+                _submitError = result.ErrorMessage ?? "Registration failed. Please try again.";
+            }
+        }
+        catch (Exception ex)
+        {
+            _submitError = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            _isSubmitting = false;
+        }
+    }
+
+    private bool ValidateRegistrationModel()
+    {
+        if (string.IsNullOrWhiteSpace(_model.FirstName) ||
+            string.IsNullOrWhiteSpace(_model.LastName) ||
+            string.IsNullOrWhiteSpace(_model.IDNumber) ||
+            string.IsNullOrWhiteSpace(_model.Email) ||
+            string.IsNullOrWhiteSpace(_model.PhoneNumber) ||
+            string.IsNullOrWhiteSpace(_model.SchoolName) ||
+            string.IsNullOrWhiteSpace(_model.Gender) ||
+            string.IsNullOrWhiteSpace(_model.Ethnicity) ||
+            !_model.DateOfBirth.HasValue)
+        {
+            return false;
+        }
+
+        if ((_model.IDType == "FOREIGN_ID" || _model.IDType == "PASSPORT") &&
+            (string.IsNullOrWhiteSpace(_model.Nationality) || string.IsNullOrWhiteSpace(_model.CountryOfOrigin)))
+        {
+            return false;
+        }
+
+        if (_model.RequiresAccommodation && string.IsNullOrWhiteSpace(_model.AccommodationDetails))
+        {
+            return false;
+        }
+
+        return true;
     }
 }

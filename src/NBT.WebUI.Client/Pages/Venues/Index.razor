@@ -1,0 +1,115 @@
+@page "/venues"
+@using NBT.Application.Venues.DTOs
+@using NBT.WebUI.Client.Services
+@inject IVenueService VenueService
+@inject NavigationManager Navigation
+@attribute [Authorize(Roles = "Admin,Staff")]
+
+<PageTitle>Venue Management</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical" Style="height: 100%;">
+    <FluentToolbar Style="width: 100%;">
+        <FluentLabel Typo="Typography.H3">Venue Management</FluentLabel>
+        <FluentSpacer />
+        <FluentButton Appearance="Appearance.Accent" OnClick="@(() => Navigation.NavigateTo("/venues/create"))">
+            <FluentIcon Value="@(new Icons.Regular.Size20.Add())" Slot="start" />
+            Add New Venue
+        </FluentButton>
+    </FluentToolbar>
+
+    <FluentCard Style="width: 100%; margin-top: 20px;">
+        <FluentTextField @bind-Value="@searchTerm" 
+                        Placeholder="Search venues by name, code, city, or province..."
+                        Style="width: 100%; margin-bottom: 20px;"
+                        @oninput="HandleSearch">
+            <FluentIcon Value="@(new Icons.Regular.Size20.Search())" Slot="start" />
+        </FluentTextField>
+
+        @if (isLoading)
+        {
+            <FluentProgressRing />
+        }
+        else if (venues == null || !venues.Any())
+        {
+            <FluentMessageBar Intent="MessageIntent.Info">
+                No venues found. Click "Add New Venue" to create one.
+            </FluentMessageBar>
+        }
+        else
+        {
+            <FluentDataGrid Items="@FilteredVenues" GridTemplateColumns="1fr 1fr 1fr 1fr 1fr 1fr 150px">
+                <PropertyColumn Property="@(v => v.VenueCode)" Sortable="true" Title="Code" />
+                <PropertyColumn Property="@(v => v.VenueName)" Sortable="true" Title="Name" />
+                <PropertyColumn Property="@(v => v.City)" Sortable="true" Title="City" />
+                <PropertyColumn Property="@(v => v.Province)" Sortable="true" Title="Province" />
+                <PropertyColumn Property="@(v => v.TotalCapacity)" Sortable="true" Title="Capacity" />
+                <PropertyColumn Property="@(v => v.RoomCount)" Sortable="true" Title="Rooms" />
+                <TemplateColumn Title="Status">
+                    <FluentBadge Appearance="@(context.Status == "Active" ? Appearance.Accent : Appearance.Neutral)">
+                        @context.Status
+                    </FluentBadge>
+                </TemplateColumn>
+                <TemplateColumn Title="Actions">
+                    <FluentStack Orientation="Orientation.Horizontal">
+                        <FluentButton Appearance="Appearance.Lightweight" 
+                                    OnClick="@(() => Navigation.NavigateTo($"/venues/{context.Id}"))">
+                            <FluentIcon Value="@(new Icons.Regular.Size16.Eye())" />
+                        </FluentButton>
+                        <FluentButton Appearance="Appearance.Lightweight" 
+                                    OnClick="@(() => Navigation.NavigateTo($"/venues/edit/{context.Id}"))">
+                            <FluentIcon Value="@(new Icons.Regular.Size16.Edit())" />
+                        </FluentButton>
+                        <FluentButton Appearance="Appearance.Lightweight" 
+                                    OnClick="@(() => DeleteVenue(context.Id))">
+                            <FluentIcon Value="@(new Icons.Regular.Size16.Delete())" Color="Color.Error" />
+                        </FluentButton>
+                    </FluentStack>
+                </TemplateColumn>
+            </FluentDataGrid>
+        }
+    </FluentCard>
+</FluentStack>
+
+@code {
+    private List<VenueDto>? venues;
+    private string searchTerm = string.Empty;
+    private bool isLoading = true;
+
+    private IQueryable<VenueDto>? FilteredVenues => 
+        venues?.Where(v => 
+            string.IsNullOrWhiteSpace(searchTerm) || 
+            v.VenueName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+            v.VenueCode.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+            v.City.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+            v.Province.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+        .AsQueryable();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadVenues();
+    }
+
+    private async Task LoadVenues()
+    {
+        isLoading = true;
+        venues = await VenueService.GetAllVenuesAsync();
+        isLoading = false;
+    }
+
+    private void HandleSearch(ChangeEventArgs e)
+    {
+        searchTerm = e.Value?.ToString() ?? string.Empty;
+    }
+
+    private async Task DeleteVenue(Guid id)
+    {
+        var venue = venues?.FirstOrDefault(v => v.Id == id);
+        if (venue == null) return;
+
+        // TODO: Add confirmation dialog
+        if (await VenueService.DeleteVenueAsync(id))
+        {
+            await LoadVenues();
+        }
+    }
+}
