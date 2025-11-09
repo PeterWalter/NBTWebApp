@@ -1,0 +1,271 @@
+@page "/admin/reports"
+@using Microsoft.AspNetCore.Authorization
+@using System.Net.Http.Headers
+@attribute [Authorize(Roles = "Admin,Staff")]
+@inject HttpClient Http
+@inject IJSRuntime JS
+@inject NavigationManager NavigationManager
+@rendermode @(new Microsoft.AspNetCore.Components.Web.InteractiveServerRenderMode(prerender: false))
+
+<PageTitle>Reports - NBT Admin</PageTitle>
+
+<div class="page-container">
+    <div class="page-header">
+        <h1>Reports & Analytics</h1>
+        <p>Generate and download various system reports</p>
+    </div>
+
+    <FluentStack Orientation="Orientation.Vertical" Style="gap: 2rem;">
+        
+        <!-- Excel Reports Section -->
+        <div class="reports-section">
+            <h2>Excel Reports</h2>
+            <FluentStack Orientation="Orientation.Horizontal" Wrap="true" Style="gap: 1.5rem;">
+                
+                <!-- Registrations Report -->
+                <FluentCard Style="width: 300px; padding: 1.5rem;">
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 1rem;">
+                        <div>
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📄</div>
+                            <h3>Registration Report</h3>
+                            <p>All student registrations with personal and academic details</p>
+                        </div>
+                        
+                        <div class="date-filters">
+                            <FluentDatePicker Label="Start Date" @bind-Value="@registrationStartDate" />
+                            <FluentDatePicker Label="End Date" @bind-Value="@registrationEndDate" />
+                        </div>
+                        
+                        <FluentButton Appearance="Appearance.Accent" 
+                                    OnClick="@(() => DownloadReport("registrations", registrationStartDate, registrationEndDate))"
+                                    Loading="@isLoading">
+                            ⬇️ Download Excel
+                        </FluentButton>
+                    </FluentStack>
+                </FluentCard>
+
+                <!-- Payments Report -->
+                <FluentCard Style="width: 300px; padding: 1.5rem;">
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 1rem;">
+                        <div>
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">💰</div>
+                            <h3>Payment Report</h3>
+                            <p>All payment transactions with status and amounts</p>
+                        </div>
+                        
+                        <div class="date-filters">
+                            <FluentDatePicker Label="Start Date" @bind-Value="@paymentStartDate" />
+                            <FluentDatePicker Label="End Date" @bind-Value="@paymentEndDate" />
+                        </div>
+                        
+                        <FluentButton Appearance="Appearance.Accent" 
+                                    OnClick="@(() => DownloadReport("payments", paymentStartDate, paymentEndDate))"
+                                    Loading="@isLoading">
+                            ⬇️ Download Excel
+                        </FluentButton>
+                    </FluentStack>
+                </FluentCard>
+
+                <!-- Results Report -->
+                <FluentCard Style="width: 300px; padding: 1.5rem;">
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 1rem;">
+                        <div>
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏆</div>
+                            <h3>Results Report</h3>
+                            <p>All test results with scores and performance bands</p>
+                        </div>
+                        
+                        <div class="date-filters">
+                            <FluentDatePicker Label="Start Date" @bind-Value="@resultsStartDate" />
+                            <FluentDatePicker Label="End Date" @bind-Value="@resultsEndDate" />
+                        </div>
+                        
+                        <FluentButton Appearance="Appearance.Accent" 
+                                    OnClick="@(() => DownloadReport("results", resultsStartDate, resultsEndDate))"
+                                    Loading="@isLoading">
+                            ⬇️ Download Excel
+                        </FluentButton>
+                    </FluentStack>
+                </FluentCard>
+
+                <!-- Session Utilization Report -->
+                <FluentCard Style="width: 300px; padding: 1.5rem;">
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 1rem;">
+                        <div>
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📅</div>
+                            <h3>Session Utilization Report</h3>
+                            <p>Session capacity, bookings, and utilization percentages</p>
+                        </div>
+                        
+                        <div class="date-filters">
+                            <FluentDatePicker Label="Start Date" @bind-Value="@sessionStartDate" />
+                            <FluentDatePicker Label="End Date" @bind-Value="@sessionEndDate" />
+                        </div>
+                        
+                        <FluentButton Appearance="Appearance.Accent" 
+                                    OnClick="@(() => DownloadReport("sessions", sessionStartDate, sessionEndDate))"
+                                    Loading="@isLoading">
+                            ⬇️ Download Excel
+                        </FluentButton>
+                    </FluentStack>
+                </FluentCard>
+
+            </FluentStack>
+        </div>
+
+        <!-- Analytics Dashboard Link -->
+        <div class="analytics-section">
+            <FluentCard Style="padding: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" Style="gap: 2rem;">
+                    <div style="flex: 1;">
+                        <h2 style="color: white; margin: 0 0 0.5rem 0;">Analytics Dashboard</h2>
+                        <p style="margin: 0; opacity: 0.9;">View real-time statistics, trends, and visualizations</p>
+                    </div>
+                    <FluentButton Appearance="Appearance.Lightweight" 
+                                Style="background: white; color: #667eea;"
+                                OnClick="@(() => NavigateToAnalytics())">
+                        View Dashboard →
+                    </FluentButton>
+                </FluentStack>
+            </FluentCard>
+        </div>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <FluentMessageBar Intent="MessageIntent.Error" @bind-Hidden="@hideError">
+                @errorMessage
+            </FluentMessageBar>
+        }
+
+        @if (!string.IsNullOrEmpty(successMessage))
+        {
+            <FluentMessageBar Intent="MessageIntent.Success" @bind-Hidden="@hideSuccess">
+                @successMessage
+            </FluentMessageBar>
+        }
+
+    </FluentStack>
+</div>
+
+@code {
+    private DateTime? registrationStartDate;
+    private DateTime? registrationEndDate;
+    private DateTime? paymentStartDate;
+    private DateTime? paymentEndDate;
+    private DateTime? resultsStartDate;
+    private DateTime? resultsEndDate;
+    private DateTime? sessionStartDate;
+    private DateTime? sessionEndDate;
+    
+    private bool isLoading = false;
+    private string errorMessage = "";
+    private string successMessage = "";
+    private bool hideError = true;
+    private bool hideSuccess = true;
+
+    private async Task DownloadReport(string reportType, DateTime? startDate, DateTime? endDate)
+    {
+        isLoading = true;
+        errorMessage = "";
+        successMessage = "";
+        hideError = true;
+        hideSuccess = true;
+
+        try
+        {
+            var queryParams = new List<string>();
+            if (startDate.HasValue)
+                queryParams.Add($"startDate={startDate.Value:yyyy-MM-dd}");
+            if (endDate.HasValue)
+                queryParams.Add($"endDate={endDate.Value:yyyy-MM-dd}");
+
+            var queryString = queryParams.Any() ? "?" + string.Join("&", queryParams) : "";
+            var url = $"/api/reports/{reportType}{queryString}";
+
+            var response = await Http.GetAsync(url);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var fileBytes = await response.Content.ReadAsByteArrayAsync();
+                var fileName = response.Content.Headers.ContentDisposition?.FileName?.Trim('"') 
+                             ?? $"{reportType}_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+                
+                await JS.InvokeVoidAsync("downloadFile", fileName, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileBytes);
+                
+                successMessage = $"{reportType} report downloaded successfully!";
+                hideSuccess = false;
+            }
+            else
+            {
+                errorMessage = $"Failed to generate report: {response.ReasonPhrase}";
+                hideError = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error downloading report: {ex.Message}";
+            hideError = false;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void NavigateToAnalytics()
+    {
+        NavigationManager.NavigateTo("/admin/reports/analytics");
+    }
+}
+
+<style>
+    .page-container {
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        margin: 0 0 0.5rem 0;
+        font-size: 2rem;
+        font-weight: 600;
+    }
+
+    .page-header p {
+        margin: 0;
+        color: var(--neutral-foreground-hint);
+    }
+
+    .reports-section h2 {
+        margin: 0 0 1.5rem 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .date-filters {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    fluent-card h3 {
+        margin: 0.5rem 0 0.5rem 0;
+        font-size: 1.125rem;
+        font-weight: 600;
+    }
+
+    fluent-card p {
+        margin: 0;
+        font-size: 0.875rem;
+        color: var(--neutral-foreground-hint);
+        line-height: 1.4;
+    }
+
+    .analytics-section {
+        margin-top: 1rem;
+    }
+</style>

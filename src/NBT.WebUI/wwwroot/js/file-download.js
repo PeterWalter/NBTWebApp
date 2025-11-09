@@ -1,5 +1,5 @@
-window.downloadFile = function (fileName, byteArray) {
-    const blob = new Blob([byteArray], { type: 'application/octet-stream' });
+window.downloadFile = function (fileName, contentType, byteArray) {
+    const blob = new Blob([byteArray], { type: contentType || 'application/octet-stream' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.style.display = 'none';

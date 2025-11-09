@@ -56,6 +56,36 @@
                     </FluentButton>
                 </FluentCard>
             </FluentGridItem>
+
+            <FluentGridItem xs="12" sm="6" md="3">
+                <FluentCard Style="height: 100%;">
+                    <h3 style="margin-top: 0;">Bookings</h3>
+                    <p style="color: var(--neutral-foreground-hint);">Test bookings management</p>
+                    <FluentButton Appearance="Appearance.Accent" OnClick="@(() => NavigationManager.NavigateTo("/admin/bookings"))">
+                        View
+                    </FluentButton>
+                </FluentCard>
+            </FluentGridItem>
+
+            <FluentGridItem xs="12" sm="6" md="3">
+                <FluentCard Style="height: 100%;">
+                    <h3 style="margin-top: 0;">Reports</h3>
+                    <p style="color: var(--neutral-foreground-hint);">Analytics and exports</p>
+                    <FluentButton Appearance="Appearance.Accent" OnClick="@(() => NavigationManager.NavigateTo("/admin/reports"))">
+                        Generate
+                    </FluentButton>
+                </FluentCard>
+            </FluentGridItem>
+
+            <FluentGridItem xs="12" sm="6" md="3">
+                <FluentCard Style="height: 100%;">
+                    <h3 style="margin-top: 0;">Analytics</h3>
+                    <p style="color: var(--neutral-foreground-hint);">Real-time statistics</p>
+                    <FluentButton Appearance="Appearance.Accent" OnClick="@(() => NavigationManager.NavigateTo("/admin/reports/analytics"))">
+                        View Dashboard
+                    </FluentButton>
+                </FluentCard>
+            </FluentGridItem>
         </FluentGrid>
 
         <!-- Navigation -->
@@ -81,6 +111,18 @@
                 <FluentButton Appearance="Appearance.Outline" Style="width: 100%; justify-content: flex-start;"
                               OnClick="@(() => NavigationManager.NavigateTo("/admin/users"))">
                     👥 Users
+                </FluentButton>
+                <FluentButton Appearance="Appearance.Outline" Style="width: 100%; justify-content: flex-start;"
+                              OnClick="@(() => NavigationManager.NavigateTo("/admin/bookings"))">
+                    📅 Test Bookings
+                </FluentButton>
+                <FluentButton Appearance="Appearance.Outline" Style="width: 100%; justify-content: flex-start;"
+                              OnClick="@(() => NavigationManager.NavigateTo("/admin/reports"))">
+                    📊 Reports & Exports
+                </FluentButton>
+                <FluentButton Appearance="Appearance.Outline" Style="width: 100%; justify-content: flex-start;"
+                              OnClick="@(() => NavigationManager.NavigateTo("/admin/reports/analytics"))">
+                    📈 Analytics Dashboard
                 </FluentButton>
             </FluentStack>
         </FluentCard>
