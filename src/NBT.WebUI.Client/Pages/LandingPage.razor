@@ -1,5 +1,7 @@
 @page "/"
 @using Microsoft.FluentUI.AspNetCore.Components
+@using NBT.WebUI.Client.Services
+@inject IPublicContentService PublicContentService
 
 <PageTitle>National Benchmark Tests (NBT)</PageTitle>
 
@@ -22,8 +24,47 @@
                     Sign In
                 </FluentButton>
             </div>
+            @if (testPricing.Any())
+            {
+                <div class="hero-fees">
+                    @foreach (var pricing in testPricing)
+                    {
+                        <div class="fee-item">
+                            <div class="fee-label">@GetTestTypeName(pricing.TestType)</div>
+                            <div class="fee-amount">R @pricing.Price.ToString("N2")</div>
+                        </div>
+                    }
+                </div>
+            }
         </div>
     </section>
+
+    <!-- Important Notices / Announcements -->
+    @if (announcements.Any())
+    {
+        <section class="notices-section">
+            @foreach (var announcement in announcements)
+            {
+                <FluentMessageBar Intent="MessageIntent.Info" Style="margin-bottom: 1rem;">
+                    <strong>@announcement.Title</strong> @announcement.Summary
+                </FluentMessageBar>
+            }
+        </section>
+    }
+    else
+    {
+        <section class="notices-section">
+            <FluentMessageBar Intent="MessageIntent.Info" Style="margin-bottom: 1rem;">
+                <strong>2025 Test Dates Now Available!</strong> Registration is open for the 2025 test cycle. 
+                Book your test early to secure your preferred venue and date.
+            </FluentMessageBar>
+            
+            <FluentMessageBar Intent="MessageIntent.Warning">
+                <strong>Important:</strong> NBT results are valid for 3 years from the date of booking. 
+                You can write a maximum of 2 tests per year.
+            </FluentMessageBar>
+        </section>
+    }
 
     <!-- Navigation Cards -->
     <section class="audience-section">
@@ -121,18 +162,7 @@
         </section>
     }
 
-    <!-- Important Notices -->
-    <section class="notices-section">
-        <FluentMessageBar Intent="MessageIntent.Info" Style="margin-bottom: 1rem;">
-            <strong>2025 Test Dates Now Available!</strong> Registration is open for the 2025 test cycle. 
-            Book your test early to secure your preferred venue and date.
-        </FluentMessageBar>
-        
-        <FluentMessageBar Intent="MessageIntent.Warning">
-            <strong>Important:</strong> NBT results are valid for 3 years from the date of booking. 
-            You can write a maximum of 2 tests per year.
-        </FluentMessageBar>
-    </section>
+
 
     <!-- Footer Info -->
     <section class="footer-info">
@@ -158,11 +188,35 @@
 @code {
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     
-    private string? videoUrl = null; // Set to actual video URL when available
+    private string? videoUrl = null;
+    private List<TestPricing> testPricing = new();
+    private List<Announcement> announcements = new();
     
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        // Could load from configuration
-        // videoUrl = "https://www.youtube.com/embed/YOUR_VIDEO_ID";
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        try
+        {
+            testPricing = await PublicContentService.GetCurrentTestPricingAsync();
+            announcements = await PublicContentService.GetFeaturedAnnouncementsAsync();
+        }
+        catch
+        {
+            // Gracefully handle errors - page will show without dynamic content
+        }
+    }
+
+    private string GetTestTypeName(string testType)
+    {
+        return testType switch
+        {
+            "AQL" => "AQL Test",
+            "AQL_MAT" => "AQL + MAT Test",
+            _ => testType
+        };
     }
 }

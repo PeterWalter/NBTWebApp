@@ -30,6 +30,9 @@ public static class ApplicationDbContextSeed
         // Seed Downloadable Resources
         await SeedDownloadableResourcesAsync(context);
 
+        // Seed Test Pricing
+        await SeedTestPricingAsync(context);
+
         await context.SaveChangesAsync();
     }
 
@@ -291,6 +294,45 @@ public static class ApplicationDbContextSeed
             };
 
             context.DownloadableResources.AddRange(resources);
+        }
+    }
+
+    private static async Task SeedTestPricingAsync(ApplicationDbContext context)
+    {
+        if (!await context.TestPricings.AnyAsync())
+        {
+            var currentYear = DateTime.UtcNow.Year;
+            var pricing = new List<TestPricing>
+            {
+                new TestPricing
+                {
+                    Id = Guid.NewGuid(),
+                    IntakeYear = currentYear,
+                    TestType = "AQL",
+                    Price = 150.00M,
+                    EffectiveFrom = new DateTime(currentYear, 1, 1),
+                    EffectiveTo = new DateTime(currentYear, 12, 31),
+                    IsActive = true,
+                    Notes = "Academic and Quantitative Literacy test",
+                    CreatedDate = DateTime.UtcNow,
+                    CreatedBy = "System"
+                },
+                new TestPricing
+                {
+                    Id = Guid.NewGuid(),
+                    IntakeYear = currentYear,
+                    TestType = "AQL_MAT",
+                    Price = 230.00M,
+                    EffectiveFrom = new DateTime(currentYear, 1, 1),
+                    EffectiveTo = new DateTime(currentYear, 12, 31),
+                    IsActive = true,
+                    Notes = "Academic Literacy, Quantitative Literacy, and Mathematics test",
+                    CreatedDate = DateTime.UtcNow,
+                    CreatedBy = "System"
+                }
+            };
+
+            context.TestPricings.AddRange(pricing);
         }
     }
 }

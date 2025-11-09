@@ -19,5 +19,6 @@ builder.Services.AddFluentUIComponents();
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 builder.Services.AddScoped<IVenueService, VenueService>();
 builder.Services.AddScoped<IRoomService, RoomService>();
+builder.Services.AddScoped<IPublicContentService, PublicContentService>();
 
 await builder.Build().RunAsync();

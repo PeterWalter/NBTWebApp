@@ -7,9 +7,9 @@
 .hero-section {
     background: linear-gradient(135deg, var(--accent-fill-rest) 0%, var(--accent-fill-hover) 100%);
     color: white;
-    padding: 2rem 2rem;
+    padding: 1rem 2rem;
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
     border-radius: 0 0 20px 20px;
 }
 
@@ -19,22 +19,23 @@
 }
 
 .hero-logo {
-    max-width: 150px;
+    max-width: 90px;
     height: auto;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     filter: brightness(0) invert(1);
+    border: none;
 }
 
 .hero-section h1 {
-    font-size: 2.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
 }
 
 .hero-subtitle {
-    font-size: 1.25rem;
-    margin-bottom: 1.25rem;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
     opacity: 0.95;
 }
 
@@ -46,8 +47,34 @@
 }
 
 .hero-actions fluent-button {
-    font-size: 1.1rem;
-    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    padding: 0.5rem 1.5rem;
+}
+
+.hero-fees {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.fee-item {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+}
+
+.fee-label {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin-bottom: 0.25rem;
+}
+
+.fee-amount {
+    font-size: 1.4rem;
+    font-weight: 700;
 }
 
 .audience-section {
