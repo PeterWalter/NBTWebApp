@@ -20,14 +20,6 @@
 - Configure JSON serialization options globally
 - Test all API endpoints for proper JSON formatting
 
-**CRITICAL CI/CD WORKFLOW:**
-- **Successful builds** MUST be followed by a push to GitHub
-- **New phases** MUST start with a GitHub branch creation
-- **Phase completion** requires full testing before merge to main
-- **GitHub Actions** must pass all build, test, and deployment steps
-- **Feature branches** follow naming convention: `feature/{phase-name}`
-- **Merge strategy**: Squash and merge for clean history
-
 ---
 
 ## 1. FOUNDATIONAL PRINCIPLES
@@ -69,9 +61,8 @@ These principles apply to ALL new modules beyond the base website:
 
 ### 2.1 Frontend Stack (Extended)
 ```yaml
-Base Framework: Blazor Web App Interactive Auto (.NET 9.0)
-  NOTE: .NET 9 passed Release Candidate (RC) over a year ago and is now stable
-UI Library: Microsoft Fluent UI Blazor Components (NO MudBlazor)
+Base Framework: Blazor Web App Interactive Auto (.NET 8+)
+UI Library: Microsoft Fluent UI Blazor Components
 Additional Components:
   - FluentDataGrid (paginated tables)
   - FluentWizard (multi-step registration)
@@ -100,7 +91,7 @@ Business Logic:
 ### 2.3 Database (Extended Entities)
 ```yaml
 Core Entities (5 existing): User, ContentPage, Announcement, ContactInquiry, DownloadableResource
-New Entities (12 required):
+New Entities (10 required):
   1. Student (personal information, NBT number, ID type [SA_ID|FOREIGN_ID|PASSPORT])
   2. Registration (application data, status tracking)
   3. TestSession (test date, venue, capacity)
@@ -108,11 +99,9 @@ New Entities (12 required):
   5. Room (room number, capacity, venue FK)
   6. RoomAllocation (student-room assignment for session)
   7. Payment (amount, status, EasyPay reference)
-  8. TestResult (test barcode, student FK, test type [AQL|MAT])
-  9. TestResultDomain (domain type [AL|QL|MAT], performance level, score, testResult FK)
-  10. SpecialSession (remote writer, special accommodations)
-  11. PreTestQuestionnaire (survey responses, student FK)
-  12. AuditLog (comprehensive activity logging)
+  8. TestResult (scores, upload tracking)
+  9. SpecialSession (remote writer, special accommodations)
+  10. AuditLog (comprehensive activity logging)
 
 Student Entity Extended Fields:
   - IDType: enum (SA_ID, FOREIGN_ID, PASSPORT)
@@ -120,36 +109,6 @@ Student Entity Extended Fields:
   - NBTNumber: string (14-digit Luhn-validated unique identifier)
   - Nationality: string (if FOREIGN_ID or PASSPORT)
   - CountryOfOrigin: string (if FOREIGN_ID or PASSPORT)
-  - DateOfBirth: DateTime (extracted from SA_ID if applicable)
-  - Gender: enum (Male, Female, Other) (extracted from SA_ID if applicable)
-  - Age: int (calculated from DateOfBirth, not stored if DOB is present)
-  - Ethnicity: string (collected during registration)
-
-TestResult Entity Structure:
-  - TestResultId: Guid (primary key)
-  - StudentId: Guid (foreign key to Student)
-  - TestSessionId: Guid (foreign key to TestSession)
-  - Barcode: string (unique identifier for the actual answer sheet)
-  - TestType: enum (AQL, MAT)
-  - TestDate: DateTime
-  - CreatedDate: DateTime
-  - UpdatedDate: DateTime
-
-TestResultDomain Entity Structure:
-  - TestResultDomainId: Guid (primary key)
-  - TestResultId: Guid (foreign key to TestResult)
-  - DomainType: enum (AL, QL, MAT)
-  - Score: decimal (0-100)
-  - PerformanceLevel: enum (BasicLower, BasicUpper, IntermediateLower, IntermediateUpper, ProficientLower, ProficientUpper)
-  - Percentile: decimal (0-100)
-  - CreatedDate: DateTime
-
-PreTestQuestionnaire Entity Structure:
-  - QuestionnaireId: Guid (primary key)
-  - StudentId: Guid (foreign key to Student)
-  - Responses: JSON (survey questions and answers)
-  - CompletedDate: DateTime
-  - RegistrationId: Guid (foreign key to Registration)
 
 Relationships:
   - Student 1:N Registration
@@ -159,10 +118,7 @@ Relationships:
   - TestSession 1:N RoomAllocation
   - Room 1:N RoomAllocation
   - Student 1:N RoomAllocation
-  - Student 1:N TestResult
-  - TestResult 1:N TestResultDomain (1 for AQL domains [AL, QL], 3 for MAT [AL, QL, MAT])
-  - Student 1:N PreTestQuestionnaire
-  - Registration 1:1 PreTestQuestionnaire
+  - Registration 1:1 TestResult
 ```
 
 ---
@@ -230,24 +186,11 @@ Students (applicants/writers) interact with the NBT Web Application through a st
 - Mandatory before test participation
 - Data supports NBT research initiatives and operational insights
 
-**Results Access & Structure**
+**Results Access**
 - Students securely log in to view or download their AQL and MAT results once released
 - Results available for 3 years from test date
-- **Test Result Domains**:
-  * **AQL Test**: Generates results for two domains:
-    - Academic Literacy (AL) with performance level
-    - Quantitative Literacy (QL) with performance level
-  * **MAT Test** (AQL + Math): Generates results for three domains:
-    - Academic Literacy (AL) with performance level
-    - Quantitative Literacy (QL) with performance level
-    - Mathematics (MAT) with performance level
-- **Performance Levels** (per domain): Basic Lower, Basic Upper, Intermediate Lower, Intermediate Upper, Proficient Lower, Proficient Upper
-- **Barcode Uniqueness**: Each result has a unique barcode that distinguishes the test written (identifies the actual answer sheet used)
-  * If a student writes 2 tests, each test has a different barcode
-  * Barcode format: System-generated unique identifier per test write
-  * Essential for differentiating multiple test attempts
-- Performance band and percentile displayed per domain
-- Downloadable result certificates with barcode
+- Performance band and percentile displayed
+- Downloadable result certificates
 
 **Profile Management**
 - Applicants may update personal or academic details
@@ -316,40 +259,18 @@ public interface IBookingValidationService
 ```yaml
 Pattern: Wizard Component with Step Navigation
 Steps:
-  1. Account & Personal Information (Combined Step):
-     - ID Type selection (SA_ID, FOREIGN_ID, PASSPORT)
-     - ID Number entry with validation
-     - Duplicate prevention check
-     - Personal details: First Name, Last Name, Email, Phone
-     - If SA_ID: Auto-extract DOB and Gender from ID
-     - Manual entry: DOB (if not SA_ID), Gender, Ethnicity
-     - Age calculated from DOB (not required as separate input)
-  
-  2. Academic & Test Selection (Combined Step):
-     - Academic background (school, grade, year)
-     - Test type selection (AQL or MAT)
-     - Test preferences and special accommodations
-     - Venue and session selection (capacity validation)
-  
-  3. Pre-Test Questionnaire:
-     - Background survey questions for research and equity reporting
-     - Multiple choice and short answer questions
-     - Save responses to PreTestQuestionnaire entity
-  
-  4. Review & Confirmation:
-     - Summary of all entered information
-     - Terms and conditions acceptance
-     - Submit registration
-     - NBT Number generation (automatic upon submission)
-     - Navigate to login page after successful registration
+  1. Personal Information (ID validation, duplicate check)
+  2. NBT Number Generation (Luhn algorithm, unique check)
+  3. Test Session Selection (capacity validation)
+  4. Payment Information (EasyPay initiation)
+  5. Confirmation (summary, submission)
 
 Persistence Strategy: Save draft on each step
 Validation: Client + server-side per step
-Navigation: Forward (enabled when step is valid), backward, cancel with state preservation
-NBT Number Generation: Triggered automatically on final submission, not as separate step
+Navigation: Forward, backward, cancel with state preservation
 ```
 
-**PRINCIPLE:** Registration MUST be resumable. Partial data MUST be persisted to prevent data loss. NBT number is generated server-side upon successful submission, not during wizard navigation.
+**PRINCIPLE:** Registration MUST be resumable. Partial data MUST be persisted to prevent data loss.
 
 ### 4.2 NBT Number Generation (Luhn Algorithm)
 ```csharp
