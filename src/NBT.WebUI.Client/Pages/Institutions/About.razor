@@ -1,0 +1,107 @@
+@page "/institutions/about"
+
+<PageTitle>NBT for Institutions</PageTitle>
+
+<link rel="stylesheet" href="Pages/ContentPage.css" />
+
+<div class="content-page">
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/">Home</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/institutions/about">For Institutions</FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h1>NBT for Institutions</h1>
+
+    <FluentCard class="info-card">
+        <h2>How Universities Use NBT Results</h2>
+        <p>
+            The National Benchmark Tests provide higher education institutions with valuable additional information 
+            about prospective students' academic readiness. Many South African universities use NBT results alongside 
+            National Senior Certificate (NSC) results to make informed admission and placement decisions.
+        </p>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Benefits for Institutions</h2>
+        <ul>
+            <li><strong>Enhanced Admission Decisions:</strong> NBT results complement school-leaving results and provide 
+            an independent measure of academic preparedness.</li>
+            <li><strong>Student Placement:</strong> Identify students who may benefit from extended or foundation programmes.</li>
+            <li><strong>Academic Support Planning:</strong> Understand cohort strengths and areas requiring additional support.</li>
+            <li><strong>Quality Assurance:</strong> Monitor incoming student preparedness trends over time.</li>
+            <li><strong>Research & Validation:</strong> Access aggregated data for educational research and programme evaluation.</li>
+        </ul>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Test Domains</h2>
+        <div class="domain-grid">
+            <div class="domain-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.BookOpen())" Color="Color.Accent" />
+                <h3>Academic Literacy (AL)</h3>
+                <p>Measures ability to engage with academic texts and extract meaning</p>
+            </div>
+            <div class="domain-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.Calculator())" Color="Color.Accent" />
+                <h3>Quantitative Literacy (QL)</h3>
+                <p>Assesses competency in managing quantitative information</p>
+            </div>
+            <div class="domain-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.MathFormula())" Color="Color.Accent" />
+                <h3>Mathematics (MAT)</h3>
+                <p>Evaluates mathematical knowledge and problem-solving skills</p>
+            </div>
+        </div>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Requesting Results</h2>
+        <p>
+            Institutions can request student NBT results through our secure portal. Results include performance 
+            levels, domain scores, and individual student barcodes for verification.
+        </p>
+        <FluentButton Appearance="Appearance.Accent"
+                    IconStart="@(new Icons.Regular.Size20.DocumentArrowDown())"
+                    OnClick="@(() => Navigation.NavigateTo("/institutions/request-results"))">
+            Request Student Results
+        </FluentButton>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Partnership Opportunities</h2>
+        <p>
+            The NBT Project welcomes partnerships with institutions for research, validation studies, 
+            and programme development. Contact us to explore collaboration opportunities.
+        </p>
+        <FluentButton Appearance="Appearance.Outline"
+                    IconStart="@(new Icons.Regular.Size20.Handshake())"
+                    OnClick="@(() => Navigation.NavigateTo("/institutions/partnership"))">
+            Explore Partnerships
+        </FluentButton>
+    </FluentCard>
+</div>
+
+<style>
+    .domain-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 1.5rem;
+    }
+
+    .domain-item {
+        text-align: center;
+        padding: 1.5rem;
+        background: var(--neutral-layer-2);
+        border-radius: 8px;
+    }
+
+    .domain-item h3 {
+        color: var(--accent-fill-rest);
+        margin: 1rem 0 0.5rem 0;
+    }
+</style>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+}

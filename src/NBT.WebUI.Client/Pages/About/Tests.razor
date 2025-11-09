@@ -1,0 +1,91 @@
+@page "/about/tests"
+
+<PageTitle>About the NBT Tests</PageTitle>
+
+<link rel="stylesheet" href="Pages/ContentPage.css" />
+
+<div class="content-page">
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/">Home</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/about/tests">About the Tests</FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h1>About the NBT Tests</h1>
+
+    <FluentCard class="info-card">
+        <h2>What are the National Benchmark Tests?</h2>
+        <p>
+            The National Benchmark Tests (NBTs) are assessments for first-year applicants into higher education institutions. 
+            The NBTs were designed to measure a writer's ability to transfer understanding of Academic Literacy, 
+            Quantitative Literacy and Mathematics to the demands of tertiary coursework.
+        </p>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Test Components</h2>
+        
+        <h3><FluentIcon Value="@(new Icons.Regular.Size20.BookOpen())" /> Academic and Quantitative Literacy (AQL)</h3>
+        <p>
+            This test assesses your ability to understand and engage with academic texts and your 
+            capacity to manage situations that involve quantitative information. The AQL test consists of two domains:
+        </p>
+        <ul>
+            <li><strong>Academic Literacy (AL):</strong> Measures your ability to read academic texts critically, 
+            extract key information, and apply reasoning skills.</li>
+            <li><strong>Quantitative Literacy (QL):</strong> Assesses your ability to manage situations or solve 
+            problems in academic and real-life contexts that require quantitative information.</li>
+        </ul>
+
+        <h3><FluentIcon Value="@(new Icons.Regular.Size20.Calculator())" /> Mathematics (MAT)</h3>
+        <p>
+            The Mathematics test assesses your ability in the kind of mathematics required for entry-level 
+            courses in higher education. This test is essential for students planning to study mathematics-intensive 
+            programs such as engineering, science, commerce, or any field requiring mathematical competency.
+        </p>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Test Format</h2>
+        <ul>
+            <li><FluentIcon Value="@(new Icons.Regular.Size16.Clock())" /> <strong>Duration:</strong> AQL test is 3 hours; MAT test is 3 hours</li>
+            <li><FluentIcon Value="@(new Icons.Regular.Size16.QuizNew())" /> <strong>Format:</strong> Multiple choice questions</li>
+            <li><FluentIcon Value="@(new Icons.Regular.Size16.Desktop())" /> <strong>Delivery:</strong> Computer-based testing at approved venues</li>
+            <li><FluentIcon Value="@(new Icons.Regular.Size16.Globe())" /> <strong>Online Option:</strong> Available on select dates for remote testing</li>
+        </ul>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Performance Levels</h2>
+        <p>NBT results are reported using performance levels that indicate readiness for tertiary study:</p>
+        <ul>
+            <li><strong>Proficient:</strong> Well prepared for tertiary study demands</li>
+            <li><strong>Intermediate:</strong> Moderately prepared, may need some support</li>
+            <li><strong>Basic:</strong> Requires substantial support to succeed in tertiary education</li>
+        </ul>
+        <p>Each level may have Upper and Lower bands providing more granular feedback.</p>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Test Validity</h2>
+        <FluentMessageBar Intent="MessageIntent.Info">
+            NBT results are valid for 3 years from the date of booking. You may write a maximum of 2 tests per year.
+        </FluentMessageBar>
+    </FluentCard>
+
+    <div class="action-section">
+        <FluentButton Appearance="Appearance.Accent" 
+                    IconStart="@(new Icons.Regular.Size20.PersonAdd())"
+                    OnClick="@(() => Navigation.NavigateTo("/register"))">
+            Register for NBT
+        </FluentButton>
+        <FluentButton Appearance="Appearance.Outline"
+                    IconStart="@(new Icons.Regular.Size20.Calendar())"
+                    OnClick="@(() => Navigation.NavigateTo("/about/test-dates"))">
+            View Test Dates
+        </FluentButton>
+    </div>
+</div>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+}

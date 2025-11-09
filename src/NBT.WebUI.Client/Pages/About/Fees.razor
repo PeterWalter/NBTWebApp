@@ -1,0 +1,165 @@
+@page "/about/fees"
+
+<PageTitle>Test Fees</PageTitle>
+
+<link rel="stylesheet" href="Pages/ContentPage.css" />
+
+<div class="content-page">
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/">Home</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/about/fees">Test Fees</FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h1>Test Fees</h1>
+
+    <FluentCard class="info-card">
+        <h2>2025 NBT Test Fees</h2>
+        <p>The following fees apply for the 2025 test cycle:</p>
+        
+        <div class="fee-grid">
+            <FluentCard class="fee-card">
+                <h3>AQL Test</h3>
+                <div class="fee-amount">R150</div>
+                <p>Academic & Quantitative Literacy</p>
+            </FluentCard>
+
+            <FluentCard class="fee-card">
+                <h3>MAT Test</h3>
+                <div class="fee-amount">R120</div>
+                <p>Mathematics</p>
+            </FluentCard>
+
+            <FluentCard class="fee-card">
+                <h3>AQL + MAT</h3>
+                <div class="fee-amount">R270</div>
+                <p>Both tests (same session)</p>
+            </FluentCard>
+        </div>
+
+        <FluentMessageBar Intent="MessageIntent.Info" Style="margin-top: 1rem;">
+            <strong>Note:</strong> Fees may vary from year to year. Always check the current fees during registration.
+        </FluentMessageBar>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Payment Options</h2>
+        <ul>
+            <li><FluentIcon Value="@(new Icons.Regular.Size16.Money())" /> <strong>Online Payment:</strong> Pay via EasyPay payment gateway (credit/debit card)</li>
+            <li><FluentIcon Value="@(new Icons.Regular.Size16.BuildingBank())" /> <strong>Bank Transfer:</strong> Direct deposit to NBT bank account</li>
+            <li><FluentIcon Value="@(new Icons.Regular.Size16.Payment())" /> <strong>Installments:</strong> Payment can be made in installments until booking closes</li>
+        </ul>
+        
+        <FluentMessageBar Intent="MessageIntent.Warning" Style="margin-top: 1rem;">
+            <strong>Important:</strong> Test fees must be fully paid before the booking closing date. 
+            Only fully paid tests can be written and results will only be released for paid tests.
+        </FluentMessageBar>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Payment Processing</h2>
+        <div class="process-steps">
+            <div class="process-step">
+                <FluentIcon Value="@(new Icons.Regular.Size24.NumberSymbol())" Color="Color.Accent" />
+                <h4>Step 1</h4>
+                <p>Complete registration and receive your NBT number</p>
+            </div>
+            <div class="process-step">
+                <FluentIcon Value="@(new Icons.Regular.Size24.CalendarAdd())" Color="Color.Accent" />
+                <h4>Step 2</h4>
+                <p>Book your test and select payment method</p>
+            </div>
+            <div class="process-step">
+                <FluentIcon Value="@(new Icons.Regular.Size24.Payment())" Color="Color.Accent" />
+                <h4>Step 3</h4>
+                <p>Make payment using EasyPay reference or bank deposit</p>
+            </div>
+            <div class="process-step">
+                <FluentIcon Value="@(new Icons.Regular.Size24.Checkmark())" Color="Color.Accent" />
+                <h4>Step 4</h4>
+                <p>Payment confirmed - ready to write test</p>
+            </div>
+        </div>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Bank Payment Upload</h2>
+        <p>
+            If you paid via bank transfer, you can upload your proof of payment through your student account. 
+            Bank payment records are processed within 2-3 business days.
+        </p>
+        <FluentButton Appearance="Appearance.Outline"
+                    IconStart="@(new Icons.Regular.Size20.ArrowUpload())"
+                    OnClick="@(() => Navigation.NavigateTo("/login"))">
+            Upload Payment Proof
+        </FluentButton>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Refund Policy</h2>
+        <p>
+            Refunds are only available in exceptional circumstances and must be requested in writing. 
+            Please contact the NBT office for refund queries.
+        </p>
+        <ul>
+            <li>No refunds for missed tests due to personal circumstances</li>
+            <li>Technical issues at the venue may qualify for refund or rescheduling</li>
+            <li>Refund processing may take up to 30 business days</li>
+        </ul>
+    </FluentCard>
+
+    <div class="action-section">
+        <FluentButton Appearance="Appearance.Accent" 
+                    IconStart="@(new Icons.Regular.Size20.PersonAdd())"
+                    OnClick="@(() => Navigation.NavigateTo("/register"))">
+            Register & Pay
+        </FluentButton>
+    </div>
+</div>
+
+<style>
+    .fee-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    .fee-card {
+        text-align: center;
+        padding: 1.5rem;
+        border: 2px solid var(--accent-fill-rest);
+    }
+
+    .fee-card h3 {
+        margin: 0 0 1rem 0;
+        color: var(--accent-fill-rest);
+    }
+
+    .fee-amount {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--accent-fill-rest);
+        margin: 1rem 0;
+    }
+
+    .process-steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .process-step {
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .process-step h4 {
+        margin: 0.5rem 0;
+        color: var(--accent-fill-rest);
+    }
+</style>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+}

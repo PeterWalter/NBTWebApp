@@ -1,0 +1,70 @@
+.content-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.content-page h1 {
+    color: var(--accent-fill-rest);
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+}
+
+.content-page h2 {
+    color: var(--accent-fill-rest);
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.content-page h3 {
+    color: var(--neutral-foreground-rest);
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+}
+
+.info-card {
+    margin-bottom: 2rem;
+    padding: 2rem;
+}
+
+.info-card p {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.info-card ul {
+    line-height: 1.8;
+    margin: 1rem 0;
+    padding-left: 2rem;
+}
+
+.info-card li {
+    margin: 0.5rem 0;
+}
+
+.action-section {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.action-section fluent-button {
+    font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+    .content-page {
+        padding: 1rem;
+    }
+
+    .content-page h1 {
+        font-size: 2rem;
+    }
+
+    .content-page h2 {
+        font-size: 1.5rem;
+    }
+}
