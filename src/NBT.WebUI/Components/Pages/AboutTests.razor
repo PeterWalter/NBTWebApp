@@ -1,0 +1,80 @@
+@page "/about/tests"
+@inject NavigationManager Navigation
+
+<PageTitle>About the Tests - NBT</PageTitle>
+
+<div class="page-wrapper">
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">About the Tests</h1>
+            <p class="page-subtitle">Understanding the National Benchmark Tests</p>
+        </div>
+    </div>
+
+    <div class="container page-content">
+        <section class="content-section">
+            <h2>What are the NBTs?</h2>
+            <p>
+                The National Benchmark Tests (NBTs) are assessments for first-year applicants into higher 
+                education institutions. They assess academic readiness for university-level education.
+            </p>
+        </section>
+
+        <section class="content-section">
+            <h2>Test Components</h2>
+            <div class="test-cards">
+                <div class="test-card">
+                    <div class="test-card-icon">📊</div>
+                    <h3>Academic and Quantitative Literacy (AQL)</h3>
+                    <p>
+                        Assesses your ability to understand and work with academic texts and solve 
+                        quantitative problems in academic contexts.
+                    </p>
+                    <p><strong>Duration:</strong> 3 hours</p>
+                </div>
+
+                <div class="test-card">
+                    <div class="test-card-icon">🔢</div>
+                    <h3>Mathematics (MAT)</h3>
+                    <p>
+                        Assesses your mathematical competency in school-level mathematics, focusing on 
+                        knowledge and skills required for higher education.
+                    </p>
+                    <p><strong>Duration:</strong> 3 hours</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2>Who Should Write the NBTs?</h2>
+            <ul class="info-list">
+                <li>Grade 12 learners planning to apply to South African universities</li>
+                <li>Grade 11 learners who wish to apply for early selection programmes</li>
+                <li>Applicants with post-school qualifications wishing to access higher education</li>
+            </ul>
+        </section>
+
+        <section class="content-section">
+            <h2>How Universities Use NBT Results</h2>
+            <p>
+                Universities use NBT results alongside other indicators such as school results to assess 
+                academic readiness for university education. The combination of indicators helps institutions 
+                to make informed placement and selection decisions.
+            </p>
+        </section>
+
+        <div class="action-section">
+            <FluentButton Appearance="Appearance.Accent" OnClick="@GoToRegister">
+                🎓 Register for NBT
+            </FluentButton>
+            <FluentButton Appearance="Appearance.Neutral" OnClick="@GoToHome">
+                ← Back to Home
+            </FluentButton>
+        </div>
+    </div>
+</div>
+
+@code {
+    private void GoToRegister() => Navigation.NavigateTo("/register");
+    private void GoToHome() => Navigation.NavigateTo("/");
+}
