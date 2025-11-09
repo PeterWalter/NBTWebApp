@@ -1,0 +1,142 @@
+@page "/admin/venue-test"
+@using NBT.Domain.Entities
+@inject HttpClient Http
+
+<PageTitle>Venue API Test</PageTitle>
+
+<h1>Venue API Test</h1>
+
+<div style="margin: 20px 0;">
+    <h3>Test API Connection</h3>
+    <button @onclick="TestGetVenues">Get All Venues</button>
+    <button @onclick="TestCreateVenue">Create Test Venue</button>
+</div>
+
+@if (loading)
+{
+    <p>Loading...</p>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div style="color: red; padding: 10px; background: #fee; margin: 10px 0;">
+        <strong>Error:</strong> @errorMessage
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div style="color: green; padding: 10px; background: #efe; margin: 10px 0;">
+        <strong>Success:</strong> @successMessage
+    </div>
+}
+
+@if (venues != null && venues.Any())
+{
+    <h3>Venues (@venues.Count)</h3>
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background: #f0f0f0;">
+                <th style="border: 1px solid #ddd; padding: 8px;">ID</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Name</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Location</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Type</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Capacity</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Active</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var venue in venues)
+            {
+                <tr>
+                    <td style="border: 1px solid #ddd; padding: 8px;">@venue.VenueId</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">@venue.VenueName</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">@venue.Location</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">@venue.VenueType</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">@venue.TotalCapacity</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">@(venue.IsActive ? "Yes" : "No")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (!loading)
+{
+    <p>No venues found.</p>
+}
+
+@code {
+    private List<Venue>? venues;
+    private bool loading = false;
+    private string? errorMessage;
+    private string? successMessage;
+
+    private async Task TestGetVenues()
+    {
+        loading = true;
+        errorMessage = null;
+        successMessage = null;
+        StateHasChanged();
+
+        try
+        {
+            venues = await Http.GetFromJsonAsync<List<Venue>>("api/venues");
+            successMessage = $"Successfully loaded {venues?.Count ?? 0} venues";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            loading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task TestCreateVenue()
+    {
+        loading = true;
+        errorMessage = null;
+        successMessage = null;
+        StateHasChanged();
+
+        try
+        {
+            var newVenue = new Venue
+            {
+                VenueName = $"Test Venue {DateTime.Now:HHmmss}",
+                Location = "Test Location",
+                VenueType = "National",
+                TotalCapacity = 100,
+                IsActive = true,
+                ContactPerson = "Test Contact",
+                ContactEmail = "test@test.com",
+                ContactPhone = "0123456789"
+            };
+
+            var response = await Http.PostAsJsonAsync("api/venues", newVenue);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var created = await response.Content.ReadFromJsonAsync<Venue>();
+                successMessage = $"Successfully created venue with ID: {created?.VenueId}";
+                await TestGetVenues(); // Reload list
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                errorMessage = $"Failed to create venue: {response.StatusCode} - {error}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            loading = false;
+            StateHasChanged();
+        }
+    }
+}

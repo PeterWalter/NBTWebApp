@@ -1,0 +1,192 @@
+@page "/admin/students/create"
+@using Microsoft.FluentUI.AspNetCore.Components
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<PageTitle>Create Student - NBT System</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical" Style="gap: 20px; max-width: 800px; margin: 0 auto;">
+    <FluentStack Orientation="Orientation.Horizontal" Style="justify-content: space-between; align-items: center;">
+        <FluentLabel Typo="Typography.H3">Create New Student</FluentLabel>
+        <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => Navigation.NavigateTo("/admin/students"))">
+            <FluentIcon Value="@(new Icons.Regular.Size20.ArrowLeft())" Slot="start" />
+            Back to List
+        </FluentButton>
+    </FluentStack>
+    
+    <FluentCard Style="padding: 30px;">
+        <EditForm Model="@_student" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+            
+            <FluentStack Orientation="Orientation.Vertical" Style="gap: 20px;">
+                <FluentLabel Typo="Typography.H5">Personal Information</FluentLabel>
+                
+                <FluentTextField @bind-Value="_student.FirstName" 
+                               Label="First Name" 
+                               Required="true" 
+                               Style="width: 100%;" />
+                <ValidationMessage For="@(() => _student.FirstName)" />
+                
+                <FluentTextField @bind-Value="_student.LastName" 
+                               Label="Last Name" 
+                               Required="true" 
+                               Style="width: 100%;" />
+                <ValidationMessage For="@(() => _student.LastName)" />
+                
+                <FluentTextField @bind-Value="_student.IDNumber" 
+                               Label="ID Number / Passport" 
+                               Required="true" 
+                               Style="width: 100%;" 
+                               Placeholder="Enter SA ID or Foreign ID/Passport" />
+                <ValidationMessage For="@(() => _student.IDNumber)" />
+                
+                <FluentDatePicker @bind-Value="_student.DateOfBirth" 
+                                Label="Date of Birth" 
+                                Style="width: 100%;" />
+                <ValidationMessage For="@(() => _student.DateOfBirth)" />
+                
+                <FluentSelect @bind-Value="_student.Gender" 
+                            Label="Gender" 
+                            Style="width: 100%;">
+                    <FluentOption Value="">-- Select Gender --</FluentOption>
+                    <FluentOption Value="Male">Male</FluentOption>
+                    <FluentOption Value="Female">Female</FluentOption>
+                    <FluentOption Value="Other">Other</FluentOption>
+                </FluentSelect>
+                <ValidationMessage For="@(() => _student.Gender)" />
+                
+                <FluentSelect @bind-Value="_student.Ethnicity" 
+                            Label="Ethnicity" 
+                            Style="width: 100%;">
+                    <FluentOption Value="">-- Select Ethnicity --</FluentOption>
+                    <FluentOption Value="African">African</FluentOption>
+                    <FluentOption Value="Coloured">Coloured</FluentOption>
+                    <FluentOption Value="Indian">Indian</FluentOption>
+                    <FluentOption Value="White">White</FluentOption>
+                    <FluentOption Value="Other">Other</FluentOption>
+                </FluentSelect>
+                <ValidationMessage For="@(() => _student.Ethnicity)" />
+                
+                <FluentDivider />
+                
+                <FluentLabel Typo="Typography.H5">Contact Information</FluentLabel>
+                
+                <FluentTextField @bind-Value="_student.Email" 
+                               Label="Email" 
+                               Required="true" 
+                               TextFieldType="TextFieldType.Email" 
+                               Style="width: 100%;" />
+                <ValidationMessage For="@(() => _student.Email)" />
+                
+                <FluentTextField @bind-Value="_student.MobileNumber" 
+                               Label="Mobile Number" 
+                               Required="true" 
+                               TextFieldType="TextFieldType.Tel" 
+                               Style="width: 100%;" />
+                <ValidationMessage For="@(() => _student.MobileNumber)" />
+                
+                <FluentTextField @bind-Value="_student.HomeNumber" 
+                               Label="Home Number (Optional)" 
+                               TextFieldType="TextFieldType.Tel" 
+                               Style="width: 100%;" />
+                
+                <FluentDivider />
+                
+                <FluentLabel Typo="Typography.H5">Address</FluentLabel>
+                
+                <FluentTextArea @bind-Value="_student.Address" 
+                              Label="Street Address" 
+                              Rows="3" 
+                              Style="width: 100%;" />
+                
+                <FluentTextField @bind-Value="_student.City" 
+                               Label="City" 
+                               Style="width: 100%;" />
+                
+                <FluentTextField @bind-Value="_student.Province" 
+                               Label="Province" 
+                               Style="width: 100%;" />
+                
+                <FluentTextField @bind-Value="_student.PostalCode" 
+                               Label="Postal Code" 
+                               Style="width: 100%;" />
+                
+                <FluentDivider />
+                
+                <FluentCheckbox @bind-Value="_student.IsActive" Label="Active" />
+                
+                @if (!string.IsNullOrEmpty(_errorMessage))
+                {
+                    <FluentMessageBar Intent="MessageIntent.Error">
+                        @_errorMessage
+                    </FluentMessageBar>
+                }
+                
+                <FluentStack Orientation="Orientation.Horizontal" Style="gap: 10px; justify-content: flex-end;">
+                    <FluentButton Appearance="Appearance.Neutral" 
+                                OnClick="@(() => Navigation.NavigateTo("/admin/students"))">
+                        Cancel
+                    </FluentButton>
+                    <FluentButton Appearance="Appearance.Accent" 
+                                Type="ButtonType.Submit" 
+                                Loading="_submitting">
+                        Create Student
+                    </FluentButton>
+                </FluentStack>
+            </FluentStack>
+        </EditForm>
+    </FluentCard>
+</FluentStack>
+
+@code {
+    private CreateStudentDto _student = new();
+    private bool _submitting = false;
+    private string _errorMessage = string.Empty;
+    
+    private async Task HandleSubmit()
+    {
+        _submitting = true;
+        _errorMessage = string.Empty;
+        
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/students", _student);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                Navigation.NavigateTo("/admin/students");
+            }
+            else
+            {
+                _errorMessage = $"Error creating student: {response.StatusCode}";
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            _submitting = false;
+        }
+    }
+    
+    public class CreateStudentDto
+    {
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string IDNumber { get; set; } = string.Empty;
+        public DateTime? DateOfBirth { get; set; }
+        public string Gender { get; set; } = string.Empty;
+        public string Ethnicity { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string MobileNumber { get; set; } = string.Empty;
+        public string HomeNumber { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+        public string Province { get; set; } = string.Empty;
+        public string PostalCode { get; set; } = string.Empty;
+        public bool IsActive { get; set; } = true;
+    }
+}

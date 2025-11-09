@@ -21,7 +21,9 @@
                           @bind-Value="@_currentStepIndex" 
                           StepperPosition="StepperPosition.Top"
                           Height="auto"
-                          DisplayStepNumber="true">
+                          DisplayStepNumber="true"
+                          ButtonTemplate="@CustomButtonTemplate"
+                          OnFinish="@HandleSubmitAsync">
                 
                 <!-- Step 1: Personal Information and Contact Details -->
                 <FluentWizardStep Label="Personal & Contact" 
@@ -43,10 +45,10 @@
 
                         <FluentTextField Label="ID Number *" 
                                        @bind-Value="_model.IDNumber"
+                                       @bind-Value:after="OnIDNumberChangedAsync"
                                        Style="width: 100%; margin-bottom: 20px;"
                                        Placeholder="@GetIDPlaceholder(_model.IDType)"
-                                       Required="true"
-                                       @oninput="OnIDNumberChanged" />
+                                       Required="true" />
                         
                         @if (!string.IsNullOrEmpty(_idValidationMessage))
                         {
@@ -143,6 +145,13 @@
                                            TextFieldType="TextFieldType.Tel"
                                            Placeholder="Optional" />
                         </div>
+
+                        @if (!string.IsNullOrEmpty(_step1ValidationMessage))
+                        {
+                            <FluentMessageBar Intent="MessageIntent.Warning" Style="margin-top: 20px;">
+                                @_step1ValidationMessage
+                            </FluentMessageBar>
+                        }
                     </div>
                 </FluentWizardStep>
 
@@ -271,6 +280,13 @@
                             
                             <FluentMessageBar Intent="MessageIntent.Info" Style="margin-top: 10px;">
                                 Your accommodation request will be reviewed by our team. You may be contacted for additional information.
+                            </FluentMessageBar>
+                        }
+
+                        @if (!string.IsNullOrEmpty(_step2ValidationMessage))
+                        {
+                            <FluentMessageBar Intent="MessageIntent.Warning" Style="margin-top: 20px;">
+                                @_step2ValidationMessage
                             </FluentMessageBar>
                         }
                     </div>
@@ -419,6 +435,8 @@
     private bool _idValidationError = false;
     private bool _dobExtractedFromID = false;
     private bool _genderExtractedFromID = false;
+    private string? _step1ValidationMessage;
+    private string? _step2ValidationMessage;
 
     private readonly List<string> _idTypes = new() { "SA_ID", "FOREIGN_ID", "PASSPORT" };
     private readonly List<string> _genderOptions = new() { "Male", "Female", "Other" };
@@ -444,17 +462,29 @@
         // Validate current step before moving forward
         if (args.TargetIndex > args.OldIndex)
         {
-            var isValid = await ValidateCurrentStepAsync(args.OldIndex);
+            var (isValid, errorMessage) = await ValidateCurrentStepWithMessageAsync(args.OldIndex);
             if (!isValid)
             {
                 args.IsCancelled = true;
-                _submitError = "Please complete all required fields before proceeding.";
+                
+                // Set step-specific validation message
+                if (args.OldIndex == 0)
+                {
+                    _step1ValidationMessage = errorMessage;
+                }
+                else if (args.OldIndex == 1)
+                {
+                    _step2ValidationMessage = errorMessage;
+                }
+                
                 StateHasChanged();
                 return;
             }
         }
         
-        // Clear error when moving between steps
+        // Clear errors when successfully moving
+        _step1ValidationMessage = null;
+        _step2ValidationMessage = null;
         _submitError = null;
     }
 
@@ -466,6 +496,17 @@
             1 => await ValidateStep2Async(),
             2 => true, // Review step
             _ => true
+        };
+    }
+
+    private async Task<(bool isValid, string? errorMessage)> ValidateCurrentStepWithMessageAsync(int stepIndex)
+    {
+        return stepIndex switch
+        {
+            0 => await ValidateStep1WithMessageAsync(),
+            1 => await ValidateStep2WithMessageAsync(),
+            2 => (true, null), // Review step
+            _ => (true, null)
         };
     }
 
@@ -491,10 +532,9 @@
         };
     }
 
-    private async Task OnIDNumberChanged(ChangeEventArgs e)
+    private async Task OnIDNumberChangedAsync()
     {
-        var idNumber = e.Value?.ToString() ?? string.Empty;
-        _model.IDNumber = idNumber;
+        var idNumber = _model.IDNumber ?? string.Empty;
         
         if (string.IsNullOrWhiteSpace(idNumber))
         {
@@ -643,8 +683,8 @@
         return true;
     }
 
-    // Step validation methods
-    private Task<bool> ValidateStep1Async()
+    // Step validation methods - synchronous for real-time UI updates
+    private bool IsStep1Valid()
     {
         // Required fields for step 1 (Personal & Contact)
         if (string.IsNullOrWhiteSpace(_model.IDNumber) ||
@@ -656,40 +696,143 @@
             string.IsNullOrWhiteSpace(_model.Ethnicity) ||
             !_model.DateOfBirth.HasValue)
         {
-            return Task.FromResult(false);
+            return false;
         }
 
         // Foreign ID validation
         if ((_model.IDType == "FOREIGN_ID" || _model.IDType == "PASSPORT") &&
             (string.IsNullOrWhiteSpace(_model.Nationality) || string.IsNullOrWhiteSpace(_model.CountryOfOrigin)))
         {
-            return Task.FromResult(false);
+            return false;
         }
 
         // Must not have validation errors
         if (_idValidationError)
         {
-            return Task.FromResult(false);
+            return false;
         }
 
-        return Task.FromResult(true);
+        return true;
     }
 
-    private Task<bool> ValidateStep2Async()
+    private Task<bool> ValidateStep1Async()
+    {
+        return Task.FromResult(IsStep1Valid());
+    }
+
+    private bool IsStep2Valid()
     {
         // Required fields for step 2 (Academic & Survey)
         // School name is required, survey questions are optional
         if (string.IsNullOrWhiteSpace(_model.SchoolName))
         {
-            return Task.FromResult(false);
+            return false;
         }
 
         // If accommodation is required, details must be provided
         if (_model.RequiresAccommodation && string.IsNullOrWhiteSpace(_model.AccommodationDetails))
         {
-            return Task.FromResult(false);
+            return false;
         }
 
-        return Task.FromResult(true);
+        return true;
     }
+
+    private Task<bool> ValidateStep2Async()
+    {
+        return Task.FromResult(IsStep2Valid());
+    }
+
+    private Task<(bool, string?)> ValidateStep1WithMessageAsync()
+    {
+        var errors = new List<string>();
+
+        if (string.IsNullOrWhiteSpace(_model.IDNumber))
+            errors.Add("ID Number is required");
+        if (string.IsNullOrWhiteSpace(_model.FirstName))
+            errors.Add("First Name is required");
+        if (string.IsNullOrWhiteSpace(_model.LastName))
+            errors.Add("Last Name is required");
+        if (!_model.DateOfBirth.HasValue)
+            errors.Add("Date of Birth is required");
+        if (string.IsNullOrWhiteSpace(_model.Gender))
+            errors.Add("Gender is required");
+        if (string.IsNullOrWhiteSpace(_model.Ethnicity))
+            errors.Add("Ethnicity is required");
+        if (string.IsNullOrWhiteSpace(_model.Email))
+            errors.Add("Email is required");
+        if (string.IsNullOrWhiteSpace(_model.PhoneNumber))
+            errors.Add("Phone Number is required");
+
+        if ((_model.IDType == "FOREIGN_ID" || _model.IDType == "PASSPORT"))
+        {
+            if (string.IsNullOrWhiteSpace(_model.Nationality))
+                errors.Add("Nationality is required for foreign IDs");
+            if (string.IsNullOrWhiteSpace(_model.CountryOfOrigin))
+                errors.Add("Country of Origin is required for foreign IDs");
+        }
+
+        if (_idValidationError)
+            errors.Add("ID Number has validation errors");
+
+        if (errors.Any())
+        {
+            return Task.FromResult((false, string.Join("; ", errors)));
+        }
+
+        return Task.FromResult((true, (string?)null));
+    }
+
+    private Task<(bool, string?)> ValidateStep2WithMessageAsync()
+    {
+        var errors = new List<string>();
+
+        if (string.IsNullOrWhiteSpace(_model.SchoolName))
+            errors.Add("School Name is required");
+
+        if (_model.RequiresAccommodation && string.IsNullOrWhiteSpace(_model.AccommodationDetails))
+            errors.Add("Accommodation details are required when special accommodations are requested");
+
+        if (errors.Any())
+        {
+            return Task.FromResult((false, string.Join("; ", errors)));
+        }
+
+        return Task.FromResult((true, (string?)null));
+    }
+
+    private RenderFragment<FluentWizard> CustomButtonTemplate => wizard => __builder =>
+    {
+        var canMoveNext = _currentStepIndex == 0 ? IsStep1Valid() : 
+                         _currentStepIndex == 1 ? IsStep2Valid() : 
+                         true;
+
+        <div class="wizard-button-container" style="display: flex; gap: 10px; margin-top: 20px;">
+            @if (_currentStepIndex > 0)
+            {
+                <FluentButton Appearance="Appearance.Neutral"
+                            OnClick="@(() => wizard.GoToPreviousAsync())">
+                    Previous
+                </FluentButton>
+            }
+            
+            @if (_currentStepIndex < 2)
+            {
+                <FluentButton Appearance="Appearance.Accent"
+                            Disabled="@(!canMoveNext)"
+                            OnClick="@(() => wizard.GoToNextAsync())">
+                    Next
+                </FluentButton>
+            }
+            else
+            {
+                <FluentButton Appearance="Appearance.Accent"
+                            Disabled="@(!canMoveNext)"
+                            OnClick="@HandleSubmitAsync">
+                    <FluentIcon Value="@(new Icons.Regular.Size20.CheckmarkCircle())" Slot="start" />
+                    Complete Registration
+                </FluentButton>
+            }
+        </div>
+    };
 }

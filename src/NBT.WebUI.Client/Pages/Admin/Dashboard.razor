@@ -1,0 +1,177 @@
+@page "/admin/dashboard"
+@using Microsoft.FluentUI.AspNetCore.Components
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<PageTitle>Admin Dashboard - NBT System</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical" Style="gap: 20px;">
+    <FluentLabel Typo="Typography.H3">Admin Dashboard</FluentLabel>
+    
+    <FluentGrid Spacing="3">
+        <FluentGridItem xs="12" sm="6" md="3">
+            <FluentCard Style="padding: 20px; text-align: center;">
+                <FluentLabel Typo="Typography.H5">Total Students</FluentLabel>
+                <FluentLabel Typo="Typography.H2" Style="color: var(--accent-fill-rest);">@_stats.TotalStudents</FluentLabel>
+                <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => Navigation.NavigateTo("/admin/students"))">
+                    View All
+                </FluentButton>
+            </FluentCard>
+        </FluentGridItem>
+        
+        <FluentGridItem xs="12" sm="6" md="3">
+            <FluentCard Style="padding: 20px; text-align: center;">
+                <FluentLabel Typo="Typography.H5">Active Bookings</FluentLabel>
+                <FluentLabel Typo="Typography.H2" Style="color: var(--accent-fill-rest);">@_stats.ActiveBookings</FluentLabel>
+                <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => Navigation.NavigateTo("/admin/bookings"))">
+                    View All
+                </FluentButton>
+            </FluentCard>
+        </FluentGridItem>
+        
+        <FluentGridItem xs="12" sm="6" md="3">
+            <FluentCard Style="padding: 20px; text-align: center;">
+                <FluentLabel Typo="Typography.H5">Pending Payments</FluentLabel>
+                <FluentLabel Typo="Typography.H2" Style="color: var(--accent-fill-rest);">@_stats.PendingPayments</FluentLabel>
+                <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => Navigation.NavigateTo("/admin/payments"))">
+                    View All
+                </FluentButton>
+            </FluentCard>
+        </FluentGridItem>
+        
+        <FluentGridItem xs="12" sm="6" md="3">
+            <FluentCard Style="padding: 20px; text-align: center;">
+                <FluentLabel Typo="Typography.H5">Total Venues</FluentLabel>
+                <FluentLabel Typo="Typography.H2" Style="color: var(--accent-fill-rest);">@_stats.TotalVenues</FluentLabel>
+                <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => Navigation.NavigateTo("/venues"))">
+                    View All
+                </FluentButton>
+            </FluentCard>
+        </FluentGridItem>
+    </FluentGrid>
+    
+    <FluentGrid Spacing="3">
+        <FluentGridItem xs="12" md="6">
+            <FluentCard Style="padding: 20px;">
+                <FluentLabel Typo="Typography.H5">Quick Actions</FluentLabel>
+                <FluentStack Orientation="Orientation.Vertical" Style="gap: 10px; margin-top: 15px;">
+                    <FluentButton Appearance="Appearance.Accent" OnClick="@(() => Navigation.NavigateTo("/admin/students/create"))">
+                        <FluentIcon Value="@(new Icons.Regular.Size20.PersonAdd())" Slot="start" />
+                        Create New Student
+                    </FluentButton>
+                    <FluentButton Appearance="Appearance.Accent" OnClick="@(() => Navigation.NavigateTo("/admin/bookings/create"))">
+                        <FluentIcon Value="@(new Icons.Regular.Size20.CalendarAdd())" Slot="start" />
+                        Create New Booking
+                    </FluentButton>
+                    <FluentButton Appearance="Appearance.Accent" OnClick="@(() => Navigation.NavigateTo("/venues/create"))">
+                        <FluentIcon Value="@(new Icons.Regular.Size20.BuildingAdd())" Slot="start" />
+                        Create New Venue
+                    </FluentButton>
+                    <FluentButton Appearance="Appearance.Accent" OnClick="@(() => Navigation.NavigateTo("/admin/test-dates"))">
+                        <FluentIcon Value="@(new Icons.Regular.Size20.CalendarLtr())" Slot="start" />
+                        Manage Test Dates
+                    </FluentButton>
+                </FluentStack>
+            </FluentCard>
+        </FluentGridItem>
+        
+        <FluentGridItem xs="12" md="6">
+            <FluentCard Style="padding: 20px;">
+                <FluentLabel Typo="Typography.H5">Recent Activity</FluentLabel>
+                <FluentStack Orientation="Orientation.Vertical" Style="gap: 10px; margin-top: 15px;">
+                    @if (_recentActivities.Any())
+                    {
+                        @foreach (var activity in _recentActivities)
+                        {
+                            <FluentStack Orientation="Orientation.Horizontal" Style="gap: 10px;">
+                                <FluentIcon Value="@(new Icons.Regular.Size16.Circle())" Color="Color.Accent" />
+                                <FluentLabel>@activity</FluentLabel>
+                            </FluentStack>
+                        }
+                    }
+                    else
+                    {
+                        <FluentLabel>No recent activity</FluentLabel>
+                    }
+                </FluentStack>
+            </FluentCard>
+        </FluentGridItem>
+    </FluentGrid>
+</FluentStack>
+
+@code {
+    private DashboardStats _stats = new();
+    private List<string> _recentActivities = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDashboardData();
+    }
+    
+    private async Task LoadDashboardData()
+    {
+        try
+        {
+            var studentsResponse = await Http.GetFromJsonAsync<List<StudentDto>>("api/students");
+            var bookingsResponse = await Http.GetFromJsonAsync<List<BookingDto>>("api/bookings");
+            var paymentsResponse = await Http.GetFromJsonAsync<List<PaymentDto>>("api/payments");
+            var venuesResponse = await Http.GetFromJsonAsync<List<VenueDto>>("api/venues");
+            
+            _stats = new DashboardStats
+            {
+                TotalStudents = studentsResponse?.Count ?? 0,
+                ActiveBookings = bookingsResponse?.Count(b => b.Status == "Confirmed" || b.Status == "Pending") ?? 0,
+                PendingPayments = paymentsResponse?.Count(p => p.Status == "Pending" || p.Status == "Partial") ?? 0,
+                TotalVenues = venuesResponse?.Count ?? 0
+            };
+            
+            _recentActivities = new List<string>
+            {
+                $"Latest registration: {studentsResponse?.OrderByDescending(s => s.CreatedDate).FirstOrDefault()?.FirstName ?? "None"}",
+                $"Latest booking: {bookingsResponse?.OrderByDescending(b => b.BookingDate).FirstOrDefault()?.TestType ?? "None"}",
+                $"Payments today: {paymentsResponse?.Count(p => p.PaymentDate.Date == DateTime.Today) ?? 0}"
+            };
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading dashboard: {ex.Message}");
+        }
+    }
+    
+    public class DashboardStats
+    {
+        public int TotalStudents { get; set; }
+        public int ActiveBookings { get; set; }
+        public int PendingPayments { get; set; }
+        public int TotalVenues { get; set; }
+    }
+    
+    public class StudentDto
+    {
+        public int Id { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public DateTime CreatedDate { get; set; }
+    }
+    
+    public class BookingDto
+    {
+        public int Id { get; set; }
+        public string TestType { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public DateTime BookingDate { get; set; }
+    }
+    
+    public class PaymentDto
+    {
+        public int Id { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public DateTime PaymentDate { get; set; }
+    }
+    
+    public class VenueDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+    }
+}

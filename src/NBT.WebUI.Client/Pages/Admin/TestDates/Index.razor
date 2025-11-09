@@ -1,0 +1,205 @@
+@page "/admin/test-dates"
+@using Microsoft.FluentUI.AspNetCore.Components
+@inject HttpClient Http
+@inject IDialogService DialogService
+
+<PageTitle>Test Dates Management - NBT System</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical" Style="gap: 20px;">
+    <FluentStack Orientation="Orientation.Horizontal" Style="justify-content: space-between; align-items: center;">
+        <FluentLabel Typo="Typography.H3">Test Dates Management</FluentLabel>
+        <FluentButton Appearance="Appearance.Accent" OnClick="ShowCreateDialog">
+            <FluentIcon Value="@(new Icons.Regular.Size20.CalendarAdd())" Slot="start" />
+            Add Test Date
+        </FluentButton>
+    </FluentStack>
+    
+    <FluentCard Style="padding: 20px;">
+        <FluentLabel Typo="Typography.H5" Style="margin-bottom: 15px;">Upcoming Test Dates</FluentLabel>
+        
+        @if (_loading)
+        {
+            <FluentProgressRing />
+        }
+        else if (_testDates.Any())
+        {
+            <FluentDataGrid Items="@_testDates.AsQueryable()" Style="width: 100%;">
+                <PropertyColumn Property="@(t => t.TestDate)" Title="Test Date" Format="yyyy-MM-dd" Sortable="true" />
+                <PropertyColumn Property="@(t => t.ClosingDate)" Title="Booking Closes" Format="yyyy-MM-dd" Sortable="true" />
+                <TemplateColumn Title="Test Type">
+                    <FluentStack Orientation="Orientation.Horizontal" Style="gap: 5px;">
+                        @if (context.IsSundayTest)
+                        {
+                            <FluentBadge Appearance="Appearance.Accent">Sunday</FluentBadge>
+                        }
+                        @if (context.IsOnlineTest)
+                        {
+                            <FluentBadge Appearance="Appearance.Accent">Online</FluentBadge>
+                        }
+                        @if (!context.IsSundayTest && !context.IsOnlineTest)
+                        {
+                            <FluentBadge Appearance="Appearance.Neutral">Regular</FluentBadge>
+                        }
+                    </FluentStack>
+                </TemplateColumn>
+                <PropertyColumn Property="@(t => t.Capacity)" Title="Capacity" Sortable="true" />
+                <PropertyColumn Property="@(t => t.BookedCount)" Title="Booked" Sortable="true" />
+                <TemplateColumn Title="Available">
+                    <FluentProgressRing Value="@((double)context.BookedCount / context.Capacity * 100)" 
+                                      Max="100" 
+                                      Min="0" 
+                                      Style="width: 40px; height: 40px;" />
+                    <FluentLabel>@(context.Capacity - context.BookedCount) slots</FluentLabel>
+                </TemplateColumn>
+                <TemplateColumn Title="Status">
+                    <FluentBadge Appearance="@(context.IsActive ? Appearance.Accent : Appearance.Neutral)">
+                        @(context.IsActive ? "Active" : "Inactive")
+                    </FluentBadge>
+                </TemplateColumn>
+                <TemplateColumn Title="Actions">
+                    <FluentStack Orientation="Orientation.Horizontal" Style="gap: 5px;">
+                        <FluentButton Appearance="Appearance.Lightweight" 
+                                    OnClick="@(() => EditTestDate(context))">
+                            <FluentIcon Value="@(new Icons.Regular.Size16.Edit())" />
+                        </FluentButton>
+                        <FluentButton Appearance="Appearance.Lightweight" 
+                                    OnClick="@(() => ToggleStatus(context))">
+                            <FluentIcon Value="@(new Icons.Regular.Size16.Power())" />
+                        </FluentButton>
+                        <FluentButton Appearance="Appearance.Lightweight" 
+                                    OnClick="@(() => DeleteTestDate(context.Id))">
+                            <FluentIcon Value="@(new Icons.Regular.Size16.Delete())" Color="Color.Error" />
+                        </FluentButton>
+                    </FluentStack>
+                </TemplateColumn>
+            </FluentDataGrid>
+        }
+        else
+        {
+            <FluentLabel>No test dates configured.</FluentLabel>
+        }
+    </FluentCard>
+</FluentStack>
+
+@code {
+    private List<TestDateDto> _testDates = new();
+    private bool _loading = true;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTestDates();
+    }
+    
+    private async Task LoadTestDates()
+    {
+        _loading = true;
+        try
+        {
+            // TODO: Replace with actual API endpoint when available
+            // var response = await Http.GetFromJsonAsync<List<TestDateDto>>("api/testdates");
+            // _testDates = response ?? new List<TestDateDto>();
+            
+            // Sample data for now
+            _testDates = new List<TestDateDto>
+            {
+                new TestDateDto 
+                { 
+                    Id = 1, 
+                    TestDate = new DateTime(2025, 5, 15), 
+                    ClosingDate = new DateTime(2025, 5, 8),
+                    IsSundayTest = false,
+                    IsOnlineTest = false,
+                    Capacity = 500,
+                    BookedCount = 235,
+                    IsActive = true
+                },
+                new TestDateDto 
+                { 
+                    Id = 2, 
+                    TestDate = new DateTime(2025, 6, 1), 
+                    ClosingDate = new DateTime(2025, 5, 25),
+                    IsSundayTest = true,
+                    IsOnlineTest = false,
+                    Capacity = 300,
+                    BookedCount = 87,
+                    IsActive = true
+                },
+                new TestDateDto 
+                { 
+                    Id = 3, 
+                    TestDate = new DateTime(2025, 6, 20), 
+                    ClosingDate = new DateTime(2025, 6, 13),
+                    IsSundayTest = false,
+                    IsOnlineTest = true,
+                    Capacity = 1000,
+                    BookedCount = 445,
+                    IsActive = true
+                }
+            };
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading test dates: {ex.Message}");
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+    
+    private async Task ShowCreateDialog()
+    {
+        // TODO: Implement create dialog
+        await Task.CompletedTask;
+    }
+    
+    private async Task EditTestDate(TestDateDto testDate)
+    {
+        // TODO: Implement edit dialog
+        await Task.CompletedTask;
+    }
+    
+    private async Task ToggleStatus(TestDateDto testDate)
+    {
+        testDate.IsActive = !testDate.IsActive;
+        // TODO: Save to API
+        StateHasChanged();
+    }
+    
+    private async Task DeleteTestDate(int id)
+    {
+        var dialog = await DialogService.ShowConfirmationAsync(
+            "Are you sure you want to delete this test date?",
+            "Delete Test Date",
+            "Yes",
+            "No");
+        
+        var result = await dialog.Result;
+        
+        if (!result.Cancelled)
+        {
+            try
+            {
+                // await Http.DeleteAsync($"api/testdates/{id}");
+                _testDates.RemoveAll(t => t.Id == id);
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting test date: {ex.Message}");
+            }
+        }
+    }
+    
+    public class TestDateDto
+    {
+        public int Id { get; set; }
+        public DateTime TestDate { get; set; }
+        public DateTime ClosingDate { get; set; }
+        public bool IsSundayTest { get; set; }
+        public bool IsOnlineTest { get; set; }
+        public int Capacity { get; set; }
+        public int BookedCount { get; set; }
+        public bool IsActive { get; set; }
+    }
+}

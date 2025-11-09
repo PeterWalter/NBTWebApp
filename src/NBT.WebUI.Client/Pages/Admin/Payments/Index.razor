@@ -1,0 +1,193 @@
+@page "/admin/payments"
+@using Microsoft.FluentUI.AspNetCore.Components
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<PageTitle>Payment Management - NBT System</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical" Style="gap: 20px;">
+    <FluentStack Orientation="Orientation.Horizontal" Style="justify-content: space-between; align-items: center;">
+        <FluentLabel Typo="Typography.H3">Payment Management</FluentLabel>
+        <FluentStack Orientation="Orientation.Horizontal" Style="gap: 10px;">
+            <FluentButton Appearance="Appearance.Outline" OnClick="@(() => Navigation.NavigateTo("/admin/payments/upload"))">
+                <FluentIcon Value="@(new Icons.Regular.Size20.ArrowUpload())" Slot="start" />
+                Upload Payment File
+            </FluentButton>
+            <FluentButton Appearance="Appearance.Accent" OnClick="@(() => Navigation.NavigateTo("/admin/payments/create"))">
+                <FluentIcon Value="@(new Icons.Regular.Size20.Add())" Slot="start" />
+                Record Payment
+            </FluentButton>
+        </FluentStack>
+    </FluentStack>
+    
+    <FluentCard Style="padding: 20px;">
+        <FluentStack Orientation="Orientation.Horizontal" Style="gap: 10px; margin-bottom: 20px;">
+            <FluentSearch @bind-Value="_searchTerm" 
+                         Placeholder="Search by student name or NBT number..." 
+                         Style="flex: 1;"
+                         @bind-Value:after="FilterPayments" />
+            <FluentSelect @bind-Value="_statusFilter" 
+                        @bind-Value:after="FilterPayments"
+                        Style="width: 200px;">
+                <FluentOption Value="">All Statuses</FluentOption>
+                <FluentOption Value="Pending">Pending</FluentOption>
+                <FluentOption Value="Partial">Partial</FluentOption>
+                <FluentOption Value="Complete">Complete</FluentOption>
+                <FluentOption Value="Refunded">Refunded</FluentOption>
+            </FluentSelect>
+            <FluentButton Appearance="Appearance.Outline" OnClick="LoadPayments">
+                <FluentIcon Value="@(new Icons.Regular.Size20.ArrowSync())" Slot="start" />
+                Refresh
+            </FluentButton>
+        </FluentStack>
+        
+        <FluentStack Orientation="Orientation.Horizontal" Style="gap: 20px; margin-bottom: 20px;">
+            <FluentCard Style="padding: 15px; flex: 1;">
+                <FluentLabel Typo="Typography.Body">Total Payments</FluentLabel>
+                <FluentLabel Typo="Typography.H4">R @_stats.TotalAmount.ToString("N2")</FluentLabel>
+            </FluentCard>
+            <FluentCard Style="padding: 15px; flex: 1;">
+                <FluentLabel Typo="Typography.Body">Pending Payments</FluentLabel>
+                <FluentLabel Typo="Typography.H4">@_stats.PendingCount</FluentLabel>
+            </FluentCard>
+            <FluentCard Style="padding: 15px; flex: 1;">
+                <FluentLabel Typo="Typography.Body">This Month</FluentLabel>
+                <FluentLabel Typo="Typography.H4">R @_stats.MonthlyAmount.ToString("N2")</FluentLabel>
+            </FluentCard>
+        </FluentStack>
+        
+        @if (_loading)
+        {
+            <FluentProgressRing />
+        }
+        else if (_filteredPayments.Any())
+        {
+            <FluentDataGrid Items="@_filteredPayments" Style="width: 100%;">
+                <PropertyColumn Property="@(p => p.Id)" Title="Payment #" Sortable="true" />
+                <PropertyColumn Property="@(p => p.StudentName)" Title="Student" Sortable="true" />
+                <PropertyColumn Property="@(p => p.NBTNumber)" Title="NBT Number" />
+                <PropertyColumn Property="@(p => p.Amount)" Title="Amount" Format="C2" Sortable="true" />
+                <PropertyColumn Property="@(p => p.PaymentDate)" Title="Date" Format="yyyy-MM-dd" Sortable="true" />
+                <PropertyColumn Property="@(p => p.PaymentMethod)" Title="Method" />
+                <PropertyColumn Property="@(p => p.Reference)" Title="Reference" />
+                <TemplateColumn Title="Status">
+                    <FluentBadge Appearance="@GetStatusAppearance(context.Status)">
+                        @context.Status
+                    </FluentBadge>
+                </TemplateColumn>
+                <TemplateColumn Title="Actions">
+                    <FluentStack Orientation="Orientation.Horizontal" Style="gap: 5px;">
+                        <FluentButton Appearance="Appearance.Lightweight" 
+                                    OnClick="@(() => Navigation.NavigateTo($"/admin/payments/{context.Id}"))">
+                            <FluentIcon Value="@(new Icons.Regular.Size16.Eye())" />
+                        </FluentButton>
+                        <FluentButton Appearance="Appearance.Lightweight" 
+                                    OnClick="@(() => Navigation.NavigateTo($"/admin/payments/edit/{context.Id}"))">
+                            <FluentIcon Value="@(new Icons.Regular.Size16.Edit())" />
+                        </FluentButton>
+                    </FluentStack>
+                </TemplateColumn>
+            </FluentDataGrid>
+        }
+        else
+        {
+            <FluentLabel>No payments found.</FluentLabel>
+        }
+    </FluentCard>
+</FluentStack>
+
+@code {
+    private List<PaymentDto> _payments = new();
+    private IQueryable<PaymentDto> _filteredPayments = Enumerable.Empty<PaymentDto>().AsQueryable();
+    private string _searchTerm = string.Empty;
+    private string _statusFilter = string.Empty;
+    private bool _loading = true;
+    private PaymentStats _stats = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPayments();
+    }
+    
+    private async Task LoadPayments()
+    {
+        _loading = true;
+        try
+        {
+            var response = await Http.GetFromJsonAsync<List<PaymentDto>>("api/payments");
+            _payments = response ?? new List<PaymentDto>();
+            CalculateStats();
+            FilterPayments();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading payments: {ex.Message}");
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+    
+    private void CalculateStats()
+    {
+        _stats = new PaymentStats
+        {
+            TotalAmount = _payments.Sum(p => p.Amount),
+            PendingCount = _payments.Count(p => p.Status == "Pending" || p.Status == "Partial"),
+            MonthlyAmount = _payments
+                .Where(p => p.PaymentDate.Month == DateTime.Now.Month && 
+                           p.PaymentDate.Year == DateTime.Now.Year)
+                .Sum(p => p.Amount)
+        };
+    }
+    
+    private void FilterPayments()
+    {
+        var filtered = _payments.AsEnumerable();
+        
+        if (!string.IsNullOrWhiteSpace(_searchTerm))
+        {
+            var term = _searchTerm.ToLower();
+            filtered = filtered.Where(p => 
+                p.StudentName.ToLower().Contains(term) ||
+                p.NBTNumber.Contains(term) ||
+                p.Reference.ToLower().Contains(term));
+        }
+        
+        if (!string.IsNullOrWhiteSpace(_statusFilter))
+        {
+            filtered = filtered.Where(p => p.Status == _statusFilter);
+        }
+        
+        _filteredPayments = filtered.AsQueryable();
+    }
+    
+    private Appearance GetStatusAppearance(string status) => status switch
+    {
+        "Complete" => Appearance.Accent,
+        "Partial" => Appearance.Neutral,
+        "Pending" => Appearance.Neutral,
+        "Refunded" => Appearance.Neutral,
+        _ => Appearance.Neutral
+    };
+    
+    public class PaymentDto
+    {
+        public int Id { get; set; }
+        public string StudentName { get; set; } = string.Empty;
+        public string NBTNumber { get; set; } = string.Empty;
+        public decimal Amount { get; set; }
+        public DateTime PaymentDate { get; set; }
+        public string PaymentMethod { get; set; } = string.Empty;
+        public string Reference { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+    }
+    
+    public class PaymentStats
+    {
+        public decimal TotalAmount { get; set; }
+        public int PendingCount { get; set; }
+        public decimal MonthlyAmount { get; set; }
+    }
+}

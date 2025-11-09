@@ -1,0 +1,157 @@
+@page "/admin/students"
+@using Microsoft.FluentUI.AspNetCore.Components
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IDialogService DialogService
+
+<PageTitle>Student Management - NBT System</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical" Style="gap: 20px;">
+    <FluentStack Orientation="Orientation.Horizontal" Style="justify-content: space-between; align-items: center;">
+        <FluentLabel Typo="Typography.H3">Student Management</FluentLabel>
+        <FluentButton Appearance="Appearance.Accent" OnClick="@(() => Navigation.NavigateTo("/admin/students/create"))">
+            <FluentIcon Value="@(new Icons.Regular.Size20.PersonAdd())" Slot="start" />
+            Create New Student
+        </FluentButton>
+    </FluentStack>
+    
+    <FluentCard Style="padding: 20px;">
+        <FluentStack Orientation="Orientation.Horizontal" Style="gap: 10px; margin-bottom: 20px;">
+            <FluentSearch @bind-Value="_searchTerm" 
+                         Placeholder="Search by name, NBT number, or ID number..." 
+                         Style="flex: 1;"
+                         @bind-Value:after="FilterStudents" />
+            <FluentButton Appearance="Appearance.Outline" OnClick="LoadStudents">
+                <FluentIcon Value="@(new Icons.Regular.Size20.ArrowSync())" Slot="start" />
+                Refresh
+            </FluentButton>
+        </FluentStack>
+        
+        @if (_loading)
+        {
+            <FluentProgressRing />
+        }
+        else if (_filteredStudents.Any())
+        {
+            <FluentDataGrid Items="@_filteredStudents" Style="width: 100%;">
+                <PropertyColumn Property="@(s => s.NBTNumber)" Title="NBT Number" Sortable="true" />
+                <PropertyColumn Property="@(s => s.FirstName)" Title="First Name" Sortable="true" />
+                <PropertyColumn Property="@(s => s.LastName)" Title="Last Name" Sortable="true" />
+                <PropertyColumn Property="@(s => s.IDNumber)" Title="ID Number" Sortable="true" />
+                <PropertyColumn Property="@(s => s.Email)" Title="Email" Sortable="true" />
+                <PropertyColumn Property="@(s => s.MobileNumber)" Title="Mobile" />
+                <TemplateColumn Title="Status">
+                    <FluentBadge Appearance="@(context.IsActive ? Appearance.Accent : Appearance.Neutral)">
+                        @(context.IsActive ? "Active" : "Inactive")
+                    </FluentBadge>
+                </TemplateColumn>
+                <TemplateColumn Title="Actions">
+                    <FluentStack Orientation="Orientation.Horizontal" Style="gap: 5px;">
+                        <FluentButton Appearance="Appearance.Lightweight" 
+                                    OnClick="@(() => Navigation.NavigateTo($"/admin/students/{context.Id}"))">
+                            <FluentIcon Value="@(new Icons.Regular.Size16.Eye())" />
+                        </FluentButton>
+                        <FluentButton Appearance="Appearance.Lightweight" 
+                                    OnClick="@(() => Navigation.NavigateTo($"/admin/students/edit/{context.Id}"))">
+                            <FluentIcon Value="@(new Icons.Regular.Size16.Edit())" />
+                        </FluentButton>
+                        <FluentButton Appearance="Appearance.Lightweight" 
+                                    OnClick="@(() => DeleteStudent(context.Id))">
+                            <FluentIcon Value="@(new Icons.Regular.Size16.Delete())" Color="Color.Error" />
+                        </FluentButton>
+                    </FluentStack>
+                </TemplateColumn>
+            </FluentDataGrid>
+        }
+        else
+        {
+            <FluentLabel>No students found.</FluentLabel>
+        }
+    </FluentCard>
+</FluentStack>
+
+@code {
+    private List<StudentDto> _students = new();
+    private IQueryable<StudentDto> _filteredStudents = Enumerable.Empty<StudentDto>().AsQueryable();
+    private string _searchTerm = string.Empty;
+    private bool _loading = true;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadStudents();
+    }
+    
+    private async Task LoadStudents()
+    {
+        _loading = true;
+        try
+        {
+            var response = await Http.GetFromJsonAsync<List<StudentDto>>("api/students");
+            _students = response ?? new List<StudentDto>();
+            FilterStudents();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading students: {ex.Message}");
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+    
+    private void FilterStudents()
+    {
+        if (string.IsNullOrWhiteSpace(_searchTerm))
+        {
+            _filteredStudents = _students.AsQueryable();
+        }
+        else
+        {
+            var term = _searchTerm.ToLower();
+            _filteredStudents = _students
+                .Where(s => s.FirstName.ToLower().Contains(term) ||
+                           s.LastName.ToLower().Contains(term) ||
+                           s.NBTNumber.Contains(term) ||
+                           s.IDNumber.Contains(term) ||
+                           s.Email.ToLower().Contains(term))
+                .AsQueryable();
+        }
+    }
+    
+    private async Task DeleteStudent(int id)
+    {
+        var dialog = await DialogService.ShowConfirmationAsync(
+            "Are you sure you want to delete this student?",
+            "Delete Student",
+            "Yes",
+            "No");
+        
+        var result = await dialog.Result;
+        
+        if (!result.Cancelled)
+        {
+            try
+            {
+                await Http.DeleteAsync($"api/students/{id}");
+                await LoadStudents();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting student: {ex.Message}");
+            }
+        }
+    }
+    
+    public class StudentDto
+    {
+        public int Id { get; set; }
+        public string NBTNumber { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string IDNumber { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string MobileNumber { get; set; } = string.Empty;
+        public bool IsActive { get; set; }
+    }
+}

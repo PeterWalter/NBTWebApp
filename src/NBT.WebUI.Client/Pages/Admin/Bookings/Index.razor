@@ -1,0 +1,161 @@
+@page "/admin/bookings"
+@using Microsoft.FluentUI.AspNetCore.Components
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<PageTitle>Booking Management - NBT System</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical" Style="gap: 20px;">
+    <FluentStack Orientation="Orientation.Horizontal" Style="justify-content: space-between; align-items: center;">
+        <FluentLabel Typo="Typography.H3">Booking Management</FluentLabel>
+        <FluentButton Appearance="Appearance.Accent" OnClick="@(() => Navigation.NavigateTo("/admin/bookings/create"))">
+            <FluentIcon Value="@(new Icons.Regular.Size20.CalendarAdd())" Slot="start" />
+            Create New Booking
+        </FluentButton>
+    </FluentStack>
+    
+    <FluentCard Style="padding: 20px;">
+        <FluentStack Orientation="Orientation.Horizontal" Style="gap: 10px; margin-bottom: 20px;">
+            <FluentSearch @bind-Value="_searchTerm" 
+                         Placeholder="Search by student name or NBT number..." 
+                         Style="flex: 1;"
+                         @bind-Value:after="FilterBookings" />
+            <FluentSelect @bind-Value="_statusFilter" 
+                        @bind-Value:after="FilterBookings"
+                        Style="width: 200px;">
+                <FluentOption Value="">All Statuses</FluentOption>
+                <FluentOption Value="Pending">Pending</FluentOption>
+                <FluentOption Value="Confirmed">Confirmed</FluentOption>
+                <FluentOption Value="Cancelled">Cancelled</FluentOption>
+                <FluentOption Value="Completed">Completed</FluentOption>
+            </FluentSelect>
+            <FluentButton Appearance="Appearance.Outline" OnClick="LoadBookings">
+                <FluentIcon Value="@(new Icons.Regular.Size20.ArrowSync())" Slot="start" />
+                Refresh
+            </FluentButton>
+        </FluentStack>
+        
+        @if (_loading)
+        {
+            <FluentProgressRing />
+        }
+        else if (_filteredBookings.Any())
+        {
+            <FluentDataGrid Items="@_filteredBookings" Style="width: 100%;">
+                <PropertyColumn Property="@(b => b.Id)" Title="Booking #" Sortable="true" />
+                <PropertyColumn Property="@(b => b.StudentName)" Title="Student" Sortable="true" />
+                <PropertyColumn Property="@(b => b.NBTNumber)" Title="NBT Number" />
+                <PropertyColumn Property="@(b => b.TestType)" Title="Test Type" Sortable="true" />
+                <PropertyColumn Property="@(b => b.VenueName)" Title="Venue" />
+                <PropertyColumn Property="@(b => b.TestDate)" Title="Test Date" Format="yyyy-MM-dd" Sortable="true" />
+                <TemplateColumn Title="Status">
+                    <FluentBadge Appearance="@GetStatusAppearance(context.Status)">
+                        @context.Status
+                    </FluentBadge>
+                </TemplateColumn>
+                <TemplateColumn Title="Payment">
+                    <FluentBadge Appearance="@GetPaymentAppearance(context.PaymentStatus)">
+                        @context.PaymentStatus
+                    </FluentBadge>
+                </TemplateColumn>
+                <TemplateColumn Title="Actions">
+                    <FluentStack Orientation="Orientation.Horizontal" Style="gap: 5px;">
+                        <FluentButton Appearance="Appearance.Lightweight" 
+                                    OnClick="@(() => Navigation.NavigateTo($"/admin/bookings/{context.Id}"))">
+                            <FluentIcon Value="@(new Icons.Regular.Size16.Eye())" />
+                        </FluentButton>
+                        <FluentButton Appearance="Appearance.Lightweight" 
+                                    OnClick="@(() => Navigation.NavigateTo($"/admin/bookings/edit/{context.Id}"))">
+                            <FluentIcon Value="@(new Icons.Regular.Size16.Edit())" />
+                        </FluentButton>
+                    </FluentStack>
+                </TemplateColumn>
+            </FluentDataGrid>
+        }
+        else
+        {
+            <FluentLabel>No bookings found.</FluentLabel>
+        }
+    </FluentCard>
+</FluentStack>
+
+@code {
+    private List<BookingDto> _bookings = new();
+    private IQueryable<BookingDto> _filteredBookings = Enumerable.Empty<BookingDto>().AsQueryable();
+    private string _searchTerm = string.Empty;
+    private string _statusFilter = string.Empty;
+    private bool _loading = true;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBookings();
+    }
+    
+    private async Task LoadBookings()
+    {
+        _loading = true;
+        try
+        {
+            var response = await Http.GetFromJsonAsync<List<BookingDto>>("api/bookings");
+            _bookings = response ?? new List<BookingDto>();
+            FilterBookings();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading bookings: {ex.Message}");
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+    
+    private void FilterBookings()
+    {
+        var filtered = _bookings.AsEnumerable();
+        
+        if (!string.IsNullOrWhiteSpace(_searchTerm))
+        {
+            var term = _searchTerm.ToLower();
+            filtered = filtered.Where(b => 
+                b.StudentName.ToLower().Contains(term) ||
+                b.NBTNumber.Contains(term));
+        }
+        
+        if (!string.IsNullOrWhiteSpace(_statusFilter))
+        {
+            filtered = filtered.Where(b => b.Status == _statusFilter);
+        }
+        
+        _filteredBookings = filtered.AsQueryable();
+    }
+    
+    private Appearance GetStatusAppearance(string status) => status switch
+    {
+        "Confirmed" => Appearance.Accent,
+        "Pending" => Appearance.Neutral,
+        "Cancelled" => Appearance.Neutral,
+        "Completed" => Appearance.Accent,
+        _ => Appearance.Neutral
+    };
+    
+    private Appearance GetPaymentAppearance(string status) => status switch
+    {
+        "Paid" => Appearance.Accent,
+        "Partial" => Appearance.Neutral,
+        "Pending" => Appearance.Neutral,
+        _ => Appearance.Neutral
+    };
+    
+    public class BookingDto
+    {
+        public int Id { get; set; }
+        public string StudentName { get; set; } = string.Empty;
+        public string NBTNumber { get; set; } = string.Empty;
+        public string TestType { get; set; } = string.Empty;
+        public string VenueName { get; set; } = string.Empty;
+        public DateTime TestDate { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public string PaymentStatus { get; set; } = string.Empty;
+    }
+}
