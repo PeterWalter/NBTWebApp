@@ -1,0 +1,168 @@
+@page "/"
+@using Microsoft.FluentUI.AspNetCore.Components
+
+<PageTitle>National Benchmark Tests (NBT)</PageTitle>
+
+<div class="landing-page">
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <img src="/images/nbt-logo.png" alt="NBT Logo" class="hero-logo" />
+            <h1>National Benchmark Tests</h1>
+            <p class="hero-subtitle">Assessing academic readiness for tertiary education</p>
+            <div class="hero-actions">
+                <FluentButton Appearance="Appearance.Accent" 
+                            IconStart="@(new Icons.Regular.Size20.PersonAdd())"
+                            OnClick="@(() => Navigation.NavigateTo("/register"))">
+                    Register for NBT
+                </FluentButton>
+                <FluentButton Appearance="Appearance.Outline"
+                            IconStart="@(new Icons.Regular.Size20.SignIn())"
+                            OnClick="@(() => Navigation.NavigateTo("/login"))">
+                    Sign In
+                </FluentButton>
+            </div>
+        </div>
+    </section>
+
+    <!-- Navigation Cards -->
+    <section class="audience-section">
+        <FluentCard class="audience-card">
+            <div class="card-header">
+                <FluentIcon Value="@(new Icons.Regular.Size48.Person())" Color="Color.Accent" />
+                <h2>For Applicants</h2>
+            </div>
+            <FluentNavMenu>
+                <FluentNavLink Href="/register" Icon="@(new Icons.Regular.Size20.PersonAdd())">Register for NBT</FluentNavLink>
+                <FluentNavLink Href="/login" Icon="@(new Icons.Regular.Size20.SignIn())">Sign In / My Account</FluentNavLink>
+                <FluentNavLink Href="/about/tests" Icon="@(new Icons.Regular.Size20.BookInformation())">About the Tests</FluentNavLink>
+                <FluentNavLink Href="/about/test-dates" Icon="@(new Icons.Regular.Size20.Calendar())">Test Dates & Venues</FluentNavLink>
+                <FluentNavLink Href="/about/fees" Icon="@(new Icons.Regular.Size20.Money())">Test Fees</FluentNavLink>
+                <FluentNavLink Href="/about/results" Icon="@(new Icons.Regular.Size20.DocumentCheckmark())">Understanding Results</FluentNavLink>
+                <FluentNavLink Href="/about/special-needs" Icon="@(new Icons.Regular.Size20.Accessibility())">Special Needs Accommodation</FluentNavLink>
+                <FluentNavLink Href="/faq" Icon="@(new Icons.Regular.Size20.QuestionCircle())">FAQs</FluentNavLink>
+            </FluentNavMenu>
+        </FluentCard>
+
+        <FluentCard class="audience-card">
+            <div class="card-header">
+                <FluentIcon Value="@(new Icons.Regular.Size48.Building())" Color="Color.Accent" />
+                <h2>For Institutions</h2>
+            </div>
+            <FluentNavMenu>
+                <FluentNavLink Href="/institutions/about" Icon="@(new Icons.Regular.Size20.Info())">About NBT for Institutions</FluentNavLink>
+                <FluentNavLink Href="/institutions/using-results" Icon="@(new Icons.Regular.Size20.DocumentData())">Using NBT Results</FluentNavLink>
+                <FluentNavLink Href="/institutions/request-results" Icon="@(new Icons.Regular.Size20.DocumentArrowDown())">Request Results</FluentNavLink>
+                <FluentNavLink Href="/institutions/research" Icon="@(new Icons.Regular.Size20.BeakerSettings())">Research & Validation</FluentNavLink>
+                <FluentNavLink Href="/institutions/partnership" Icon="@(new Icons.Regular.Size20.Handshake())">Partnership Opportunities</FluentNavLink>
+                <FluentNavLink Href="/institutions/contact" Icon="@(new Icons.Regular.Size20.Mail())">Contact Us</FluentNavLink>
+            </FluentNavMenu>
+        </FluentCard>
+
+        <FluentCard class="audience-card">
+            <div class="card-header">
+                <FluentIcon Value="@(new Icons.Regular.Size48.Hat())" Color="Color.Accent" />
+                <h2>For Educators</h2>
+            </div>
+            <FluentNavMenu>
+                <FluentNavLink Href="/educators/about" Icon="@(new Icons.Regular.Size20.Info())">About NBT for Educators</FluentNavLink>
+                <FluentNavLink Href="/educators/preparing-students" Icon="@(new Icons.Regular.Size20.BookOpen())">Preparing Students</FluentNavLink>
+                <FluentNavLink Href="/educators/sample-questions" Icon="@(new Icons.Regular.Size20.QuizNew())">Sample Questions</FluentNavLink>
+                <FluentNavLink Href="/educators/resources" Icon="@(new Icons.Regular.Size20.Folder())">Teaching Resources</FluentNavLink>
+                <FluentNavLink Href="/educators/workshops" Icon="@(new Icons.Regular.Size20.PeopleTeam())">Workshops & Training</FluentNavLink>
+                <FluentNavLink Href="/educators/contact" Icon="@(new Icons.Regular.Size20.Mail())">Contact Us</FluentNavLink>
+            </FluentNavMenu>
+        </FluentCard>
+    </section>
+
+    <!-- Quick Info Section -->
+    <section class="info-section">
+        <FluentCard>
+            <h2>What are the NBTs?</h2>
+            <p>
+                The National Benchmark Tests (NBTs) are assessments for first-year applicants into higher education institutions. 
+                The NBTs were designed to measure a writer's ability to transfer understanding of Academic Literacy, 
+                Quantitative Literacy and Mathematics to the demands of tertiary coursework.
+            </p>
+            <FluentButton Appearance="Appearance.Lightweight" 
+                        IconEnd="@(new Icons.Regular.Size20.ArrowRight())"
+                        OnClick="@(() => Navigation.NavigateTo("/about/tests"))">
+                Learn More
+            </FluentButton>
+        </FluentCard>
+
+        <FluentCard>
+            <h2>Why write the NBT?</h2>
+            <p>
+                Many universities use the NBT results alongside school results to make admission decisions. 
+                The NBT helps institutions identify students' academic strengths and support needs, 
+                enabling better placement and support strategies.
+            </p>
+            <FluentButton Appearance="Appearance.Lightweight" 
+                        IconEnd="@(new Icons.Regular.Size20.ArrowRight())"
+                        OnClick="@(() => Navigation.NavigateTo("/about/why-nbt"))">
+                Learn More
+            </FluentButton>
+        </FluentCard>
+    </section>
+
+    <!-- Video Section (if available) -->
+    @if (!string.IsNullOrEmpty(videoUrl))
+    {
+        <section class="video-section">
+            <h2>Watch: How to Register for NBT</h2>
+            <div class="video-container">
+                <iframe src="@videoUrl" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                </iframe>
+            </div>
+        </section>
+    }
+
+    <!-- Important Notices -->
+    <section class="notices-section">
+        <FluentMessageBar Intent="MessageIntent.Info" Style="margin-bottom: 1rem;">
+            <strong>2025 Test Dates Now Available!</strong> Registration is open for the 2025 test cycle. 
+            Book your test early to secure your preferred venue and date.
+        </FluentMessageBar>
+        
+        <FluentMessageBar Intent="MessageIntent.Warning">
+            <strong>Important:</strong> NBT results are valid for 3 years from the date of booking. 
+            You can write a maximum of 2 tests per year.
+        </FluentMessageBar>
+    </section>
+
+    <!-- Footer Info -->
+    <section class="footer-info">
+        <div class="footer-column">
+            <h3>Contact Us</h3>
+            <p><FluentIcon Value="@(new Icons.Regular.Size16.Mail())" /> info@nbt.ac.za</p>
+            <p><FluentIcon Value="@(new Icons.Regular.Size16.Phone())" /> 021 650 3523</p>
+        </div>
+        <div class="footer-column">
+            <h3>Office Hours</h3>
+            <p>Monday - Friday: 8:00 AM - 4:30 PM</p>
+            <p>Closed on public holidays</p>
+        </div>
+        <div class="footer-column">
+            <h3>Quick Links</h3>
+            <FluentAnchor Href="/privacy">Privacy Policy</FluentAnchor><br/>
+            <FluentAnchor Href="/terms">Terms of Service</FluentAnchor><br/>
+            <FluentAnchor Href="/accessibility">Accessibility</FluentAnchor>
+        </div>
+    </section>
+</div>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+    
+    private string? videoUrl = null; // Set to actual video URL when available
+    
+    protected override void OnInitialized()
+    {
+        // Could load from configuration
+        // videoUrl = "https://www.youtube.com/embed/YOUR_VIDEO_ID";
+    }
+}

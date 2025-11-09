@@ -1,0 +1,192 @@
+@page "/about/test-dates"
+
+<PageTitle>Test Dates & Venues</PageTitle>
+
+<link rel="stylesheet" href="Pages/ContentPage.css" />
+
+<div class="content-page">
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/">Home</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/about/test-dates">Test Dates</FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h1>Test Dates & Venues - 2025</h1>
+
+    <FluentMessageBar Intent="MessageIntent.Info" Style="margin-bottom: 2rem;">
+        <strong>Important:</strong> Book early to secure your preferred venue and date. 
+        Bookings close approximately 2 weeks before each test date.
+    </FluentMessageBar>
+
+    <FluentCard class="info-card">
+        <h2>2025 Test Calendar</h2>
+        <p>Tests are available throughout the year at various venues across South Africa and online.</p>
+        
+        <FluentDataGrid Items="@testDates.AsQueryable()" Style="margin-top: 1rem;">
+            <PropertyColumn Property="@(d => d.TestDate.ToString("dd MMM yyyy"))" Title="Test Date" />
+            <PropertyColumn Property="@(d => d.ClosingDate.ToString("dd MMM yyyy"))" Title="Booking Closes" />
+            <PropertyColumn Property="@(d => d.TestType)" Title="Test Type" />
+            <TemplateColumn Title="Notes">
+                <div>
+                    @if (context.IsSunday)
+                    {
+                        <FluentBadge Fill="accent" Circular="true">Sunday Test</FluentBadge>
+                    }
+                    @if (context.IsOnline)
+                    {
+                        <FluentBadge Fill="info" Circular="true">Online Available</FluentBadge>
+                    }
+                </div>
+            </TemplateColumn>
+        </FluentDataGrid>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Venue Types</h2>
+        <div class="venue-types">
+            <div class="venue-type-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.Building())" Color="Color.Accent" />
+                <h3>National Venues</h3>
+                <p>Regular testing centers across South Africa with fixed test dates and schedules.</p>
+            </div>
+            <div class="venue-type-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.Globe())" Color="Color.Accent" />
+                <h3>Online Testing</h3>
+                <p>Write from anywhere in the world on select dates with a computer, internet, camera, and microphone.</p>
+            </div>
+            <div class="venue-type-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.People())" Color="Color.Accent" />
+                <h3>Special Sessions</h3>
+                <p>Arranged for groups or special circumstances with approved invigilators.</p>
+            </div>
+            <div class="venue-type-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.BeakerSettings())" Color="Color.Accent" />
+                <h3>Research Venues</h3>
+                <p>Special venues for research and validation studies.</p>
+            </div>
+        </div>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Available Test Venues</h2>
+        <p>NBT tests are conducted at venues in the following cities and regions:</p>
+        <div class="venue-grid">
+            <div class="province-section">
+                <h4>Gauteng</h4>
+                <ul>
+                    <li>Johannesburg</li>
+                    <li>Pretoria</li>
+                    <li>Soweto</li>
+                </ul>
+            </div>
+            <div class="province-section">
+                <h4>Western Cape</h4>
+                <ul>
+                    <li>Cape Town</li>
+                    <li>Stellenbosch</li>
+                </ul>
+            </div>
+            <div class="province-section">
+                <h4>KwaZulu-Natal</h4>
+                <ul>
+                    <li>Durban</li>
+                    <li>Pietermaritzburg</li>
+                </ul>
+            </div>
+            <div class="province-section">
+                <h4>Eastern Cape</h4>
+                <ul>
+                    <li>Port Elizabeth</li>
+                    <li>East London</li>
+                </ul>
+            </div>
+            <div class="province-section">
+                <h4>Other Provinces</h4>
+                <ul>
+                    <li>Bloemfontein</li>
+                    <li>Polokwane</li>
+                    <li>Nelspruit</li>
+                </ul>
+            </div>
+        </div>
+        <FluentMessageBar Intent="MessageIntent.Info" Style="margin-top: 1rem;">
+            Specific venue addresses and available test dates can be viewed during the booking process.
+        </FluentMessageBar>
+    </FluentCard>
+
+    <div class="action-section">
+        <FluentButton Appearance="Appearance.Accent" 
+                    IconStart="@(new Icons.Regular.Size20.CalendarAdd())"
+                    OnClick="@(() => Navigation.NavigateTo("/register"))">
+            Book a Test
+        </FluentButton>
+    </div>
+</div>
+
+<style>
+    .venue-types {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .venue-type-item {
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .venue-type-item h3 {
+        margin: 0.5rem 0;
+        color: var(--accent-fill-rest);
+    }
+
+    .venue-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .province-section h4 {
+        color: var(--accent-fill-rest);
+        margin-bottom: 0.5rem;
+    }
+
+    .province-section ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .province-section li {
+        padding: 0.25rem 0;
+    }
+</style>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+    private List<TestDateInfo> testDates = new();
+
+    protected override void OnInitialized()
+    {
+        // Sample test dates - would come from database
+        testDates = new List<TestDateInfo>
+        {
+            new TestDateInfo { TestDate = new DateTime(2025, 2, 8), ClosingDate = new DateTime(2025, 1, 25), TestType = "AQL & MAT", IsSunday = false, IsOnline = true },
+            new TestDateInfo { TestDate = new DateTime(2025, 2, 22), ClosingDate = new DateTime(2025, 2, 8), TestType = "AQL & MAT", IsSunday = false, IsOnline = false },
+            new TestDateInfo { TestDate = new DateTime(2025, 3, 9), ClosingDate = new DateTime(2025, 2, 23), TestType = "AQL & MAT", IsSunday = true, IsOnline = true },
+            new TestDateInfo { TestDate = new DateTime(2025, 4, 5), ClosingDate = new DateTime(2025, 3, 22), TestType = "AQL & MAT", IsSunday = false, IsOnline = false },
+            new TestDateInfo { TestDate = new DateTime(2025, 5, 10), ClosingDate = new DateTime(2025, 4, 26), TestType = "AQL & MAT", IsSunday = true, IsOnline = true },
+            new TestDateInfo { TestDate = new DateTime(2025, 6, 7), ClosingDate = new DateTime(2025, 5, 24), TestType = "AQL & MAT", IsSunday = false, IsOnline = false },
+        };
+    }
+
+    public class TestDateInfo
+    {
+        public DateTime TestDate { get; set; }
+        public DateTime ClosingDate { get; set; }
+        public string TestType { get; set; } = string.Empty;
+        public bool IsSunday { get; set; }
+        public bool IsOnline { get; set; }
+    }
+}

@@ -1,0 +1,136 @@
+@page "/educators/about"
+
+<PageTitle>NBT for Educators</PageTitle>
+
+<link rel="stylesheet" href="Pages/ContentPage.css" />
+
+<div class="content-page">
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/">Home</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/educators/about">For Educators</FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h1>NBT for Educators</h1>
+
+    <FluentCard class="info-card">
+        <h2>Supporting Your Students</h2>
+        <p>
+            As an educator, you play a crucial role in preparing students for higher education. The National Benchmark 
+            Tests assess students' readiness for tertiary study, and understanding these assessments can help you better 
+            support your learners.
+        </p>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>What the NBTs Measure</h2>
+        <p>
+            The NBTs are not curriculum tests. They assess students' ability to apply knowledge and skills in 
+            academic contexts, focusing on:
+        </p>
+        <ul>
+            <li><strong>Academic Literacy:</strong> Reading, comprehending, and reasoning with academic texts</li>
+            <li><strong>Quantitative Literacy:</strong> Working with numbers and quantitative information in context</li>
+            <li><strong>Mathematics:</strong> Mathematical concepts and problem-solving at entry level for tertiary study</li>
+        </ul>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>How You Can Help</h2>
+        <div class="help-grid">
+            <div class="help-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.BookOpen())" Color="Color.Accent" />
+                <h3>Encourage Reading</h3>
+                <p>Expose students to a variety of academic and informational texts</p>
+            </div>
+            <div class="help-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.Calculator())" Color="Color.Accent" />
+                <h3>Apply Mathematics</h3>
+                <p>Help students see mathematical concepts in real-world contexts</p>
+            </div>
+            <div class="help-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.QuizNew())" Color="Color.Accent" />
+                <h3>Critical Thinking</h3>
+                <p>Foster reasoning, analysis, and problem-solving skills</p>
+            </div>
+            <div class="help-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.Info())" Color="Color.Accent" />
+                <h3>Inform Students</h3>
+                <p>Ensure students understand the purpose and importance of the NBTs</p>
+            </div>
+        </div>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Resources for Educators</h2>
+        <p>We provide various resources to help you prepare your students:</p>
+        <div class="resource-links">
+            <FluentButton Appearance="Appearance.Outline"
+                        IconStart="@(new Icons.Regular.Size20.QuizNew())"
+                        OnClick="@(() => Navigation.NavigateTo("/educators/sample-questions"))">
+                Sample Questions
+            </FluentButton>
+            <FluentButton Appearance="Appearance.Outline"
+                        IconStart="@(new Icons.Regular.Size20.Folder())"
+                        OnClick="@(() => Navigation.NavigateTo("/educators/resources"))">
+                Teaching Resources
+            </FluentButton>
+            <FluentButton Appearance="Appearance.Outline"
+                        IconStart="@(new Icons.Regular.Size20.PeopleTeam())"
+                        OnClick="@(() => Navigation.NavigateTo("/educators/workshops"))">
+                Workshops & Training
+            </FluentButton>
+        </div>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Professional Development</h2>
+        <p>
+            The NBT Project offers workshops and training sessions for educators to better understand the tests 
+            and effective preparation strategies. These sessions cover test content, sample questions, 
+            and teaching approaches that support academic literacy and quantitative reasoning.
+        </p>
+        <FluentMessageBar Intent="MessageIntent.Info">
+            Contact us to arrange a workshop at your school or attend one of our regional training sessions.
+        </FluentMessageBar>
+    </FluentCard>
+
+    <div class="action-section">
+        <FluentButton Appearance="Appearance.Accent"
+                    IconStart="@(new Icons.Regular.Size20.Mail())"
+                    OnClick="@(() => Navigation.NavigateTo("/educators/contact"))">
+            Contact Us
+        </FluentButton>
+    </div>
+</div>
+
+<style>
+    .help-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-top: 1.5rem;
+    }
+
+    .help-item {
+        text-align: center;
+        padding: 1.5rem;
+        background: var(--neutral-layer-2);
+        border-radius: 8px;
+    }
+
+    .help-item h3 {
+        color: var(--accent-fill-rest);
+        margin: 1rem 0 0.5rem 0;
+    }
+
+    .resource-links {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+    }
+</style>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+}
