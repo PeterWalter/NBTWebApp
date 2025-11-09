@@ -1,28 +1,72 @@
 @page "/"
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
+@using Microsoft.FluentUI.AspNetCore.Components
+@using Microsoft.FluentUI.AspNetCore.Components.Icons
 
 <PageTitle>National Benchmark Tests (NBT)</PageTitle>
 
 <div class="landing-page">
     <!-- Hero Section -->
     <section class="hero-section">
+        <div class="hero-background">
+            <div class="hero-gradient"></div>
+            <div class="hero-pattern"></div>
+        </div>
         <div class="hero-inner">
             <div class="hero-content">
-                <img src="/images/nbt-logo.png" alt="NBT Logo" class="hero-logo" />
-                <h1 class="hero-title">National Benchmark Tests</h1>
-                <p class="hero-subtitle">Assessing academic readiness for tertiary education</p>
+                <div class="hero-badge">
+                    <img src="/images/nbt-logo.png" alt="NBT Logo" class="hero-logo" />
+                    <span class="badge-text">Official Portal</span>
+                </div>
+                <h1 class="hero-title">
+                    <span class="title-line">National</span>
+                    <span class="title-line highlight">Benchmark Tests</span>
+                </h1>
+                <p class="hero-subtitle">Assessing academic readiness for tertiary education in South Africa</p>
+                <p class="hero-description">
+                    Join thousands of students preparing for their academic future. 
+                    Register today and take the first step towards your university journey.
+                </p>
                 <div class="hero-actions">
-                    <button class="btn hero-btn-primary" @onclick="@GoToRegister">
-                        <span class="icon person-add-icon"></span> Register for NBT
-                    </button>
-                    <button class="btn hero-btn-secondary" @onclick="@GoToLogin">
-                        <span class="icon sign-in-icon"></span> Sign In
-                    </button>
+                    <FluentButton Appearance="Appearance.Accent" 
+                                  class="hero-btn-primary" 
+                                  OnClick="@GoToRegister">
+                        🎓 Register for NBT
+                    </FluentButton>
+                    <FluentButton Appearance="Appearance.Outline" 
+                                  class="hero-btn-secondary" 
+                                  OnClick="@GoToLogin">
+                        🔐 Sign In
+                    </FluentButton>
+                    <FluentButton Appearance="Appearance.Lightweight" 
+                                  class="hero-btn-tertiary" 
+                                  OnClick="@GoToAboutTests">
+                        Learn More →
+                    </FluentButton>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">500K+</div>
+                        <div class="stat-label">Students Tested</div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div class="stat-number">26</div>
+                        <div class="stat-label">Universities</div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div class="stat-number">20+</div>
+                        <div class="stat-label">Years Experience</div>
+                    </div>
                 </div>
             </div>
-            <div class="hero-image">
-                <img src="/images/hero-student.png" alt="Student taking NBT test" class="student-illustration" />
+            <div class="hero-visual">
+                <div class="visual-card">
+                    <div class="visual-glow"></div>
+                    <img src="/images/hero-student.png" alt="Student taking NBT test" class="student-illustration" />
+                </div>
             </div>
         </div>
     </section>
@@ -80,4 +124,5 @@
 @code {
     private void GoToRegister() => Navigation.NavigateTo("/register");
     private void GoToLogin() => Navigation.NavigateTo("/login");
+    private void GoToAboutTests() => Navigation.NavigateTo("/about/tests");
 }

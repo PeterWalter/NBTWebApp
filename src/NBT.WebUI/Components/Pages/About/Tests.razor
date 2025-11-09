@@ -1,0 +1,215 @@
+@page "/about/tests"
+@inject NavigationManager Navigation
+
+<PageTitle>About the Tests - NBT</PageTitle>
+
+<div class="page-wrapper">
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">About the Tests</h1>
+            <p class="page-subtitle">Understanding the National Benchmark Tests</p>
+        </div>
+    </div>
+
+    <div class="container page-content">
+        <section class="content-section">
+            <h2>What are the NBTs?</h2>
+            <p>
+                The National Benchmark Tests (NBTs) are assessments for first-year applicants into higher 
+                education institutions. They assess academic readiness for university-level education.
+            </p>
+        </section>
+
+        <section class="content-section">
+            <h2>Test Components</h2>
+            <div class="test-cards">
+                <div class="test-card">
+                    <div class="test-card-icon">📊</div>
+                    <h3>Academic and Quantitative Literacy (AQL)</h3>
+                    <p>
+                        Assesses your ability to understand and work with academic texts and solve 
+                        quantitative problems in academic contexts.
+                    </p>
+                    <p><strong>Duration:</strong> 3 hours</p>
+                </div>
+
+                <div class="test-card">
+                    <div class="test-card-icon">🔢</div>
+                    <h3>Mathematics (MAT)</h3>
+                    <p>
+                        Assesses your mathematical competency in school-level mathematics, focusing on 
+                        knowledge and skills required for higher education.
+                    </p>
+                    <p><strong>Duration:</strong> 3 hours</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2>Who Should Write the NBTs?</h2>
+            <ul class="info-list">
+                <li>Grade 12 learners planning to apply to South African universities</li>
+                <li>Grade 11 learners who wish to apply for early selection programmes</li>
+                <li>Applicants with post-school qualifications wishing to access higher education</li>
+            </ul>
+        </section>
+
+        <section class="content-section">
+            <h2>How Universities Use NBT Results</h2>
+            <p>
+                Universities use NBT results alongside other indicators such as school results to assess 
+                academic readiness for university education. The combination of indicators helps institutions 
+                to make informed placement and selection decisions.
+            </p>
+        </section>
+
+        <div class="action-section">
+            <FluentButton Appearance="Appearance.Accent" OnClick="@(() => Navigation.NavigateTo(\"/register\"))">
+                Register for NBT
+            </FluentButton>
+            <FluentButton Appearance="Appearance.Neutral" OnClick="@(() => Navigation.NavigateTo(\"/\"))">
+                Back to Home
+            </FluentButton>
+        </div>
+    </div>
+</div>
+
+<style>
+    .page-wrapper {
+        min-height: 100vh;
+        background-color: #faf9f8;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #0078d4 0%, #00b7c3 100%);
+        color: white;
+        padding: 4rem 2rem;
+        text-align: center;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .page-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin: 0 0 1rem 0;
+    }
+
+    .page-subtitle {
+        font-size: 1.25rem;
+        opacity: 0.9;
+        margin: 0;
+    }
+
+    .page-content {
+        padding: 3rem 2rem;
+    }
+
+    .content-section {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .content-section h2 {
+        color: #0078d4;
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+        font-size: 1.75rem;
+    }
+
+    .content-section p {
+        line-height: 1.6;
+        color: #605e5c;
+        margin-bottom: 1rem;
+    }
+
+    .test-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .test-card {
+        background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .test-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .test-card-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .test-card h3 {
+        color: #0078d4;
+        margin-bottom: 1rem;
+        font-size: 1.25rem;
+    }
+
+    .test-card p {
+        color: #605e5c;
+        font-size: 0.95rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .info-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .info-list li {
+        padding: 0.75rem 0;
+        padding-left: 2rem;
+        position: relative;
+        color: #605e5c;
+    }
+
+    .info-list li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #00b7c3;
+        font-weight: bold;
+        font-size: 1.25rem;
+    }
+
+    .action-section {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 3rem;
+        flex-wrap: wrap;
+    }
+
+    @@media (max-width: 768px) {
+        .page-title {
+            font-size: 2rem;
+        }
+
+        .page-subtitle {
+            font-size: 1rem;
+        }
+
+        .test-cards {
+            grid-template-columns: 1fr;
+        }
+
+        .action-section {
+            flex-direction: column;
+        }
+    }
+</style>
