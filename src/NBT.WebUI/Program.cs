@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.FluentUI.AspNetCore.Components;
 using NBT.WebUI.Components;
@@ -36,6 +38,16 @@ builder.Services.AddCascadingAuthenticationState();
 
 // Add HTTP Client for API calls
 var apiUrl = builder.Configuration["ApiBaseUrl"] ?? "http://localhost:5000/";
+
+// Configure JSON serialization options for all HttpClients
+var jsonOptions = new JsonSerializerOptions
+{
+    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+    Converters = { new JsonStringEnumConverter() },
+    ReferenceHandler = ReferenceHandler.IgnoreCycles,
+    WriteIndented = builder.Environment.IsDevelopment()
+};
 
 // Register HttpClient for non-service usage
 builder.Services.AddHttpClient();
