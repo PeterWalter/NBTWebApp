@@ -1,0 +1,330 @@
+@page "/admin/students/edit/{id:guid}"
+@using Microsoft.FluentUI.AspNetCore.Components
+@using System.Net.Http.Json
+@using NBT.Application.Students.DTOs
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IDialogService DialogService
+
+<PageTitle>Edit Student - NBT System</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical" Style="gap: 20px; max-width: 1000px; margin: 0 auto;">
+    <FluentStack Orientation="Orientation.Horizontal" Style="justify-content: space-between; align-items: center;">
+        <FluentLabel Typo="Typography.H3">Edit Student</FluentLabel>
+        <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => Navigation.NavigateTo($"/admin/students/{Id}"))">
+            <FluentIcon Value="@(new Icons.Regular.Size20.ArrowLeft())" Slot="start" />
+            Back to Details
+        </FluentButton>
+    </FluentStack>
+    
+    @if (_loading)
+    {
+        <FluentProgressRing />
+    }
+    else if (_student != null)
+    {
+        <FluentCard Style="padding: 30px;">
+            <EditForm Model="@_student" OnValidSubmit="HandleSubmit">
+                <DataAnnotationsValidator />
+                
+                <FluentStack Orientation="Orientation.Vertical" Style="gap: 25px;">
+                    <!-- Read-only Identity Information -->
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 15px;">
+                        <FluentLabel Typo="Typography.H5">Student Identity (Read-Only)</FluentLabel>
+                        <FluentDivider />
+                        <FluentStack Orientation="Orientation.Horizontal" Style="gap: 20px; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <FluentLabel Weight="FontWeight.Bold">NBT Number:</FluentLabel>
+                                <FluentLabel>@_originalStudent?.NBTNumber</FluentLabel>
+                            </div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <FluentLabel Weight="FontWeight.Bold">ID Number:</FluentLabel>
+                                <FluentLabel>@_originalStudent?.IDNumber</FluentLabel>
+                            </div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <FluentLabel Weight="FontWeight.Bold">ID Type:</FluentLabel>
+                                <FluentLabel>@_originalStudent?.IDType</FluentLabel>
+                            </div>
+                        </FluentStack>
+                    </FluentStack>
+
+                    <!-- Personal Information -->
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 15px;">
+                        <FluentLabel Typo="Typography.H5">Personal Information</FluentLabel>
+                        <FluentDivider />
+                        <FluentStack Orientation="Orientation.Horizontal" Style="gap: 20px; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 300px;">
+                                <FluentTextField @bind-Value="_student.FirstName" 
+                                               Label="First Name" 
+                                               Required="true" 
+                                               Style="width: 100%;" />
+                                <ValidationMessage For="@(() => _student.FirstName)" />
+                            </div>
+                            <div style="flex: 1; min-width: 300px;">
+                                <FluentTextField @bind-Value="_student.LastName" 
+                                               Label="Last Name" 
+                                               Required="true" 
+                                               Style="width: 100%;" />
+                                <ValidationMessage For="@(() => _student.LastName)" />
+                            </div>
+                        </FluentStack>
+                    </FluentStack>
+
+                    <!-- Contact Information -->
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 15px;">
+                        <FluentLabel Typo="Typography.H5">Contact Information</FluentLabel>
+                        <FluentDivider />
+                        <FluentStack Orientation="Orientation.Horizontal" Style="gap: 20px; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 300px;">
+                                <FluentTextField @bind-Value="_student.Email" 
+                                               Label="Email" 
+                                               Required="true" 
+                                               TextFieldType="TextFieldType.Email" 
+                                               Style="width: 100%;" />
+                                <ValidationMessage For="@(() => _student.Email)" />
+                            </div>
+                            <div style="flex: 1; min-width: 300px;">
+                                <FluentTextField @bind-Value="_student.PhoneNumber" 
+                                               Label="Phone Number" 
+                                               Required="true" 
+                                               TextFieldType="TextFieldType.Tel" 
+                                               Style="width: 100%;" />
+                                <ValidationMessage For="@(() => _student.PhoneNumber)" />
+                            </div>
+                        </FluentStack>
+                        <FluentTextField @bind-Value="_student.AlternativePhoneNumber" 
+                                       Label="Alternative Phone Number" 
+                                       TextFieldType="TextFieldType.Tel" 
+                                       Style="width: 100%;" />
+                    </FluentStack>
+
+                    <!-- Address Information -->
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 15px;">
+                        <FluentLabel Typo="Typography.H5">Address</FluentLabel>
+                        <FluentDivider />
+                        <FluentTextField @bind-Value="_student.AddressLine1" 
+                                       Label="Address Line 1" 
+                                       Style="width: 100%;" />
+                        <FluentTextField @bind-Value="_student.AddressLine2" 
+                                       Label="Address Line 2" 
+                                       Style="width: 100%;" />
+                        <FluentStack Orientation="Orientation.Horizontal" Style="gap: 20px; flex-wrap: wrap;">
+                            <div style="flex: 2; min-width: 200px;">
+                                <FluentTextField @bind-Value="_student.City" 
+                                               Label="City" 
+                                               Style="width: 100%;" />
+                            </div>
+                            <div style="flex: 1; min-width: 150px;">
+                                <FluentSelect @bind-Value="_student.Province" 
+                                            Label="Province" 
+                                            Style="width: 100%;">
+                                    <FluentOption Value="">-- Select Province --</FluentOption>
+                                    <FluentOption Value="Eastern Cape">Eastern Cape</FluentOption>
+                                    <FluentOption Value="Free State">Free State</FluentOption>
+                                    <FluentOption Value="Gauteng">Gauteng</FluentOption>
+                                    <FluentOption Value="KwaZulu-Natal">KwaZulu-Natal</FluentOption>
+                                    <FluentOption Value="Limpopo">Limpopo</FluentOption>
+                                    <FluentOption Value="Mpumalanga">Mpumalanga</FluentOption>
+                                    <FluentOption Value="Northern Cape">Northern Cape</FluentOption>
+                                    <FluentOption Value="North West">North West</FluentOption>
+                                    <FluentOption Value="Western Cape">Western Cape</FluentOption>
+                                </FluentSelect>
+                            </div>
+                            <div style="flex: 1; min-width: 120px;">
+                                <FluentTextField @bind-Value="_student.PostalCode" 
+                                               Label="Postal Code" 
+                                               Style="width: 100%;" />
+                            </div>
+                        </FluentStack>
+                        <FluentTextField @bind-Value="_student.Country" 
+                                       Label="Country" 
+                                       Style="width: 100%;" />
+                    </FluentStack>
+
+                    <!-- Academic Information -->
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 15px;">
+                        <FluentLabel Typo="Typography.H5">Academic Information</FluentLabel>
+                        <FluentDivider />
+                        <FluentTextField @bind-Value="_student.SchoolName" 
+                                       Label="School Name" 
+                                       Required="true" 
+                                       Style="width: 100%;" />
+                        <FluentStack Orientation="Orientation.Horizontal" Style="gap: 20px; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <FluentSelect @bind-Value="_student.SchoolProvince" 
+                                            Label="School Province" 
+                                            Style="width: 100%;">
+                                    <FluentOption Value="">-- Select Province --</FluentOption>
+                                    <FluentOption Value="Eastern Cape">Eastern Cape</FluentOption>
+                                    <FluentOption Value="Free State">Free State</FluentOption>
+                                    <FluentOption Value="Gauteng">Gauteng</FluentOption>
+                                    <FluentOption Value="KwaZulu-Natal">KwaZulu-Natal</FluentOption>
+                                    <FluentOption Value="Limpopo">Limpopo</FluentOption>
+                                    <FluentOption Value="Mpumalanga">Mpumalanga</FluentOption>
+                                    <FluentOption Value="Northern Cape">Northern Cape</FluentOption>
+                                    <FluentOption Value="North West">North West</FluentOption>
+                                    <FluentOption Value="Western Cape">Western Cape</FluentOption>
+                                </FluentSelect>
+                            </div>
+                            <div style="flex: 1; min-width: 150px;">
+                                <FluentNumberField @bind-Value="_student.GradeYear" 
+                                                 Label="Grade/Year" 
+                                                 Min="8" 
+                                                 Max="13" 
+                                                 Style="width: 100%;" />
+                            </div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <FluentTextField @bind-Value="_student.HomeLanguage" 
+                                               Label="Home Language" 
+                                               Style="width: 100%;" />
+                            </div>
+                        </FluentStack>
+                    </FluentStack>
+
+                    <!-- Special Accommodations -->
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 15px;">
+                        <FluentLabel Typo="Typography.H5">Special Accommodations</FluentLabel>
+                        <FluentDivider />
+                        <FluentCheckbox @bind-Value="_student.RequiresAccommodation" 
+                                      Label="Requires Special Accommodation" />
+                        @if (_student.RequiresAccommodation)
+                        {
+                            <FluentTextArea @bind-Value="_student.AccommodationDetails" 
+                                          Label="Accommodation Details" 
+                                          Rows="4" 
+                                          Style="width: 100%;" 
+                                          Placeholder="Please describe the special accommodations required..." />
+                        }
+                    </FluentStack>
+
+                    <!-- Status -->
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 15px;">
+                        <FluentLabel Typo="Typography.H5">Account Status</FluentLabel>
+                        <FluentDivider />
+                        <FluentCheckbox @bind-Value="_student.IsActive" 
+                                      Label="Active Account" />
+                        @if (!_student.IsActive)
+                        {
+                            <FluentMessageBar Intent="MessageIntent.Warning">
+                                Inactive accounts cannot book tests or access services.
+                            </FluentMessageBar>
+                        }
+                    </FluentStack>
+
+                    @if (!string.IsNullOrEmpty(_errorMessage))
+                    {
+                        <FluentMessageBar Intent="MessageIntent.Error">
+                            @_errorMessage
+                        </FluentMessageBar>
+                    }
+                    
+                    <FluentStack Orientation="Orientation.Horizontal" Style="gap: 10px; justify-content: flex-end;">
+                        <FluentButton Appearance="Appearance.Neutral" 
+                                    OnClick="@(() => Navigation.NavigateTo($"/admin/students/{Id}"))">
+                            Cancel
+                        </FluentButton>
+                        <FluentButton Appearance="Appearance.Accent" 
+                                    Type="ButtonType.Submit" 
+                                    Loading="_submitting">
+                            <FluentIcon Value="@(new Icons.Regular.Size20.Save())" Slot="start" />
+                            Save Changes
+                        </FluentButton>
+                    </FluentStack>
+                </FluentStack>
+            </EditForm>
+        </FluentCard>
+    }
+    else if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <FluentMessageBar Intent="MessageIntent.Error">
+            @_errorMessage
+        </FluentMessageBar>
+    }
+</FluentStack>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+    
+    private UpdateStudentDto? _student;
+    private StudentDto? _originalStudent;
+    private bool _loading = true;
+    private bool _submitting = false;
+    private string _errorMessage = string.Empty;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadStudent();
+    }
+    
+    private async Task LoadStudent()
+    {
+        _loading = true;
+        try
+        {
+            _originalStudent = await Http.GetFromJsonAsync<StudentDto>($"api/students/{Id}");
+            if (_originalStudent != null)
+            {
+                _student = new UpdateStudentDto
+                {
+                    Id = _originalStudent.Id,
+                    FirstName = _originalStudent.FirstName,
+                    LastName = _originalStudent.LastName,
+                    Email = _originalStudent.Email,
+                    PhoneNumber = _originalStudent.PhoneNumber,
+                    AlternativePhoneNumber = _originalStudent.AlternativePhoneNumber,
+                    AddressLine1 = _originalStudent.AddressLine1,
+                    AddressLine2 = _originalStudent.AddressLine2,
+                    City = _originalStudent.City,
+                    Province = _originalStudent.Province,
+                    PostalCode = _originalStudent.PostalCode,
+                    Country = _originalStudent.Country,
+                    SchoolName = _originalStudent.SchoolName,
+                    SchoolProvince = _originalStudent.SchoolProvince,
+                    GradeYear = _originalStudent.GradeYear,
+                    HomeLanguage = _originalStudent.HomeLanguage,
+                    RequiresAccommodation = _originalStudent.RequiresAccommodation,
+                    AccommodationDetails = _originalStudent.AccommodationDetails,
+                    IsActive = _originalStudent.IsActive
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Error loading student: {ex.Message}";
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+    
+    private async Task HandleSubmit()
+    {
+        _submitting = true;
+        _errorMessage = string.Empty;
+        
+        try
+        {
+            var response = await Http.PutAsJsonAsync($"api/students/{Id}", _student);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                Navigation.NavigateTo($"/admin/students/{Id}");
+            }
+            else
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                _errorMessage = $"Error updating student: {response.StatusCode} - {content}";
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            _submitting = false;
+        }
+    }
+}

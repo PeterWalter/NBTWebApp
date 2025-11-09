@@ -1,5 +1,6 @@
 @page "/admin/students"
 @using Microsoft.FluentUI.AspNetCore.Components
+@using NBT.Application.Students.DTOs
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @inject IDialogService DialogService
@@ -39,7 +40,7 @@
                 <PropertyColumn Property="@(s => s.LastName)" Title="Last Name" Sortable="true" />
                 <PropertyColumn Property="@(s => s.IDNumber)" Title="ID Number" Sortable="true" />
                 <PropertyColumn Property="@(s => s.Email)" Title="Email" Sortable="true" />
-                <PropertyColumn Property="@(s => s.MobileNumber)" Title="Mobile" />
+                <PropertyColumn Property="@(s => s.PhoneNumber)" Title="Mobile" />
                 <TemplateColumn Title="Status">
                     <FluentBadge Appearance="@(context.IsActive ? Appearance.Accent : Appearance.Neutral)">
                         @(context.IsActive ? "Active" : "Inactive")
@@ -71,8 +72,8 @@
 </FluentStack>
 
 @code {
-    private List<StudentDto> _students = new();
-    private IQueryable<StudentDto> _filteredStudents = Enumerable.Empty<StudentDto>().AsQueryable();
+    private List<NBT.Application.Students.DTOs.StudentDto> _students = new();
+    private IQueryable<NBT.Application.Students.DTOs.StudentDto> _filteredStudents = Enumerable.Empty<NBT.Application.Students.DTOs.StudentDto>().AsQueryable();
     private string _searchTerm = string.Empty;
     private bool _loading = true;
     
@@ -86,8 +87,8 @@
         _loading = true;
         try
         {
-            var response = await Http.GetFromJsonAsync<List<StudentDto>>("api/students");
-            _students = response ?? new List<StudentDto>();
+            var response = await Http.GetFromJsonAsync<List<NBT.Application.Students.DTOs.StudentDto>>("api/students");
+            _students = response ?? new List<NBT.Application.Students.DTOs.StudentDto>();
             FilterStudents();
         }
         catch (Exception ex)
@@ -119,11 +120,11 @@
         }
     }
     
-    private async Task DeleteStudent(int id)
+    private async Task DeleteStudent(Guid id)
     {
         var dialog = await DialogService.ShowConfirmationAsync(
-            "Are you sure you want to delete this student?",
-            "Delete Student",
+            "Are you sure you want to deactivate this student? This action will mark the student as inactive.",
+            "Deactivate Student",
             "Yes",
             "No");
         
@@ -138,20 +139,8 @@
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error deleting student: {ex.Message}");
+                Console.WriteLine($"Error deactivating student: {ex.Message}");
             }
         }
-    }
-    
-    public class StudentDto
-    {
-        public int Id { get; set; }
-        public string NBTNumber { get; set; } = string.Empty;
-        public string FirstName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
-        public string IDNumber { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string MobileNumber { get; set; } = string.Empty;
-        public bool IsActive { get; set; }
     }
 }

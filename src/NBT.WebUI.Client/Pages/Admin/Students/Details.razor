@@ -1,0 +1,324 @@
+@page "/admin/students/{id:guid}"
+@using Microsoft.FluentUI.AspNetCore.Components
+@using System.Net.Http.Json
+@using NBT.Application.Students.DTOs
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<PageTitle>Student Details - NBT System</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical" Style="gap: 20px; max-width: 1200px; margin: 0 auto;">
+    <FluentStack Orientation="Orientation.Horizontal" Style="justify-content: space-between; align-items: center;">
+        <FluentLabel Typo="Typography.H3">Student Details</FluentLabel>
+        <FluentStack Orientation="Orientation.Horizontal" Style="gap: 10px;">
+            <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => Navigation.NavigateTo("/admin/students"))">
+                <FluentIcon Value="@(new Icons.Regular.Size20.ArrowLeft())" Slot="start" />
+                Back to List
+            </FluentButton>
+            <FluentButton Appearance="Appearance.Accent" OnClick="@(() => Navigation.NavigateTo($"/admin/students/edit/{Id}"))">
+                <FluentIcon Value="@(new Icons.Regular.Size20.Edit())" Slot="start" />
+                Edit
+            </FluentButton>
+        </FluentStack>
+    </FluentStack>
+    
+    @if (_loading)
+    {
+        <FluentProgressRing />
+    }
+    else if (_student != null)
+    {
+        <FluentCard Style="padding: 30px;">
+            <FluentStack Orientation="Orientation.Vertical" Style="gap: 30px;">
+                <!-- Student Identity -->
+                <FluentStack Orientation="Orientation.Vertical" Style="gap: 15px;">
+                    <FluentLabel Typo="Typography.H5">Student Identity</FluentLabel>
+                    <FluentDivider />
+                    <FluentStack Orientation="Orientation.Horizontal" Style="gap: 50px; flex-wrap: wrap;">
+                        <div>
+                            <FluentLabel Weight="FontWeight.Bold">NBT Number:</FluentLabel>
+                            <FluentLabel>@_student.NBTNumber</FluentLabel>
+                        </div>
+                        <div>
+                            <FluentLabel Weight="FontWeight.Bold">ID Type:</FluentLabel>
+                            <FluentLabel>@_student.IDType</FluentLabel>
+                        </div>
+                        <div>
+                            <FluentLabel Weight="FontWeight.Bold">ID Number:</FluentLabel>
+                            <FluentLabel>@_student.IDNumber</FluentLabel>
+                        </div>
+                        <div>
+                            <FluentLabel Weight="FontWeight.Bold">Status:</FluentLabel>
+                            <FluentBadge Appearance="@(_student.IsActive ? Appearance.Accent : Appearance.Neutral)">
+                                @(_student.IsActive ? "Active" : "Inactive")
+                            </FluentBadge>
+                        </div>
+                    </FluentStack>
+                </FluentStack>
+
+                <!-- Personal Information -->
+                <FluentStack Orientation="Orientation.Vertical" Style="gap: 15px;">
+                    <FluentLabel Typo="Typography.H5">Personal Information</FluentLabel>
+                    <FluentDivider />
+                    <FluentStack Orientation="Orientation.Horizontal" Style="gap: 50px; flex-wrap: wrap;">
+                        <div>
+                            <FluentLabel Weight="FontWeight.Bold">Full Name:</FluentLabel>
+                            <FluentLabel>@_student.FirstName @_student.LastName</FluentLabel>
+                        </div>
+                        <div>
+                            <FluentLabel Weight="FontWeight.Bold">Date of Birth:</FluentLabel>
+                            <FluentLabel>@_student.DateOfBirth.ToString("dd MMM yyyy")</FluentLabel>
+                        </div>
+                        @if (_student.Age.HasValue)
+                        {
+                            <div>
+                                <FluentLabel Weight="FontWeight.Bold">Age:</FluentLabel>
+                                <FluentLabel>@_student.Age years</FluentLabel>
+                            </div>
+                        }
+                        <div>
+                            <FluentLabel Weight="FontWeight.Bold">Gender:</FluentLabel>
+                            <FluentLabel>@_student.Gender</FluentLabel>
+                        </div>
+                        @if (!string.IsNullOrEmpty(_student.Ethnicity))
+                        {
+                            <div>
+                                <FluentLabel Weight="FontWeight.Bold">Ethnicity:</FluentLabel>
+                                <FluentLabel>@_student.Ethnicity</FluentLabel>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(_student.Nationality))
+                        {
+                            <div>
+                                <FluentLabel Weight="FontWeight.Bold">Nationality:</FluentLabel>
+                                <FluentLabel>@_student.Nationality</FluentLabel>
+                            </div>
+                        }
+                    </FluentStack>
+                </FluentStack>
+
+                <!-- Contact Information -->
+                <FluentStack Orientation="Orientation.Vertical" Style="gap: 15px;">
+                    <FluentLabel Typo="Typography.H5">Contact Information</FluentLabel>
+                    <FluentDivider />
+                    <FluentStack Orientation="Orientation.Horizontal" Style="gap: 50px; flex-wrap: wrap;">
+                        <div>
+                            <FluentLabel Weight="FontWeight.Bold">Email:</FluentLabel>
+                            <FluentLabel>@_student.Email</FluentLabel>
+                        </div>
+                        <div>
+                            <FluentLabel Weight="FontWeight.Bold">Phone:</FluentLabel>
+                            <FluentLabel>@_student.PhoneNumber</FluentLabel>
+                        </div>
+                        @if (!string.IsNullOrEmpty(_student.AlternativePhoneNumber))
+                        {
+                            <div>
+                                <FluentLabel Weight="FontWeight.Bold">Alternative Phone:</FluentLabel>
+                                <FluentLabel>@_student.AlternativePhoneNumber</FluentLabel>
+                            </div>
+                        }
+                    </FluentStack>
+                </FluentStack>
+
+                <!-- Address Information -->
+                @if (!string.IsNullOrEmpty(_student.AddressLine1) || !string.IsNullOrEmpty(_student.City))
+                {
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 15px;">
+                        <FluentLabel Typo="Typography.H5">Address</FluentLabel>
+                        <FluentDivider />
+                        <FluentStack Orientation="Orientation.Vertical" Style="gap: 5px;">
+                            @if (!string.IsNullOrEmpty(_student.AddressLine1))
+                            {
+                                <FluentLabel>@_student.AddressLine1</FluentLabel>
+                            }
+                            @if (!string.IsNullOrEmpty(_student.AddressLine2))
+                            {
+                                <FluentLabel>@_student.AddressLine2</FluentLabel>
+                            }
+                            <FluentLabel>@_student.City, @_student.Province @_student.PostalCode</FluentLabel>
+                            @if (!string.IsNullOrEmpty(_student.Country))
+                            {
+                                <FluentLabel>@_student.Country</FluentLabel>
+                            }
+                        </FluentStack>
+                    </FluentStack>
+                }
+
+                <!-- Academic Information -->
+                <FluentStack Orientation="Orientation.Vertical" Style="gap: 15px;">
+                    <FluentLabel Typo="Typography.H5">Academic Information</FluentLabel>
+                    <FluentDivider />
+                    <FluentStack Orientation="Orientation.Horizontal" Style="gap: 50px; flex-wrap: wrap;">
+                        <div>
+                            <FluentLabel Weight="FontWeight.Bold">School:</FluentLabel>
+                            <FluentLabel>@_student.SchoolName</FluentLabel>
+                        </div>
+                        @if (!string.IsNullOrEmpty(_student.SchoolProvince))
+                        {
+                            <div>
+                                <FluentLabel Weight="FontWeight.Bold">School Province:</FluentLabel>
+                                <FluentLabel>@_student.SchoolProvince</FluentLabel>
+                            </div>
+                        }
+                        @if (_student.GradeYear.HasValue)
+                        {
+                            <div>
+                                <FluentLabel Weight="FontWeight.Bold">Grade/Year:</FluentLabel>
+                                <FluentLabel>Grade @_student.GradeYear</FluentLabel>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(_student.HomeLanguage))
+                        {
+                            <div>
+                                <FluentLabel Weight="FontWeight.Bold">Home Language:</FluentLabel>
+                                <FluentLabel>@_student.HomeLanguage</FluentLabel>
+                            </div>
+                        }
+                    </FluentStack>
+                </FluentStack>
+
+                <!-- Special Accommodations -->
+                @if (_student.RequiresAccommodation)
+                {
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 15px;">
+                        <FluentLabel Typo="Typography.H5">Special Accommodations</FluentLabel>
+                        <FluentDivider />
+                        <FluentLabel>@_student.AccommodationDetails</FluentLabel>
+                    </FluentStack>
+                }
+
+                <!-- Survey Information -->
+                @if (!string.IsNullOrEmpty(_student.MotivationForTesting) || !string.IsNullOrEmpty(_student.CareerInterests))
+                {
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 15px;">
+                        <FluentLabel Typo="Typography.H5">Survey Responses</FluentLabel>
+                        <FluentDivider />
+                        @if (!string.IsNullOrEmpty(_student.MotivationForTesting))
+                        {
+                            <div>
+                                <FluentLabel Weight="FontWeight.Bold">Motivation for Testing:</FluentLabel>
+                                <FluentLabel>@_student.MotivationForTesting</FluentLabel>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(_student.CareerInterests))
+                        {
+                            <div>
+                                <FluentLabel Weight="FontWeight.Bold">Career Interests:</FluentLabel>
+                                <FluentLabel>@_student.CareerInterests</FluentLabel>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(_student.PreferredStudyField))
+                        {
+                            <div>
+                                <FluentLabel Weight="FontWeight.Bold">Preferred Study Field:</FluentLabel>
+                                <FluentLabel>@_student.PreferredStudyField</FluentLabel>
+                            </div>
+                        }
+                        <FluentStack Orientation="Orientation.Horizontal" Style="gap: 30px;">
+                            <div>
+                                <FluentLabel Weight="FontWeight.Bold">Access to Computer:</FluentLabel>
+                                <FluentLabel>@(_student.HasAccessToComputer ? "Yes" : "No")</FluentLabel>
+                            </div>
+                            <div>
+                                <FluentLabel Weight="FontWeight.Bold">Internet Access:</FluentLabel>
+                                <FluentLabel>@(_student.HasInternetAccess ? "Yes" : "No")</FluentLabel>
+                            </div>
+                        </FluentStack>
+                    </FluentStack>
+                }
+
+                <!-- Audit Information -->
+                <FluentStack Orientation="Orientation.Vertical" Style="gap: 15px;">
+                    <FluentLabel Typo="Typography.H5">Audit Information</FluentLabel>
+                    <FluentDivider />
+                    <FluentStack Orientation="Orientation.Horizontal" Style="gap: 50px; flex-wrap: wrap;">
+                        <div>
+                            <FluentLabel Weight="FontWeight.Bold">Created Date:</FluentLabel>
+                            <FluentLabel>@_student.CreatedDate.ToString("dd MMM yyyy HH:mm")</FluentLabel>
+                        </div>
+                        @if (!string.IsNullOrEmpty(_student.CreatedBy))
+                        {
+                            <div>
+                                <FluentLabel Weight="FontWeight.Bold">Created By:</FluentLabel>
+                                <FluentLabel>@_student.CreatedBy</FluentLabel>
+                            </div>
+                        }
+                        @if (_student.LastModifiedDate.HasValue)
+                        {
+                            <div>
+                                <FluentLabel Weight="FontWeight.Bold">Last Modified:</FluentLabel>
+                                <FluentLabel>@_student.LastModifiedDate.Value.ToString("dd MMM yyyy HH:mm")</FluentLabel>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(_student.LastModifiedBy))
+                        {
+                            <div>
+                                <FluentLabel Weight="FontWeight.Bold">Modified By:</FluentLabel>
+                                <FluentLabel>@_student.LastModifiedBy</FluentLabel>
+                            </div>
+                        }
+                    </FluentStack>
+                </FluentStack>
+            </FluentStack>
+        </FluentCard>
+
+        <!-- Related Records -->
+        <FluentStack Orientation="Orientation.Horizontal" Style="gap: 20px;">
+            <FluentCard Style="flex: 1; padding: 20px;">
+                <FluentStack Orientation="Orientation.Vertical" Style="gap: 15px;">
+                    <FluentLabel Typo="Typography.H5">Quick Actions</FluentLabel>
+                    <FluentDivider />
+                    <FluentButton Appearance="Appearance.Outline" OnClick="@(() => Navigation.NavigateTo($"/admin/bookings?studentId={Id}"))">
+                        <FluentIcon Value="@(new Icons.Regular.Size20.CalendarLtr())" Slot="start" />
+                        View Bookings
+                    </FluentButton>
+                    <FluentButton Appearance="Appearance.Outline" OnClick="@(() => Navigation.NavigateTo($"/admin/payments?studentId={Id}"))">
+                        <FluentIcon Value="@(new Icons.Regular.Size20.Payment())" Slot="start" />
+                        View Payments
+                    </FluentButton>
+                    <FluentButton Appearance="Appearance.Outline" OnClick="@(() => Navigation.NavigateTo($"/admin/results?studentId={Id}"))">
+                        <FluentIcon Value="@(new Icons.Regular.Size20.DocumentText())" Slot="start" />
+                        View Results
+                    </FluentButton>
+                </FluentStack>
+            </FluentCard>
+        </FluentStack>
+    }
+    else if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <FluentMessageBar Intent="MessageIntent.Error">
+            @_errorMessage
+        </FluentMessageBar>
+    }
+</FluentStack>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+    
+    private StudentDto? _student;
+    private bool _loading = true;
+    private string _errorMessage = string.Empty;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadStudent();
+    }
+    
+    private async Task LoadStudent()
+    {
+        _loading = true;
+        try
+        {
+            _student = await Http.GetFromJsonAsync<StudentDto>($"api/students/{Id}");
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Error loading student: {ex.Message}";
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+}
