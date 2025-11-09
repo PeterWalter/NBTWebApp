@@ -1,0 +1,169 @@
+@page "/institutions/using-results"
+
+<PageTitle>Using NBT Results</PageTitle>
+
+<link rel="stylesheet" href="Pages/ContentPage.css" />
+
+<div class="content-page">
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/">Home</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/institutions/about">For Institutions</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/institutions/using-results">Using Results</FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h1>Using NBT Results</h1>
+
+    <FluentCard class="info-card">
+        <h2>Understanding NBT Performance Levels</h2>
+        <p>
+            NBT results are reported using performance levels that indicate student readiness for tertiary study. 
+            Each test domain (Academic Literacy, Quantitative Literacy, and Mathematics) receives a separate performance level.
+        </p>
+        
+        <div class="performance-bands">
+            <div class="band proficient">
+                <h3>Proficient (Upper/Lower)</h3>
+                <p>Student is well prepared for tertiary study demands and should cope with coursework requiring these skills.</p>
+            </div>
+            <div class="band intermediate">
+                <h3>Intermediate (Upper/Lower)</h3>
+                <p>Student is moderately prepared and may need some educational support or development.</p>
+            </div>
+            <div class="band basic">
+                <h3>Basic (Upper/Lower)</h3>
+                <p>Student requires substantial educational support or development to succeed in tertiary coursework.</p>
+            </div>
+        </div>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Applications in Admissions</h2>
+        <p>Institutions use NBT results in various ways:</p>
+        <ul>
+            <li><strong>Minimum Entry Requirements:</strong> Set minimum NBT performance levels for specific programs</li>
+            <li><strong>Conditional Admission:</strong> Admit students conditionally based on NBT scores with support requirements</li>
+            <li><strong>Merit-Based Selection:</strong> Use NBT results alongside NSC marks for competitive program selection</li>
+            <li><strong>Alternative Pathways:</strong> Identify students who may benefit from foundation or extended programs</li>
+        </ul>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Student Placement Strategies</h2>
+        <div class="strategy-grid">
+            <div class="strategy-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.BookOpen())" Color="Color.Accent" />
+                <h3>Course Placement</h3>
+                <p>Use AL and QL scores to determine appropriate course levels and support needs</p>
+            </div>
+            <div class="strategy-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.Calculator())" Color="Color.Accent" />
+                <h3>Mathematics Readiness</h3>
+                <p>MAT scores inform placement in mathematics-intensive programs or foundation courses</p>
+            </div>
+            <div class="strategy-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.PeopleCommunity())" Color="Color.Accent" />
+                <h3>Support Services</h3>
+                <p>Identify students for academic development programs, tutoring, or mentoring</p>
+            </div>
+            <div class="strategy-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.Certificate())" Color="Color.Accent" />
+                <h3>Extended Programs</h3>
+                <p>Recommend 4-year or 5-year extended degree programs for appropriate students</p>
+            </div>
+        </div>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Interpreting Results Data</h2>
+        <p>NBT result files include:</p>
+        <ul>
+            <li><strong>Student Details:</strong> NBT number, ID number, names</li>
+            <li><strong>Test Information:</strong> Test date, venue, test type (AQL/MAT)</li>
+            <li><strong>Performance Levels:</strong> Separate levels for AL, QL, and MAT domains</li>
+            <li><strong>Verification Barcode:</strong> Unique identifier for each test attempt</li>
+            <li><strong>Payment Status:</strong> Confirmation of full payment</li>
+        </ul>
+        <FluentMessageBar Intent="MessageIntent.Info">
+            Each student may write multiple tests over 3 years. Barcodes distinguish between test attempts.
+        </FluentMessageBar>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Best Practices</h2>
+        <ol>
+            <li><strong>Combine Data Sources:</strong> Use NBT results alongside NSC marks, not as a replacement</li>
+            <li><strong>Holistic Review:</strong> Consider the full applicant profile including background factors</li>
+            <li><strong>Clear Communication:</strong> Ensure students understand how NBT results will be used</li>
+            <li><strong>Support Planning:</strong> Use aggregated data to plan academic development services</li>
+            <li><strong>Regular Review:</strong> Monitor the predictive validity of NBT results for your institution</li>
+        </ol>
+    </FluentCard>
+
+    <div class="action-section">
+        <FluentButton Appearance="Appearance.Accent"
+                    IconStart="@(new Icons.Regular.Size20.DocumentArrowDown())"
+                    OnClick="@(() => Navigation.NavigateTo("/institutions/request-results"))">
+            Request Student Results
+        </FluentButton>
+        <FluentButton Appearance="Appearance.Outline"
+                    IconStart="@(new Icons.Regular.Size20.BeakerSettings())"
+                    OnClick="@(() => Navigation.NavigateTo("/institutions/research"))">
+            Research & Validation
+        </FluentButton>
+    </div>
+</div>
+
+<style>
+    .performance-bands {
+        margin: 1.5rem 0;
+    }
+
+    .band {
+        padding: 1rem;
+        margin: 0.5rem 0;
+        border-left: 4px solid;
+        border-radius: 4px;
+    }
+
+    .band.proficient {
+        border-color: var(--success);
+        background: rgba(0, 128, 0, 0.1);
+    }
+
+    .band.intermediate {
+        border-color: var(--warning);
+        background: rgba(255, 165, 0, 0.1);
+    }
+
+    .band.basic {
+        border-color: var(--error);
+        background: rgba(255, 0, 0, 0.1);
+    }
+
+    .band h3 {
+        margin-top: 0;
+    }
+
+    .strategy-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .strategy-item {
+        text-align: center;
+        padding: 1.5rem;
+        background: var(--neutral-layer-2);
+        border-radius: 8px;
+    }
+
+    .strategy-item h3 {
+        color: var(--accent-fill-rest);
+        margin: 1rem 0 0.5rem 0;
+    }
+</style>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+}

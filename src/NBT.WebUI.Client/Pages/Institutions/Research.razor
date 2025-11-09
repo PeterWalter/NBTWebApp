@@ -1,0 +1,127 @@
+@page "/institutions/research"
+
+<PageTitle>Research & Validation</PageTitle>
+
+<link rel="stylesheet" href="Pages/ContentPage.css" />
+
+<div class="content-page">
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/">Home</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/institutions/about">For Institutions</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/institutions/research">Research</FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h1>Research & Validation</h1>
+
+    <FluentCard class="info-card">
+        <h2>NBT Research Programme</h2>
+        <p>
+            The NBT Project supports ongoing research into academic readiness, test validity, and the relationship 
+            between NBT performance and student success in higher education. We welcome collaboration with 
+            institutions and researchers.
+        </p>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Research Areas</h2>
+        <div class="research-areas">
+            <div class="research-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.CheckmarkCircle())" Color="Color.Accent" />
+                <h3>Test Validity</h3>
+                <p>Studies on predictive and construct validity of NBT assessments</p>
+            </div>
+            <div class="research-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.PeopleCommunity())" Color="Color.Accent" />
+                <h3>Student Success</h3>
+                <p>Correlation between NBT results and academic performance</p>
+            </div>
+            <div class="research-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.BookOpen())" Color="Color.Accent" />
+                <h3>Curriculum Impact</h3>
+                <p>Analysis of secondary education preparation for tertiary study</p>
+            </div>
+            <div class="research-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.DataArea())" Color="Color.Accent" />
+                <h3>Equity Research</h3>
+                <p>Studies on access, equity, and educational outcomes</p>
+            </div>
+        </div>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Collaboration Opportunities</h2>
+        <p>Institutions can partner with the NBT Project for:</p>
+        <ul>
+            <li><strong>Validity Studies:</strong> Validate NBT predictive power at your institution</li>
+            <li><strong>Intervention Research:</strong> Study effectiveness of support programs</li>
+            <li><strong>Longitudinal Studies:</strong> Track student performance over time</li>
+            <li><strong>Comparative Analysis:</strong> Benchmark against sector norms</li>
+            <li><strong>Policy Research:</strong> Inform admission and placement policies</li>
+        </ul>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Research Data Access</h2>
+        <p>
+            Aggregated, anonymized NBT data may be available for approved research projects. 
+            Data requests are subject to ethical approval and data protection compliance.
+        </p>
+        <p><strong>To request research data:</strong></p>
+        <ol>
+            <li>Submit a research proposal outlining objectives and methodology</li>
+            <li>Provide ethical clearance from your institution</li>
+            <li>Sign data usage agreement</li>
+            <li>Receive approved data set for analysis</li>
+        </ol>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Publications & Reports</h2>
+        <p>
+            The NBT Project publishes research findings, technical reports, and annual performance summaries. 
+            Access our research library for:
+        </p>
+        <ul>
+            <li>Technical reports on test development and validation</li>
+            <li>Academic publications and conference papers</li>
+            <li>Annual statistical reports</li>
+            <li>Institutional feedback reports</li>
+        </ul>
+        <FluentButton Appearance="Appearance.Outline" Style="margin-top: 1rem;">
+            Access Research Library
+        </FluentButton>
+    </FluentCard>
+
+    <div class="action-section">
+        <FluentButton Appearance="Appearance.Accent"
+                    IconStart="@(new Icons.Regular.Size20.Mail())"
+                    OnClick="@(() => Navigation.NavigateTo("/institutions/contact"))">
+            Propose Research Collaboration
+        </FluentButton>
+    </div>
+</div>
+
+<style>
+    .research-areas {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    .research-item {
+        text-align: center;
+        padding: 1.5rem;
+        background: var(--neutral-layer-2);
+        border-radius: 8px;
+    }
+
+    .research-item h3 {
+        color: var(--accent-fill-rest);
+        margin: 1rem 0 0.5rem 0;
+    }
+</style>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+}

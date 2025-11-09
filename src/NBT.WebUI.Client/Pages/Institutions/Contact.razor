@@ -1,0 +1,137 @@
+@page "/institutions/contact"
+
+<PageTitle>Contact Us - Institutions</PageTitle>
+
+<link rel="stylesheet" href="Pages/ContentPage.css" />
+
+<div class="content-page">
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/">Home</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/institutions/about">For Institutions</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/institutions/contact">Contact</FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h1>Contact Us - Institutional Queries</h1>
+
+    <FluentCard class="info-card">
+        <h2>Get in Touch</h2>
+        <p>
+            Our institutional services team is here to assist with result requests, partnerships, research collaboration, 
+            and any questions about using NBT results in your institution.
+        </p>
+    </FluentCard>
+
+    <div class="contact-grid">
+        <FluentCard class="contact-card">
+            <FluentIcon Value="@(new Icons.Regular.Size48.Mail())" Color="Color.Accent" />
+            <h3>Email</h3>
+            <p><strong>General Inquiries:</strong><br/>info@nbt.ac.za</p>
+            <p><strong>Results Requests:</strong><br/>results@nbt.ac.za</p>
+            <p><strong>Research & Partnerships:</strong><br/>research@nbt.ac.za</p>
+        </FluentCard>
+
+        <FluentCard class="contact-card">
+            <FluentIcon Value="@(new Icons.Regular.Size48.Phone())" Color="Color.Accent" />
+            <h3>Phone</h3>
+            <p><strong>Main Office:</strong><br/>021 650 3523</p>
+            <p><strong>Office Hours:</strong><br/>Monday - Friday<br/>8:00 AM - 4:30 PM (SAST)</p>
+            <p>Closed on public holidays</p>
+        </FluentCard>
+
+        <FluentCard class="contact-card">
+            <FluentIcon Value="@(new Icons.Regular.Size48.Location())" Color="Color.Accent" />
+            <h3>Address</h3>
+            <p>
+                Centre for Educational Assessment<br/>
+                University of Cape Town<br/>
+                Private Bag X1<br/>
+                Rondebosch 7701<br/>
+                South Africa
+            </p>
+        </FluentCard>
+    </div>
+
+    <FluentCard class="info-card">
+        <h2>Quick Links for Institutions</h2>
+        <div class="quick-links">
+            <FluentButton Appearance="Appearance.Outline"
+                        IconStart="@(new Icons.Regular.Size20.DocumentArrowDown())"
+                        OnClick="@(() => Navigation.NavigateTo("/institutions/request-results"))">
+                Request Student Results
+            </FluentButton>
+            <FluentButton Appearance="Appearance.Outline"
+                        IconStart="@(new Icons.Regular.Size20.DocumentData())"
+                        OnClick="@(() => Navigation.NavigateTo("/institutions/using-results"))">
+                Using NBT Results
+            </FluentButton>
+            <FluentButton Appearance="Appearance.Outline"
+                        IconStart="@(new Icons.Regular.Size20.BeakerSettings())"
+                        OnClick="@(() => Navigation.NavigateTo("/institutions/research"))">
+                Research Opportunities
+            </FluentButton>
+            <FluentButton Appearance="Appearance.Outline"
+                        IconStart="@(new Icons.Regular.Size20.Handshake())"
+                        OnClick="@(() => Navigation.NavigateTo("/institutions/partnership"))">
+                Partnership Options
+            </FluentButton>
+        </div>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Send Us a Message</h2>
+        <div class="contact-form">
+            <FluentTextField Label="Institution Name" Style="width: 100%;" />
+            <FluentTextField Label="Contact Person" Style="width: 100%;" />
+            <FluentTextField Label="Email Address" Style="width: 100%;" />
+            <FluentTextField Label="Phone Number" Style="width: 100%;" />
+            <FluentSelect Label="Inquiry Type" Style="width: 100%;">
+                <FluentOption Value="results">Results Request</FluentOption>
+                <FluentOption Value="research">Research Collaboration</FluentOption>
+                <FluentOption Value="partnership">Partnership Inquiry</FluentOption>
+                <FluentOption Value="venue">Venue Partnership</FluentOption>
+                <FluentOption Value="other">Other</FluentOption>
+            </FluentSelect>
+            <FluentTextArea Label="Message" Rows="6" Style="width: 100%;" />
+            <FluentButton Appearance="Appearance.Accent" Style="margin-top: 1rem;">
+                Send Message
+            </FluentButton>
+        </div>
+    </FluentCard>
+</div>
+
+<style>
+    .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .contact-card {
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .contact-card h3 {
+        color: var(--accent-fill-rest);
+        margin: 1rem 0;
+    }
+
+    .quick-links {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+
+    .contact-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+</style>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+}

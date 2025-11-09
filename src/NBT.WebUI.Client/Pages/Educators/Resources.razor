@@ -1,0 +1,198 @@
+@page "/educators/resources"
+
+<PageTitle>Teaching Resources</PageTitle>
+
+<link rel="stylesheet" href="Pages/ContentPage.css" />
+
+<div class="content-page">
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/">Home</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/educators/about">For Educators</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/educators/resources">Resources</FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h1>Teaching Resources</h1>
+
+    <FluentCard class="info-card">
+        <h2>NBT Educator Toolkit</h2>
+        <p>
+            We provide comprehensive resources to help educators support students preparing for the NBTs. 
+            All resources are free to download and use in educational settings.
+        </p>
+    </FluentCard>
+
+    <div class="resource-grid">
+        <FluentCard class="resource-card">
+            <FluentIcon Value="@(new Icons.Regular.Size48.Document())" Color="Color.Accent" />
+            <h3>Sample Questions</h3>
+            <p>Practice questions for AL, QL, and MAT with answer keys and explanations</p>
+            <FluentButton Appearance="Appearance.Outline" Style="width: 100%; margin-top: 1rem;"
+                        OnClick="@(() => Navigation.NavigateTo("/educators/sample-questions"))">
+                View Samples
+            </FluentButton>
+        </FluentCard>
+
+        <FluentCard class="resource-card">
+            <FluentIcon Value="@(new Icons.Regular.Size48.BookOpen())" Color="Color.Accent" />
+            <h3>Educator Guides</h3>
+            <p>Comprehensive guides on NBT content, format, and effective preparation strategies</p>
+            <FluentButton Appearance="Appearance.Outline" Style="width: 100%; margin-top: 1rem;">
+                Download Guides (PDF)
+            </FluentButton>
+        </FluentCard>
+
+        <FluentCard class="resource-card">
+            <FluentIcon Value="@(new Icons.Regular.Size48.Video())" Color="Color.Accent" />
+            <h3>Video Tutorials</h3>
+            <p>Video lessons on academic literacy, quantitative reasoning, and mathematics problem-solving</p>
+            <FluentButton Appearance="Appearance.Outline" Style="width: 100%; margin-top: 1rem;">
+                Watch Videos
+            </FluentButton>
+        </FluentCard>
+
+        <FluentCard class="resource-card">
+            <FluentIcon Value="@(new Icons.Regular.Size48.Presentation())" Color="Color.Accent" />
+            <h3>Presentation Slides</h3>
+            <p>Ready-to-use PowerPoint presentations for student information sessions</p>
+            <FluentButton Appearance="Appearance.Outline" Style="width: 100%; margin-top: 1rem;">
+                Download Slides
+            </FluentButton>
+        </FluentCard>
+
+        <FluentCard class="resource-card">
+            <FluentIcon Value="@(new Icons.Regular.Size48.TaskListSquare())" Color="Color.Accent" />
+            <h3>Worksheets & Activities</h3>
+            <p>Classroom activities and worksheets to develop academic and quantitative literacy</p>
+            <FluentButton Appearance="Appearance.Outline" Style="width: 100%; margin-top: 1rem;">
+                Download Activities
+            </FluentButton>
+        </FluentCard>
+
+        <FluentCard class="resource-card">
+            <FluentIcon Value="@(new Icons.Regular.Size48.DataArea())" Color="Color.Accent" />
+            <h3>Assessment Tools</h3>
+            <p>Diagnostic tools to assess student readiness and identify support needs</p>
+            <FluentButton Appearance="Appearance.Outline" Style="width: 100%; margin-top: 1rem;">
+                Access Tools
+            </FluentButton>
+        </FluentCard>
+    </div>
+
+    <FluentCard class="info-card">
+        <h2>Recommended Reading Lists</h2>
+        <p>Curated lists of texts and materials for developing academic literacy skills:</p>
+        <ul>
+            <li><strong>Academic Articles:</strong> Age-appropriate academic texts across disciplines</li>
+            <li><strong>Popular Science:</strong> Engaging science writing for quantitative and analytical thinking</li>
+            <li><strong>Data Sources:</strong> Websites with graphs, charts, and statistical information</li>
+            <li><strong>Mathematical Applications:</strong> Resources showing real-world mathematics</li>
+        </ul>
+        <FluentButton Appearance="Appearance.Outline" Style="margin-top: 1rem;">
+            Download Reading Lists (PDF)
+        </FluentButton>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Lesson Plan Templates</h2>
+        <p>Structured lesson plans incorporating NBT-style thinking and reasoning:</p>
+        <div class="template-list">
+            <div class="template-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.BookOpen())" Color="Color.Accent" />
+                <div>
+                    <h4>Academic Literacy Lessons</h4>
+                    <p>Critical reading and analysis lesson plans (Grades 10-12)</p>
+                </div>
+            </div>
+            <div class="template-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.Calculator())" Color="Color.Accent" />
+                <div>
+                    <h4>Quantitative Literacy Lessons</h4>
+                    <p>Real-world problem-solving and data interpretation activities</p>
+                </div>
+            </div>
+            <div class="template-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.MathFormula())" Color="Color.Accent" />
+                <div>
+                    <h4>Mathematics Lessons</h4>
+                    <p>Conceptual understanding and application-focused lessons</p>
+                </div>
+            </div>
+        </div>
+        <FluentButton Appearance="Appearance.Outline" Style="margin-top: 1rem;">
+            Download Lesson Plans
+        </FluentButton>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Student Information Materials</h2>
+        <p>Materials to share with students about the NBTs:</p>
+        <ul>
+            <li>NBT Information Brochures (PDF)</li>
+            <li>Registration Guide for Students</li>
+            <li>Test Day Preparation Checklist</li>
+            <li>Understanding Your Results Guide</li>
+        </ul>
+        <FluentButton Appearance="Appearance.Outline" Style="margin-top: 1rem;">
+            Download Student Materials
+        </FluentButton>
+    </FluentCard>
+
+    <div class="action-section">
+        <FluentButton Appearance="Appearance.Accent"
+                    IconStart="@(new Icons.Regular.Size20.PeopleTeam())"
+                    OnClick="@(() => Navigation.NavigateTo("/educators/workshops"))">
+            Attend a Workshop
+        </FluentButton>
+        <FluentButton Appearance="Appearance.Outline"
+                    IconStart="@(new Icons.Regular.Size20.Mail())"
+                    OnClick="@(() => Navigation.NavigateTo("/educators/contact"))">
+            Contact Us
+        </FluentButton>
+    </div>
+</div>
+
+<style>
+    .resource-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .resource-card {
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .resource-card h3 {
+        color: var(--accent-fill-rest);
+        margin: 1rem 0;
+    }
+
+    .template-list {
+        margin: 1.5rem 0;
+    }
+
+    .template-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+        margin: 1rem 0;
+        background: var(--neutral-layer-2);
+        border-radius: 8px;
+    }
+
+    .template-item h4 {
+        margin: 0 0 0.5rem 0;
+        color: var(--accent-fill-rest);
+    }
+
+    .template-item p {
+        margin: 0;
+    }
+</style>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+}

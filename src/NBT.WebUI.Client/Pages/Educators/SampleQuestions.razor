@@ -1,0 +1,178 @@
+@page "/educators/sample-questions"
+
+<PageTitle>Sample NBT Questions</PageTitle>
+
+<link rel="stylesheet" href="Pages/ContentPage.css" />
+
+<div class="content-page">
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/">Home</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/educators/about">For Educators</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/educators/sample-questions">Sample Questions</FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h1>Sample NBT Questions</h1>
+
+    <FluentCard class="info-card">
+        <h2>Using Sample Questions</h2>
+        <p>
+            Sample questions help students familiarize themselves with the NBT format and question types. 
+            Use these to illustrate the kinds of thinking and reasoning required, not as a comprehensive preparation program.
+        </p>
+        <FluentMessageBar Intent="MessageIntent.Info">
+            Remember: NBTs assess ability to apply knowledge, not recall of specific facts.
+        </FluentMessageBar>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Academic Literacy Samples</h2>
+        <p>Academic Literacy questions assess reading comprehension, critical analysis, and reasoning with academic texts.</p>
+        
+        <div class="sample-section">
+            <h4>Question Type: Comprehension</h4>
+            <p><em>Students read a passage and answer questions about main ideas, supporting details, and author's purpose.</em></p>
+            <p><strong>Skills Tested:</strong></p>
+            <ul>
+                <li>Identifying main ideas and themes</li>
+                <li>Understanding supporting evidence</li>
+                <li>Recognizing argument structure</li>
+                <li>Interpreting author's intent</li>
+            </ul>
+        </div>
+
+        <div class="sample-section">
+            <h4>Question Type: Critical Analysis</h4>
+            <p><em>Students evaluate claims, assess reasoning, and identify logical flaws in arguments.</em></p>
+            <p><strong>Skills Tested:</strong></p>
+            <ul>
+                <li>Evaluating evidence quality</li>
+                <li>Detecting bias and assumptions</li>
+                <li>Assessing logical validity</li>
+                <li>Comparing perspectives</li>
+            </ul>
+        </div>
+
+        <FluentButton Appearance="Appearance.Outline" Style="margin-top: 1rem;">
+            Download AL Sample Questions (PDF)
+        </FluentButton>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Quantitative Literacy Samples</h2>
+        <p>QL questions assess ability to work with numerical information in practical contexts.</p>
+        
+        <div class="sample-section">
+            <h4>Question Type: Data Interpretation</h4>
+            <p><em>Students analyze graphs, tables, or charts to answer questions.</em></p>
+            <p><strong>Skills Tested:</strong></p>
+            <ul>
+                <li>Reading and interpreting graphs</li>
+                <li>Extracting information from tables</li>
+                <li>Comparing data sets</li>
+                <li>Drawing conclusions from data</li>
+            </ul>
+        </div>
+
+        <div class="sample-section">
+            <h4>Question Type: Problem-Solving</h4>
+            <p><em>Students apply quantitative reasoning to real-world scenarios.</em></p>
+            <p><strong>Skills Tested:</strong></p>
+            <ul>
+                <li>Proportional reasoning</li>
+                <li>Percentage calculations</li>
+                <li>Rate and ratio problems</li>
+                <li>Logical estimation</li>
+            </ul>
+        </div>
+
+        <FluentButton Appearance="Appearance.Outline" Style="margin-top: 1rem;">
+            Download QL Sample Questions (PDF)
+        </FluentButton>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Mathematics Samples</h2>
+        <p>MAT questions assess mathematical knowledge and problem-solving at entry level for tertiary study.</p>
+        
+        <div class="sample-section">
+            <h4>Content Areas Covered:</h4>
+            <ul>
+                <li><strong>Algebra:</strong> Equations, inequalities, functions, patterns</li>
+                <li><strong>Geometry:</strong> Shapes, measurement, spatial reasoning</li>
+                <li><strong>Trigonometry:</strong> Basic trigonometric functions and applications</li>
+                <li><strong>Calculus:</strong> Introduction to rates of change and optimization</li>
+                <li><strong>Probability & Statistics:</strong> Data analysis and probability concepts</li>
+            </ul>
+        </div>
+
+        <FluentButton Appearance="Appearance.Outline" Style="margin-top: 1rem;">
+            Download MAT Sample Questions (PDF)
+        </FluentButton>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Using Samples in the Classroom</h2>
+        <p><strong>Effective Strategies:</strong></p>
+        <ol>
+            <li><strong>Discuss Question Types:</strong> Analyze what skills each question assesses</li>
+            <li><strong>Think-Aloud Practice:</strong> Model your reasoning process when solving</li>
+            <li><strong>Peer Explanation:</strong> Have students explain their thinking to classmates</li>
+            <li><strong>Error Analysis:</strong> Discuss why incorrect answers are tempting</li>
+            <li><strong>Strategy Development:</strong> Help students develop problem-solving approaches</li>
+        </ol>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Additional Resources</h2>
+        <div class="resource-links">
+            <FluentButton Appearance="Appearance.Outline"
+                        IconStart="@(new Icons.Regular.Size20.Video())"
+                        OnClick="@(() => { })">
+                Video: Solving Sample Questions
+            </FluentButton>
+            <FluentButton Appearance="Appearance.Outline"
+                        IconStart="@(new Icons.Regular.Size20.Document())"
+                        OnClick="@(() => { })">
+                Educator Guide to Sample Questions
+            </FluentButton>
+            <FluentButton Appearance="Appearance.Outline"
+                        IconStart="@(new Icons.Regular.Size20.BookOpen())"
+                        OnClick="@(() => Navigation.NavigateTo("/educators/preparing-students"))">
+                Preparation Strategies
+            </FluentButton>
+        </div>
+    </FluentCard>
+
+    <div class="action-section">
+        <FluentButton Appearance="Appearance.Accent"
+                    IconStart="@(new Icons.Regular.Size20.Folder())"
+                    OnClick="@(() => Navigation.NavigateTo("/educators/resources"))">
+            More Teaching Resources
+        </FluentButton>
+    </div>
+</div>
+
+<style>
+    .sample-section {
+        margin: 1.5rem 0;
+        padding: 1.5rem;
+        background: var(--neutral-layer-2);
+        border-radius: 8px;
+    }
+
+    .sample-section h4 {
+        color: var(--accent-fill-rest);
+        margin-top: 0;
+    }
+
+    .resource-links {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+</style>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+}

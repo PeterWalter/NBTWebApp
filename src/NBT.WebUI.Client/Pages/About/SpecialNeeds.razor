@@ -1,0 +1,159 @@
+@page "/about/special-needs"
+
+<PageTitle>Special Needs Accommodation</PageTitle>
+
+<link rel="stylesheet" href="Pages/ContentPage.css" />
+
+<div class="content-page">
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/">Home</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/about/special-needs">Special Needs</FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h1>Special Needs Accommodation</h1>
+
+    <FluentCard class="info-card">
+        <h2>Accessibility & Support</h2>
+        <p>
+            The NBT is committed to providing accessible testing for all students. We offer various accommodations 
+            for students with disabilities or special needs to ensure fair testing conditions.
+        </p>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Available Accommodations</h2>
+        
+        <div class="accommodation-item">
+            <FluentIcon Value="@(new Icons.Regular.Size24.Clock())" Color="Color.Accent" />
+            <h3>Extended Time</h3>
+            <p>Additional time for completing the test (typically 1.5x or 2x standard time)</p>
+        </div>
+
+        <div class="accommodation-item">
+            <FluentIcon Value="@(new Icons.Regular.Size24.TextFont())" Color="Color.Accent" />
+            <h3>Large Print Materials</h3>
+            <p>Test materials in larger font sizes for visually impaired students</p>
+        </div>
+
+        <div class="accommodation-item">
+            <FluentIcon Value="@(new Icons.Regular.Size24.Speaker2())" Color="Color.Accent" />
+            <h3>Screen Reader Support</h3>
+            <p>Compatible testing software for students using screen readers</p>
+        </div>
+
+        <div class="accommodation-item">
+            <FluentIcon Value="@(new Icons.Regular.Size24.Person())" Color="Color.Accent" />
+            <h3>Scribe or Reader</h3>
+            <p>Assistance from a trained scribe or reader during the test</p>
+        </div>
+
+        <div class="accommodation-item">
+            <FluentIcon Value="@(new Icons.Regular.Size24.Chair())" Color="Color.Accent" />
+            <h3>Separate Testing Room</h3>
+            <p>Private testing space for students who require it</p>
+        </div>
+
+        <div class="accommodation-item">
+            <FluentIcon Value="@(new Icons.Regular.Size24.CalendarEdit())" Color="Color.Accent" />
+            <h3>Flexible Scheduling</h3>
+            <p>Break periods or adjusted test schedules as needed</p>
+        </div>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>How to Request Accommodations</h2>
+        <ol>
+            <li>
+                <strong>During Registration:</strong> Complete the special needs accommodation form as part of your 
+                registration process.
+            </li>
+            <li>
+                <strong>Provide Documentation:</strong> Upload supporting documentation from a qualified healthcare 
+                professional or educational psychologist detailing your needs.
+            </li>
+            <li>
+                <strong>NBT Review:</strong> The NBT team will review your request and contact you to discuss 
+                appropriate accommodations.
+            </li>
+            <li>
+                <strong>Confirmation:</strong> You'll receive confirmation of approved accommodations before your test date.
+            </li>
+        </ol>
+        <FluentMessageBar Intent="MessageIntent.Warning" Style="margin-top: 1rem;">
+            <strong>Important:</strong> Submit accommodation requests at least 4 weeks before your planned test date 
+            to allow adequate time for review and arrangement.
+        </FluentMessageBar>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Remote/Special Sessions</h2>
+        <p>
+            If you cannot attend a regular testing venue due to location, disability, or other special circumstances, 
+            you may request a remote or special testing session.
+        </p>
+        <p><strong>Requirements for remote sessions:</strong></p>
+        <ul>
+            <li>Approved invigilator (teacher, principal, or other qualified person)</li>
+            <li>Suitable testing venue with required technology</li>
+            <li>Completion of special session request form</li>
+            <li>NBT approval before the test date</li>
+        </ul>
+        <p>
+            Remote session requests are automatically routed to the NBT remote administration team for review and approval.
+        </p>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Documentation Requirements</h2>
+        <p>To support your accommodation request, please provide:</p>
+        <ul>
+            <li>Medical certificate or psychologist's report (not older than 3 years)</li>
+            <li>Specific details about required accommodations</li>
+            <li>Previous accommodations granted in school examinations (if applicable)</li>
+            <li>Contact information for follow-up questions</li>
+        </ul>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Contact Us</h2>
+        <p>For questions about special needs accommodations:</p>
+        <p>
+            <FluentIcon Value="@(new Icons.Regular.Size16.Mail())" /> Email: info@nbt.ac.za<br/>
+            <FluentIcon Value="@(new Icons.Regular.Size16.Phone())" /> Phone: 021 650 3523<br/>
+            Subject Line: "Special Needs Accommodation Request"
+        </p>
+    </FluentCard>
+
+    <div class="action-section">
+        <FluentButton Appearance="Appearance.Accent" 
+                    IconStart="@(new Icons.Regular.Size20.PersonAdd())"
+                    OnClick="@(() => Navigation.NavigateTo("/register"))">
+            Register with Accommodations
+        </FluentButton>
+    </div>
+</div>
+
+<style>
+    .accommodation-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        margin: 1.5rem 0;
+        padding: 1rem;
+        border: 1px solid var(--neutral-stroke-rest);
+        border-radius: 4px;
+    }
+
+    .accommodation-item h3 {
+        margin: 0 0 0.5rem 0;
+        color: var(--accent-fill-rest);
+    }
+
+    .accommodation-item p {
+        margin: 0;
+    }
+</style>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+}

@@ -1,0 +1,175 @@
+@page "/institutions/partnership"
+
+<PageTitle>Partnership Opportunities</PageTitle>
+
+<link rel="stylesheet" href="Pages/ContentPage.css" />
+
+<div class="content-page">
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/">Home</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/institutions/about">For Institutions</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/institutions/partnership">Partnership</FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h1>Partnership Opportunities</h1>
+
+    <FluentCard class="info-card">
+        <h2>Collaborate with the NBT Project</h2>
+        <p>
+            The National Benchmark Tests Project welcomes partnerships with higher education institutions to 
+            enhance academic readiness assessment, student support, and educational research in South Africa.
+        </p>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Partnership Models</h2>
+        
+        <div class="partnership-model">
+            <h3><FluentIcon Value="@(new Icons.Regular.Size20.Building())" /> Institutional Partnership</h3>
+            <p>
+                Become a formal NBT partner institution with preferential access to services, research data, 
+                and collaborative opportunities. Benefits include:
+            </p>
+            <ul>
+                <li>Priority result delivery and support</li>
+                <li>Customized reporting and analytics</li>
+                <li>Joint research initiatives</li>
+                <li>Staff training and development</li>
+            </ul>
+        </div>
+
+        <div class="partnership-model">
+            <h3><FluentIcon Value="@(new Icons.Regular.Size20.BeakerSettings())" /> Research Partnership</h3>
+            <p>
+                Collaborate on research projects exploring student readiness, test validity, or educational outcomes. 
+                We provide:
+            </p>
+            <ul>
+                <li>Access to aggregated NBT data</li>
+                <li>Research methodology support</li>
+                <li>Joint publications and presentations</li>
+                <li>Funding opportunities for approved projects</li>
+            </ul>
+        </div>
+
+        <div class="partnership-model">
+            <h3><FluentIcon Value="@(new Icons.Regular.Size20.PeopleTeam())" /> Development Partnership</h3>
+            <p>
+                Work together to develop interventions, support programs, or preparatory materials for students. 
+                Opportunities include:
+            </p>
+            <ul>
+                <li>Co-design academic development programs</li>
+                <li>Pilot innovative teaching approaches</li>
+                <li>Share best practices and resources</li>
+                <li>Evaluate intervention effectiveness</li>
+            </ul>
+        </div>
+
+        <div class="partnership-model">
+            <h3><FluentIcon Value="@(new Icons.Regular.Size20.Location())" /> Venue Partnership</h3>
+            <p>
+                Host NBT testing at your institution as an approved testing venue. Benefits include:
+            </p>
+            <ul>
+                <li>Convenient testing for your applicants</li>
+                <li>Venue setup and technical support</li>
+                <li>Invigilator training</li>
+                <li>Revenue sharing arrangements</li>
+            </ul>
+        </div>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Partnership Benefits</h2>
+        <div class="benefits-grid">
+            <div class="benefit-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.DataArea())" Color="Color.Accent" />
+                <h3>Enhanced Data Access</h3>
+                <p>Richer analytics and reporting capabilities</p>
+            </div>
+            <div class="benefit-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.People())" Color="Color.Accent" />
+                <h3>Professional Development</h3>
+                <p>Training workshops for staff and faculty</p>
+            </div>
+            <div class="benefit-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.Shield())" Color="Color.Accent" />
+                <h3>Brand Association</h3>
+                <p>Recognition as an NBT partner institution</p>
+            </div>
+            <div class="benefit-item">
+                <FluentIcon Value="@(new Icons.Regular.Size24.Lightbulb())" Color="Color.Accent" />
+                <h3>Innovation</h3>
+                <p>Access to pilot programs and new initiatives</p>
+            </div>
+        </div>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>How to Become a Partner</h2>
+        <ol>
+            <li><strong>Express Interest:</strong> Contact us to discuss partnership opportunities</li>
+            <li><strong>Consultation:</strong> Meet with NBT team to explore alignment and objectives</li>
+            <li><strong>Proposal:</strong> Develop partnership agreement outlining roles and benefits</li>
+            <li><strong>Approval:</strong> Review and approval by both organizations</li>
+            <li><strong>Implementation:</strong> Launch partnership with clear goals and timelines</li>
+        </ol>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Current Partners</h2>
+        <p>
+            The NBT Project currently partners with numerous South African universities and research institutions. 
+            Our partnerships have contributed to improved student success outcomes and educational research.
+        </p>
+        <FluentMessageBar Intent="MessageIntent.Info">
+            Partner institutions benefit from collaborative research, shared resources, and enhanced student support strategies.
+        </FluentMessageBar>
+    </FluentCard>
+
+    <div class="action-section">
+        <FluentButton Appearance="Appearance.Accent"
+                    IconStart="@(new Icons.Regular.Size20.Handshake())"
+                    OnClick="@(() => Navigation.NavigateTo("/institutions/contact"))">
+            Explore Partnership
+        </FluentButton>
+    </div>
+</div>
+
+<style>
+    .partnership-model {
+        margin: 2rem 0;
+        padding: 1.5rem;
+        background: var(--neutral-layer-2);
+        border-radius: 8px;
+    }
+
+    .partnership-model h3 {
+        color: var(--accent-fill-rest);
+        margin-top: 0;
+    }
+
+    .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    .benefit-item {
+        text-align: center;
+        padding: 1.5rem;
+        background: var(--neutral-layer-2);
+        border-radius: 8px;
+    }
+
+    .benefit-item h3 {
+        color: var(--accent-fill-rest);
+        margin: 1rem 0 0.5rem 0;
+    }
+</style>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+}

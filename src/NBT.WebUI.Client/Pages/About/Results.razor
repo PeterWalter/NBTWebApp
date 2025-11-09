@@ -1,0 +1,154 @@
+@page "/about/results"
+
+<PageTitle>Understanding Your NBT Results</PageTitle>
+
+<link rel="stylesheet" href="Pages/ContentPage.css" />
+
+<div class="content-page">
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/">Home</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/about/results">Understanding Results</FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h1>Understanding Your NBT Results</h1>
+
+    <FluentCard class="info-card">
+        <h2>How NBT Results are Reported</h2>
+        <p>
+            NBT results are reported using performance levels that indicate your readiness for tertiary study. 
+            Each test domain (Academic Literacy, Quantitative Literacy, and Mathematics) receives a separate performance level.
+        </p>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Performance Levels</h2>
+        
+        <div class="performance-level">
+            <h3><FluentIcon Value="@(new Icons.Regular.Size20.Trophy())" Color="@Color.Success" /> Proficient</h3>
+            <p><strong>Proficient Upper / Proficient Lower</strong></p>
+            <p>
+                You are well prepared for the demands of tertiary study in this domain. You should be able to cope 
+                with coursework requiring these skills without additional academic support.
+            </p>
+        </div>
+
+        <div class="performance-level">
+            <h3><FluentIcon Value="@(new Icons.Regular.Size20.Target())" Color="@Color.Warning" /> Intermediate</h3>
+            <p><strong>Intermediate Upper / Intermediate Lower</strong></p>
+            <p>
+                You are moderately prepared for tertiary study in this domain. You may need some educational support 
+                or development to help you succeed in coursework requiring these skills.
+            </p>
+        </div>
+
+        <div class="performance-level">
+            <h3><FluentIcon Value="@(new Icons.Regular.Size20.Flag())" Color="@Color.Error" /> Basic</h3>
+            <p><strong>Basic Upper / Basic Lower</strong></p>
+            <p>
+                You will require substantial educational support or development to succeed in tertiary coursework 
+                requiring these skills. Consider additional preparation or foundation programs.
+            </p>
+        </div>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Test Domains Explained</h2>
+        
+        <h3><FluentIcon Value="@(new Icons.Regular.Size20.BookOpen())" /> Academic Literacy (AL)</h3>
+        <p>
+            Measures your ability to read and understand academic texts, extract key information, and apply critical 
+            reasoning skills. This is essential for all tertiary study areas.
+        </p>
+
+        <h3><FluentIcon Value="@(new Icons.Regular.Size20.DataArea())" /> Quantitative Literacy (QL)</h3>
+        <p>
+            Assesses your ability to manage situations or solve problems using quantitative information in academic 
+            and real-life contexts. Important for understanding data, statistics, and numerical arguments.
+        </p>
+
+        <h3><FluentIcon Value="@(new Icons.Regular.Size20.Calculator())" /> Mathematics (MAT)</h3>
+        <p>
+            Evaluates your mathematical competency required for entry-level courses in mathematics-intensive programs 
+            such as engineering, science, commerce, and technology.
+        </p>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Understanding Your Results Certificate</h2>
+        <p>Your NBT results certificate includes:</p>
+        <ul>
+            <li><strong>Personal Details:</strong> Your name, NBT number, and ID number</li>
+            <li><strong>Test Information:</strong> Test date, venue, and test type</li>
+            <li><strong>Performance Levels:</strong> Separate levels for AL, QL, and MAT (if applicable)</li>
+            <li><strong>Barcode:</strong> Unique identifier for verification purposes</li>
+        </ul>
+        <FluentMessageBar Intent="MessageIntent.Info" Style="margin-top: 1rem;">
+            Each test you write will have a different barcode to distinguish between test attempts.
+        </FluentMessageBar>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Accessing Your Results</h2>
+        <p>
+            Results are typically released 2-3 weeks after the test date. You will receive an email notification 
+            when your results are available.
+        </p>
+        <p><strong>To access your results:</strong></p>
+        <ol>
+            <li>Log in to your NBT account</li>
+            <li>Navigate to "My Results"</li>
+            <li>View or download your results certificate as a PDF</li>
+        </ol>
+        <FluentMessageBar Intent="MessageIntent.Warning" Style="margin-top: 1rem;">
+            <strong>Important:</strong> You can only view and download results for fully paid tests. 
+            Ensure all test fees are paid before the booking closing date.
+        </FluentMessageBar>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>How Universities Use NBT Results</h2>
+        <p>
+            Universities use NBT results in various ways alongside your school results:
+        </p>
+        <ul>
+            <li><strong>Admissions Decisions:</strong> Some universities use NBT results as part of their admission criteria</li>
+            <li><strong>Course Placement:</strong> Results may inform which courses or programs you're placed in</li>
+            <li><strong>Support Services:</strong> Universities identify students who may benefit from additional academic support</li>
+            <li><strong>Foundation Programs:</strong> Lower performance levels may indicate a need for foundation or extended programs</li>
+        </ul>
+        <p>
+            Check with your chosen institution(s) to understand how they use NBT results in their admission and 
+            placement processes.
+        </p>
+    </FluentCard>
+
+    <div class="action-section">
+        <FluentButton Appearance="Appearance.Accent" 
+                    IconStart="@(new Icons.Regular.Size20.SignIn())"
+                    OnClick="@(() => Navigation.NavigateTo("/login"))">
+            View My Results
+        </FluentButton>
+        <FluentButton Appearance="Appearance.Outline"
+                    IconStart="@(new Icons.Regular.Size20.PersonAdd())"
+                    OnClick="@(() => Navigation.NavigateTo("/register"))">
+            Register for NBT
+        </FluentButton>
+    </div>
+</div>
+
+<style>
+    .performance-level {
+        margin: 1.5rem 0;
+        padding: 1rem;
+        border-left: 4px solid var(--accent-fill-rest);
+    }
+
+    .performance-level h3 {
+        color: var(--accent-fill-rest);
+        margin-top: 0;
+    }
+</style>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+}

@@ -1,0 +1,164 @@
+@page "/educators/preparing-students"
+
+<PageTitle>Preparing Students for the NBT</PageTitle>
+
+<link rel="stylesheet" href="Pages/ContentPage.css" />
+
+<div class="content-page">
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/">Home</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/educators/about">For Educators</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/educators/preparing-students">Preparing Students</FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h1>Preparing Students for the NBT</h1>
+
+    <FluentCard class="info-card">
+        <h2>Understanding the NBTs</h2>
+        <p>
+            The NBTs are not curriculum tests. They assess students' ability to apply knowledge and transfer 
+            understanding to new contexts - skills essential for tertiary success. Preparation should focus on 
+            developing these transferable skills rather than memorizing content.
+        </p>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Key Preparation Strategies</h2>
+        
+        <div class="strategy-section">
+            <h3><FluentIcon Value="@(new Icons.Regular.Size20.BookOpen())" /> Academic Literacy Development</h3>
+            <ul>
+                <li><strong>Reading Practice:</strong> Expose students to diverse academic texts (articles, reports, textbooks)</li>
+                <li><strong>Comprehension Skills:</strong> Teach students to identify main ideas, arguments, and supporting evidence</li>
+                <li><strong>Critical Analysis:</strong> Develop ability to evaluate claims, detect bias, and assess reasoning</li>
+                <li><strong>Vocabulary Building:</strong> Expand academic vocabulary through context and usage</li>
+                <li><strong>Inference Skills:</strong> Practice drawing conclusions from implicit information</li>
+            </ul>
+        </div>
+
+        <div class="strategy-section">
+            <h3><FluentIcon Value="@(new Icons.Regular.Size20.Calculator())" /> Quantitative Literacy Enhancement</h3>
+            <ul>
+                <li><strong>Real-World Applications:</strong> Use mathematics in practical, everyday contexts</li>
+                <li><strong>Data Interpretation:</strong> Work with graphs, tables, and statistical information</li>
+                <li><strong>Problem-Solving:</strong> Develop logical thinking and solution strategies</li>
+                <li><strong>Estimation Skills:</strong> Practice mental math and reasonableness checks</li>
+                <li><strong>Multiple Representations:</strong> Present information in different formats (graphs, tables, text)</li>
+            </ul>
+        </div>
+
+        <div class="strategy-section">
+            <h3><FluentIcon Value="@(new Icons.Regular.Size20.MathFormula())" /> Mathematics Readiness</h3>
+            <ul>
+                <li><strong>Conceptual Understanding:</strong> Focus on why, not just how</li>
+                <li><strong>Problem-Solving Strategies:</strong> Develop multiple approaches to solutions</li>
+                <li><strong>Mathematical Reasoning:</strong> Justify answers and explain thinking</li>
+                <li><strong>Application Focus:</strong> Connect mathematics to real-world scenarios</li>
+                <li><strong>Foundation Review:</strong> Ensure solid grasp of fundamental concepts</li>
+            </ul>
+        </div>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Classroom Activities</h2>
+        
+        <div class="activity-grid">
+            <div class="activity-item">
+                <h4>Daily Reading Practice</h4>
+                <p>15-20 minutes of varied text reading with comprehension questions</p>
+            </div>
+            <div class="activity-item">
+                <h4>Think-Aloud Sessions</h4>
+                <p>Model your thinking process when solving problems or analyzing texts</p>
+            </div>
+            <div class="activity-item">
+                <h4>Peer Discussion</h4>
+                <p>Group discussions on texts, problems, or data interpretation</p>
+            </div>
+            <div class="activity-item">
+                <h4>Real-World Projects</h4>
+                <p>Apply skills to authentic problems and scenarios</p>
+            </div>
+        </div>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>What NOT to Do</h2>
+        <FluentMessageBar Intent="MessageIntent.Warning">
+            <ul style="margin: 0; padding-left: 1.5rem;">
+                <li>Don't focus on memorization of facts or formulas</li>
+                <li>Don't teach to specific test questions or formats</li>
+                <li>Don't create test anxiety - NBTs are diagnostic, not pass/fail</li>
+                <li>Don't promise that preparation guarantees high scores</li>
+            </ul>
+        </FluentMessageBar>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Timeline for Preparation</h2>
+        <p><strong>Long-Term (Throughout High School):</strong></p>
+        <ul>
+            <li>Build strong reading habits from early grades</li>
+            <li>Develop mathematical thinking skills progressively</li>
+            <li>Foster curiosity and critical thinking</li>
+        </ul>
+        
+        <p><strong>Short-Term (3-6 Months Before Test):</strong></p>
+        <ul>
+            <li>Practice with sample questions</li>
+            <li>Increase exposure to academic texts</li>
+            <li>Review fundamental mathematics concepts</li>
+            <li>Familiarize students with test format</li>
+        </ul>
+    </FluentCard>
+
+    <div class="action-section">
+        <FluentButton Appearance="Appearance.Accent"
+                    IconStart="@(new Icons.Regular.Size20.QuizNew())"
+                    OnClick="@(() => Navigation.NavigateTo("/educators/sample-questions"))">
+            View Sample Questions
+        </FluentButton>
+        <FluentButton Appearance="Appearance.Outline"
+                    IconStart="@(new Icons.Regular.Size20.Folder())"
+                    OnClick="@(() => Navigation.NavigateTo("/educators/resources"))">
+            Teaching Resources
+        </FluentButton>
+    </div>
+</div>
+
+<style>
+    .strategy-section {
+        margin: 2rem 0;
+        padding: 1.5rem;
+        background: var(--neutral-layer-2);
+        border-radius: 8px;
+    }
+
+    .strategy-section h3 {
+        color: var(--accent-fill-rest);
+        margin-top: 0;
+    }
+
+    .activity-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin: 1.5rem 0;
+    }
+
+    .activity-item {
+        padding: 1rem;
+        background: var(--neutral-layer-2);
+        border-radius: 4px;
+        border-left: 4px solid var(--accent-fill-rest);
+    }
+
+    .activity-item h4 {
+        color: var(--accent-fill-rest);
+        margin-top: 0;
+    }
+</style>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+}

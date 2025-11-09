@@ -1,0 +1,179 @@
+@page "/institutions/request-results"
+
+<PageTitle>Request Student Results</PageTitle>
+
+<link rel="stylesheet" href="Pages/ContentPage.css" />
+
+<div class="content-page">
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/">Home</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/institutions/about">For Institutions</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/institutions/request-results">Request Results</FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h1>Request Student Results</h1>
+
+    <FluentCard class="info-card">
+        <h2>Accessing NBT Results</h2>
+        <p>
+            Registered institutions can request NBT results for applicants or enrolled students. 
+            Results are provided in a secure, structured format suitable for integration with your 
+            admissions or student information systems.
+        </p>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Request Process</h2>
+        <div class="process-steps">
+            <div class="process-step">
+                <div class="step-number">1</div>
+                <h3>Register Your Institution</h3>
+                <p>Complete the institutional registration form (one-time process)</p>
+            </div>
+            <div class="process-step">
+                <div class="step-number">2</div>
+                <h3>Submit Student List</h3>
+                <p>Provide student details (NBT number, ID number, or names)</p>
+            </div>
+            <div class="process-step">
+                <div class="step-number">3</div>
+                <h3>Verification</h3>
+                <p>NBT verifies your request and student consent</p>
+            </div>
+            <div class="process-step">
+                <div class="step-number">4</div>
+                <h3>Receive Results</h3>
+                <p>Download secure results file via the institutional portal</p>
+            </div>
+        </div>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Request Methods</h2>
+        
+        <h3><FluentIcon Value="@(new Icons.Regular.Size20.Globe())" /> Online Portal (Recommended)</h3>
+        <p>
+            Access our secure institutional portal to submit requests, track processing, and download results. 
+            Portal access requires institutional registration and authorized user accounts.
+        </p>
+        <FluentButton Appearance="Appearance.Accent" Style="margin: 1rem 0;">
+            Access Institutional Portal
+        </FluentButton>
+
+        <h3><FluentIcon Value="@(new Icons.Regular.Size20.Mail())" /> Email Request</h3>
+        <p>
+            Send requests to <strong>results@nbt.ac.za</strong> with:
+        </p>
+        <ul>
+            <li>Institution name and contact details</li>
+            <li>Student list (NBT numbers or ID numbers preferred)</li>
+            <li>Purpose of request</li>
+            <li>Authorized signature</li>
+        </ul>
+
+        <h3><FluentIcon Value="@(new Icons.Regular.Size20.ArrowUpload())" /> Bulk Upload</h3>
+        <p>
+            For large student cohorts, upload a CSV or Excel file with student identifiers. 
+            Template files are available in the institutional portal.
+        </p>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Data Format</h2>
+        <p>Results are provided in CSV or JSON format and include:</p>
+        <ul>
+            <li>Student identifiers (NBT number, ID number)</li>
+            <li>Test date and venue information</li>
+            <li>Performance levels for each domain (AL, QL, MAT)</li>
+            <li>Test barcode for verification</li>
+            <li>Payment and completion status</li>
+        </ul>
+        <FluentMessageBar Intent="MessageIntent.Info">
+            Data is provided in compliance with POPIA regulations. Student consent is verified before release.
+        </FluentMessageBar>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Processing Times</h2>
+        <ul>
+            <li><strong>Online Portal Requests:</strong> Instant to 24 hours</li>
+            <li><strong>Email Requests:</strong> 2-3 business days</li>
+            <li><strong>Bulk Upload Requests:</strong> 3-5 business days</li>
+        </ul>
+        <p>
+            Processing times may be longer during peak application periods (October - February).
+        </p>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Data Security & Privacy</h2>
+        <p>All result transfers use secure, encrypted channels. Institutions must:</p>
+        <ul>
+            <li>Comply with POPIA data protection requirements</li>
+            <li>Use results only for stated educational purposes</li>
+            <li>Protect student data from unauthorized access</li>
+            <li>Delete or archive data according to institutional policies</li>
+        </ul>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Support & Assistance</h2>
+        <p>For assistance with result requests or portal access:</p>
+        <p>
+            <FluentIcon Value="@(new Icons.Regular.Size16.Mail())" /> Email: results@nbt.ac.za<br/>
+            <FluentIcon Value="@(new Icons.Regular.Size16.Phone())" /> Phone: 021 650 3523<br/>
+            <FluentIcon Value="@(new Icons.Regular.Size16.Clock())" /> Hours: Monday - Friday, 8:00 AM - 4:30 PM
+        </p>
+    </FluentCard>
+
+    <div class="action-section">
+        <FluentButton Appearance="Appearance.Accent"
+                    IconStart="@(new Icons.Regular.Size20.ArrowRight())">
+            Register Institution
+        </FluentButton>
+        <FluentButton Appearance="Appearance.Outline"
+                    IconStart="@(new Icons.Regular.Size20.Mail())"
+                    OnClick="@(() => Navigation.NavigateTo("/institutions/contact"))">
+            Contact Us
+        </FluentButton>
+    </div>
+</div>
+
+<style>
+    .process-steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    .process-step {
+        text-align: center;
+        padding: 1.5rem;
+        background: var(--neutral-layer-2);
+        border-radius: 8px;
+    }
+
+    .step-number {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: var(--accent-fill-rest);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin: 0 auto 1rem auto;
+    }
+
+    .process-step h3 {
+        color: var(--accent-fill-rest);
+        margin: 0.5rem 0;
+    }
+</style>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+}

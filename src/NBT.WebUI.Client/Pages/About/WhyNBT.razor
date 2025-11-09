@@ -1,0 +1,165 @@
+@page "/about/why-nbt"
+
+<PageTitle>Why Write the NBT?</PageTitle>
+
+<link rel="stylesheet" href="Pages/ContentPage.css" />
+
+<div class="content-page">
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/">Home</FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="/about/why-nbt">Why NBT?</FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h1>Why Write the NBT?</h1>
+
+    <FluentCard class="info-card">
+        <h2>Understanding the Purpose</h2>
+        <p>
+            The National Benchmark Tests (NBTs) provide valuable information about your academic readiness for 
+            university-level study. They complement your school results by assessing skills that are essential 
+            for success in tertiary education.
+        </p>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>Key Benefits</h2>
+        
+        <div class="benefit-item">
+            <FluentIcon Value="@(new Icons.Regular.Size24.BuildingMultiple())" Color="Color.Accent" />
+            <div>
+                <h3>University Admissions</h3>
+                <p>
+                    Many South African universities require or recommend NBT results as part of their admission process. 
+                    NBT scores are used alongside your matric results to make informed admission decisions.
+                </p>
+            </div>
+        </div>
+
+        <div class="benefit-item">
+            <FluentIcon Value="@(new Icons.Regular.Size24.PersonFeedback())" Color="Color.Accent" />
+            <div>
+                <h3>Identify Your Strengths</h3>
+                <p>
+                    NBT results help you understand your academic strengths and areas that may need development. 
+                    This self-awareness can guide your study choices and preparation for university.
+                </p>
+            </div>
+        </div>
+
+        <div class="benefit-item">
+            <FluentIcon Value="@(new Icons.Regular.Size24.PeopleCommunity())" Color="Color.Accent" />
+            <div>
+                <h3>Access Support Services</h3>
+                <p>
+                    Universities use NBT results to identify students who may benefit from additional academic support, 
+                    tutoring, or foundation programs to enhance their success.
+                </p>
+            </div>
+        </div>
+
+        <div class="benefit-item">
+            <FluentIcon Value="@(new Icons.Regular.Size24.BookSearch())" Color="Color.Accent" />
+            <div>
+                <h3>Appropriate Course Placement</h3>
+                <p>
+                    NBT scores help universities place you in courses that match your current competency level, 
+                    ensuring you're neither under-challenged nor overwhelmed.
+                </p>
+            </div>
+        </div>
+
+        <div class="benefit-item">
+            <FluentIcon Value="@(new Icons.Regular.Size24.Certificate())" Color="Color.Accent" />
+            <div>
+                <h3>Inform Career Choices</h3>
+                <p>
+                    Understanding your performance in Academic Literacy, Quantitative Literacy, and Mathematics can 
+                    help you make informed decisions about study fields and career paths.
+                </p>
+            </div>
+        </div>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>How Universities Use NBT Results</h2>
+        <p>Different universities use NBT results in various ways:</p>
+        <ul>
+            <li><strong>Admission Requirements:</strong> Some programs require minimum NBT performance levels</li>
+            <li><strong>Placement Tests:</strong> Determining readiness for specific courses or programs</li>
+            <li><strong>Support Planning:</strong> Identifying students for academic development programs</li>
+            <li><strong>Scholarship Decisions:</strong> Some institutions consider NBT results for funding allocations</li>
+            <li><strong>Extended Programs:</strong> Recommending foundation or extended degree programs when appropriate</li>
+        </ul>
+        <FluentMessageBar Intent="MessageIntent.Info" Style="margin-top: 1rem;">
+            Always check with your chosen university/universities to understand their specific NBT requirements 
+            and how they use the results.
+        </FluentMessageBar>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>NBTs vs. Matric Results</h2>
+        <p>NBTs are not a replacement for your matric results. Instead, they:</p>
+        <ul>
+            <li>Provide an <strong>independent assessment</strong> of academic readiness</li>
+            <li>Measure <strong>transferable skills</strong> rather than curriculum content</li>
+            <li>Offer <strong>comparative data</strong> across all South African students</li>
+            <li>Help universities make <strong>more informed decisions</strong> about admissions and support</li>
+        </ul>
+    </FluentCard>
+
+    <FluentCard class="info-card">
+        <h2>When Should You Write?</h2>
+        <p>
+            It's recommended to write the NBTs in your <strong>final year of high school (Grade 12)</strong> or earlier. 
+            This allows you to:
+        </p>
+        <ul>
+            <li>Include NBT results in your university applications</li>
+            <li>Retake the test if needed (up to 2 tests per year)</li>
+            <li>Plan for additional preparation or support if required</li>
+            <li>Avoid last-minute stress and venue availability issues</li>
+        </ul>
+        <p>
+            Remember: Bookings open from <strong>April 1st</strong> each year, and results are valid for 
+            <strong>3 years</strong> from the date of booking.
+        </p>
+    </FluentCard>
+
+    <div class="action-section">
+        <FluentButton Appearance="Appearance.Accent" 
+                    IconStart="@(new Icons.Regular.Size20.PersonAdd())"
+                    OnClick="@(() => Navigation.NavigateTo("/register"))">
+            Register Now
+        </FluentButton>
+        <FluentButton Appearance="Appearance.Outline"
+                    IconStart="@(new Icons.Regular.Size20.Info())"
+                    OnClick="@(() => Navigation.NavigateTo("/about/tests"))">
+            Learn About the Tests
+        </FluentButton>
+    </div>
+</div>
+
+<style>
+    .benefit-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        margin: 1.5rem 0;
+        padding: 1rem;
+        background: var(--neutral-layer-2);
+        border-radius: 4px;
+    }
+
+    .benefit-item h3 {
+        margin: 0 0 0.5rem 0;
+        color: var(--accent-fill-rest);
+    }
+
+    .benefit-item p {
+        margin: 0;
+    }
+</style>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+}
