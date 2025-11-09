@@ -14,6 +14,8 @@ using NBT.Application.ContentPages.Services;
 using NBT.Application.Reports;
 using NBT.Application.Resources.Interfaces;
 using NBT.Application.Resources.Services;
+using NBT.Application.Staff.Interfaces;
+using NBT.Application.Staff.Services;
 using NBT.Application.Students.Services;
 using NBT.Application.Venues.Services;
 using NBT.Domain.Common;
@@ -91,6 +93,7 @@ public static class DependencyInjection
         services.AddScoped<IContactInquiryService, ContactInquiryService>();
         services.AddScoped<IDownloadableResourceService, DownloadableResourceService>();
         services.AddScoped<IStudentService, StudentService>();
+        services.AddScoped<IStaffService, StaffService>();
         services.AddScoped<IBookingValidationService, BookingValidationService>();
         services.AddScoped<IBookingService, BookingService>();
         services.AddScoped<IPaymentService, PaymentService>();

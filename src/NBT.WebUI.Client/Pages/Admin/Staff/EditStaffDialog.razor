@@ -1,0 +1,131 @@
+@using NBT.Application.Staff.DTOs
+@using NBT.Domain.Enums
+@using Microsoft.FluentUI.AspNetCore.Components
+@inject IStaffService StaffService
+
+<FluentDialogBody>
+    <FluentStack Orientation="Orientation.Vertical">
+        <FluentTextField @bind-Value="@model.FirstName" 
+                        Label="First Name" 
+                        Required="true"
+                        Style="width: 100%;" />
+
+        <FluentTextField @bind-Value="@model.LastName" 
+                        Label="Last Name" 
+                        Required="true"
+                        Style="width: 100%;" />
+
+        <FluentTextField @bind-Value="@model.PhoneNumber" 
+                        Label="Phone Number"
+                        Style="width: 100%;" />
+
+        <FluentSelect @bind-Value="@model.Role" 
+                     Label="Role"
+                     Required="true"
+                     Style="width: 100%;">
+            <FluentOption Value="@UserRole.Staff">Staff</FluentOption>
+            <FluentOption Value="@UserRole.Admin">Admin</FluentOption>
+            <FluentOption Value="@UserRole.SuperUser">SuperUser</FluentOption>
+        </FluentSelect>
+
+        <FluentSelect @bind-Value="@model.Status" 
+                     Label="Status"
+                     Required="true"
+                     Style="width: 100%;">
+            <FluentOption Value="Active">Active</FluentOption>
+            <FluentOption Value="Inactive">Inactive</FluentOption>
+        </FluentSelect>
+
+        <FluentTextField @bind-Value="@model.InstitutionName" 
+                        Label="Institution Name"
+                        Style="width: 100%;" />
+
+        <FluentTextField @bind-Value="@model.InstitutionId" 
+                        Label="Institution ID"
+                        Style="width: 100%;" />
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <FluentMessageBar Intent="MessageIntent.Error">
+                @errorMessage
+            </FluentMessageBar>
+        }
+    </FluentStack>
+</FluentDialogBody>
+
+<FluentDialogFooter>
+    <FluentButton Appearance="Appearance.Accent" 
+                 OnClick="@SaveAsync"
+                 Disabled="@isSaving">
+        @(isSaving ? "Saving..." : "Save")
+    </FluentButton>
+    <FluentButton Appearance="Appearance.Neutral" 
+                 OnClick="@CancelAsync">
+        Cancel
+    </FluentButton>
+</FluentDialogFooter>
+
+@code {
+    [CascadingParameter]
+    public FluentDialog? Dialog { get; set; }
+
+    [Parameter]
+    public StaffDto Staff { get; set; } = new();
+
+    private UpdateStaffDto model = new();
+    private bool isSaving = false;
+    private string errorMessage = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        model = new UpdateStaffDto
+        {
+            FirstName = Staff.FirstName,
+            LastName = Staff.LastName,
+            PhoneNumber = Staff.PhoneNumber ?? string.Empty,
+            Role = Staff.Role,
+            Status = Staff.Status,
+            InstitutionName = Staff.InstitutionName,
+            InstitutionId = Staff.InstitutionId
+        };
+    }
+
+    private async Task SaveAsync()
+    {
+        errorMessage = string.Empty;
+        
+        if (string.IsNullOrWhiteSpace(model.FirstName) || 
+            string.IsNullOrWhiteSpace(model.LastName))
+        {
+            errorMessage = "Please fill in all required fields.";
+            return;
+        }
+
+        isSaving = true;
+        try
+        {
+            var result = await StaffService.UpdateStaffAsync(Staff.Id, model);
+            if (result != null)
+            {
+                await Dialog!.CloseAsync(result);
+            }
+            else
+            {
+                errorMessage = "Failed to update staff member. Please try again.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private async Task CancelAsync()
+    {
+        await Dialog!.CancelAsync();
+    }
+}

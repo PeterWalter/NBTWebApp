@@ -1,0 +1,133 @@
+@using NBT.Application.Staff.DTOs
+@using NBT.Domain.Enums
+@using Microsoft.FluentUI.AspNetCore.Components
+@inject IStaffService StaffService
+@inject IDialogService DialogService
+
+<FluentDialogBody>
+    <FluentStack Orientation="Orientation.Vertical">
+        <FluentTextField @bind-Value="@model.Email" 
+                        Label="Email" 
+                        Required="true"
+                        Style="width: 100%;" />
+
+        <FluentTextField @bind-Value="@model.FirstName" 
+                        Label="First Name" 
+                        Required="true"
+                        Style="width: 100%;" />
+
+        <FluentTextField @bind-Value="@model.LastName" 
+                        Label="Last Name" 
+                        Required="true"
+                        Style="width: 100%;" />
+
+        <FluentTextField @bind-Value="@model.PhoneNumber" 
+                        Label="Phone Number"
+                        Style="width: 100%;" />
+
+        <FluentSelect @bind-Value="@model.Role" 
+                     Label="Role"
+                     Required="true"
+                     Style="width: 100%;">
+            <FluentOption Value="@UserRole.Staff">Staff</FluentOption>
+            <FluentOption Value="@UserRole.Admin">Admin</FluentOption>
+            <FluentOption Value="@UserRole.SuperUser">SuperUser</FluentOption>
+        </FluentSelect>
+
+        <FluentTextField @bind-Value="@model.InstitutionName" 
+                        Label="Institution Name"
+                        Style="width: 100%;" />
+
+        <FluentTextField @bind-Value="@model.InstitutionId" 
+                        Label="Institution ID"
+                        Style="width: 100%;" />
+
+        <FluentTextField @bind-Value="@model.Password" 
+                        Label="Password" 
+                        TextFieldType="TextFieldType.Password"
+                        Required="true"
+                        Style="width: 100%;" />
+
+        <FluentTextField @bind-Value="@model.ConfirmPassword" 
+                        Label="Confirm Password" 
+                        TextFieldType="TextFieldType.Password"
+                        Required="true"
+                        Style="width: 100%;" />
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <FluentMessageBar Intent="MessageIntent.Error">
+                @errorMessage
+            </FluentMessageBar>
+        }
+    </FluentStack>
+</FluentDialogBody>
+
+<FluentDialogFooter>
+    <FluentButton Appearance="Appearance.Accent" 
+                 OnClick="@SaveAsync"
+                 Disabled="@isSaving">
+        @(isSaving ? "Creating..." : "Create")
+    </FluentButton>
+    <FluentButton Appearance="Appearance.Neutral" 
+                 OnClick="@CancelAsync">
+        Cancel
+    </FluentButton>
+</FluentDialogFooter>
+
+@code {
+    [CascadingParameter]
+    public FluentDialog? Dialog { get; set; }
+
+    private CreateStaffDto model = new() { Role = UserRole.Staff };
+    private bool isSaving = false;
+    private string errorMessage = string.Empty;
+
+    private async Task SaveAsync()
+    {
+        errorMessage = string.Empty;
+        
+        if (string.IsNullOrWhiteSpace(model.Email) || 
+            string.IsNullOrWhiteSpace(model.FirstName) || 
+            string.IsNullOrWhiteSpace(model.LastName) ||
+            string.IsNullOrWhiteSpace(model.Password) ||
+            string.IsNullOrWhiteSpace(model.ConfirmPassword))
+        {
+            errorMessage = "Please fill in all required fields.";
+            return;
+        }
+
+        if (model.Password != model.ConfirmPassword)
+        {
+            errorMessage = "Passwords do not match.";
+            return;
+        }
+
+        isSaving = true;
+        try
+        {
+            var result = await StaffService.CreateStaffAsync(model);
+            if (result != null)
+            {
+                await Dialog!.CloseAsync(result);
+            }
+            else
+            {
+                errorMessage = "Failed to create staff member. Please check the details and try again.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private async Task CancelAsync()
+    {
+        await Dialog!.CancelAsync();
+    }
+}

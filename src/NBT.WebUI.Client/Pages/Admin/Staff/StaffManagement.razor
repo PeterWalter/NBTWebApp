@@ -1,0 +1,299 @@
+@page "/admin/staff"
+@using NBT.Application.Staff.DTOs
+@using NBT.Application.Common
+@using NBT.Domain.Enums
+@using Microsoft.FluentUI.AspNetCore.Components
+@inject IStaffService StaffService
+@inject IDialogService DialogService
+@inject IToastService ToastService
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin,SuperUser")]
+
+<PageTitle>Staff Management</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical" Style="padding: 20px;">
+    <FluentLabel Typo="Typography.H3">Staff Management</FluentLabel>
+
+    <FluentCard Style="margin-bottom: 20px;">
+        <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Start">
+            <FluentSearch @bind-Value="@searchTerm" 
+                         Placeholder="Search by name or email..."
+                         Style="width: 300px;"
+                         @onchange="@(() => LoadStaffAsync())" />
+            
+            <FluentSelect @bind-Value="@selectedRole" 
+                         Style="width: 200px;"
+                         @onchange="@(() => LoadStaffAsync())">
+                <FluentOption Value="">All Roles</FluentOption>
+                <FluentOption Value="@UserRole.Staff.ToString()">Staff</FluentOption>
+                <FluentOption Value="@UserRole.Admin.ToString()">Admin</FluentOption>
+                <FluentOption Value="@UserRole.SuperUser.ToString()">SuperUser</FluentOption>
+            </FluentSelect>
+
+            <FluentSelect @bind-Value="@selectedStatus" 
+                         Style="width: 200px;"
+                         @onchange="@(() => LoadStaffAsync())">
+                <FluentOption Value="">All Status</FluentOption>
+                <FluentOption Value="Active">Active</FluentOption>
+                <FluentOption Value="Inactive">Inactive</FluentOption>
+            </FluentSelect>
+
+            <FluentSpacer />
+            
+            <FluentButton Appearance="Appearance.Accent" 
+                         IconStart="@(new Icons.Regular.Size20.PersonAdd())"
+                         OnClick="@OpenCreateDialog">
+                Add Staff
+            </FluentButton>
+        </FluentStack>
+    </FluentCard>
+
+    @if (isLoading)
+    {
+        <FluentProgressRing />
+    }
+    else if (staffList == null || !staffList.Any())
+    {
+        <FluentCard>
+            <FluentLabel>No staff members found.</FluentLabel>
+        </FluentCard>
+    }
+    else
+    {
+        <FluentDataGrid Items="@staffList" GridTemplateColumns="1fr 2fr 2fr 1fr 1fr 1fr 2fr">
+            <PropertyColumn Property="@(s => s.FullName)" Title="Name" Sortable="true" />
+            <PropertyColumn Property="@(s => s.Email)" Title="Email" Sortable="true" />
+            <PropertyColumn Property="@(s => s.PhoneNumber)" Title="Phone" />
+            <PropertyColumn Property="@(s => s.Role)" Title="Role" Sortable="true">
+                <FluentBadge Appearance="@GetRoleBadgeAppearance(context.Role)">
+                    @context.Role.ToString()
+                </FluentBadge>
+            </PropertyColumn>
+            <PropertyColumn Property="@(s => s.Status)" Title="Status" Sortable="true">
+                <FluentBadge Appearance="@(context.Status == "Active" ? Appearance.Success : Appearance.Neutral)">
+                    @context.Status
+                </FluentBadge>
+            </PropertyColumn>
+            <PropertyColumn Property="@(s => s.CreatedDate)" Title="Created" Sortable="true" Format="yyyy-MM-dd" />
+            <TemplateColumn Title="Actions">
+                <FluentButton Appearance="Appearance.Lightweight" 
+                             IconStart="@(new Icons.Regular.Size20.Edit())"
+                             OnClick="@(() => OpenEditDialog(context))">
+                    Edit
+                </FluentButton>
+                @if (context.Status == "Active")
+                {
+                    <FluentButton Appearance="Appearance.Lightweight" 
+                                 IconStart="@(new Icons.Regular.Size20.PersonProhibited())"
+                                 OnClick="@(() => DeactivateStaff(context))">
+                        Deactivate
+                    </FluentButton>
+                }
+                else
+                {
+                    <FluentButton Appearance="Appearance.Lightweight" 
+                                 IconStart="@(new Icons.Regular.Size20.PersonAvailable())"
+                                 OnClick="@(() => ActivateStaff(context))">
+                        Activate
+                    </FluentButton>
+                }
+                <FluentButton Appearance="Appearance.Lightweight" 
+                             IconStart="@(new Icons.Regular.Size20.Key())"
+                             OnClick="@(() => OpenResetPasswordDialog(context))">
+                    Reset Password
+                </FluentButton>
+                @if (context.Role != UserRole.SuperUser)
+                {
+                    <FluentButton Appearance="Appearance.Lightweight" 
+                                 IconStart="@(new Icons.Regular.Size20.Delete())"
+                                 OnClick="@(() => DeleteStaff(context))">
+                        Delete
+                    </FluentButton>
+                }
+            </TemplateColumn>
+        </FluentDataGrid>
+
+        <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center" Style="margin-top: 20px;">
+            <FluentButton Appearance="Appearance.Lightweight" 
+                         Disabled="@(currentPage <= 1)"
+                         OnClick="@(() => ChangePage(currentPage - 1))">
+                Previous
+            </FluentButton>
+            <FluentLabel>Page @currentPage of @totalPages</FluentLabel>
+            <FluentButton Appearance="Appearance.Lightweight" 
+                         Disabled="@(currentPage >= totalPages)"
+                         OnClick="@(() => ChangePage(currentPage + 1))">
+                Next
+            </FluentButton>
+        </FluentStack>
+    }
+</FluentStack>
+
+@code {
+    private List<StaffDto> staffList = new();
+    private bool isLoading = true;
+    private string searchTerm = string.Empty;
+    private string selectedRole = string.Empty;
+    private string selectedStatus = string.Empty;
+    private int currentPage = 1;
+    private int pageSize = 10;
+    private int totalPages = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadStaffAsync();
+    }
+
+    private async Task LoadStaffAsync()
+    {
+        isLoading = true;
+        try
+        {
+            var filter = new StaffFilterDto
+            {
+                SearchTerm = string.IsNullOrWhiteSpace(searchTerm) ? null : searchTerm,
+                Role = string.IsNullOrWhiteSpace(selectedRole) ? null : Enum.Parse<UserRole>(selectedRole),
+                Status = string.IsNullOrWhiteSpace(selectedStatus) ? null : selectedStatus,
+                PageNumber = currentPage,
+                PageSize = pageSize
+            };
+
+            var result = await StaffService.GetAllStaffAsync(filter);
+            staffList = result.Items.ToList();
+            totalPages = (int)Math.Ceiling((double)result.TotalCount / pageSize);
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Error loading staff: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task ChangePage(int page)
+    {
+        currentPage = page;
+        await LoadStaffAsync();
+    }
+
+    private Appearance GetRoleBadgeAppearance(UserRole role)
+    {
+        return role switch
+        {
+            UserRole.SuperUser => Appearance.Accent,
+            UserRole.Admin => Appearance.Filled,
+            UserRole.Staff => Appearance.Outline,
+            _ => Appearance.Neutral
+        };
+    }
+
+    private async Task OpenCreateDialog()
+    {
+        var dialog = await DialogService.ShowDialogAsync<CreateStaffDialog>(new DialogParameters
+        {
+            Title = "Add New Staff Member",
+            Width = "600px",
+            Modal = true
+        });
+
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            await LoadStaffAsync();
+            ToastService.ShowSuccess("Staff member created successfully");
+        }
+    }
+
+    private async Task OpenEditDialog(StaffDto staff)
+    {
+        var dialog = await DialogService.ShowDialogAsync<EditStaffDialog>(staff, new DialogParameters
+        {
+            Title = $"Edit Staff: {staff.FullName}",
+            Width = "600px",
+            Modal = true
+        });
+
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            await LoadStaffAsync();
+            ToastService.ShowSuccess("Staff member updated successfully");
+        }
+    }
+
+    private async Task OpenResetPasswordDialog(StaffDto staff)
+    {
+        var dialog = await DialogService.ShowDialogAsync<ResetPasswordDialog>(staff, new DialogParameters
+        {
+            Title = $"Reset Password: {staff.FullName}",
+            Width = "400px",
+            Modal = true
+        });
+
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            ToastService.ShowSuccess("Password reset successfully");
+        }
+    }
+
+    private async Task ActivateStaff(StaffDto staff)
+    {
+        var confirmed = await DialogService.ShowConfirmationAsync($"Activate {staff.FullName}?", "Confirm", "Yes", "No");
+        if (confirmed)
+        {
+            var success = await StaffService.ActivateStaffAsync(staff.Id);
+            if (success)
+            {
+                ToastService.ShowSuccess($"{staff.FullName} activated successfully");
+                await LoadStaffAsync();
+            }
+            else
+            {
+                ToastService.ShowError("Failed to activate staff member");
+            }
+        }
+    }
+
+    private async Task DeactivateStaff(StaffDto staff)
+    {
+        var confirmed = await DialogService.ShowConfirmationAsync($"Deactivate {staff.FullName}?", "Confirm", "Yes", "No");
+        if (confirmed)
+        {
+            var success = await StaffService.DeactivateStaffAsync(staff.Id);
+            if (success)
+            {
+                ToastService.ShowSuccess($"{staff.FullName} deactivated successfully");
+                await LoadStaffAsync();
+            }
+            else
+            {
+                ToastService.ShowError("Failed to deactivate staff member");
+            }
+        }
+    }
+
+    private async Task DeleteStaff(StaffDto staff)
+    {
+        var confirmed = await DialogService.ShowConfirmationAsync(
+            $"Are you sure you want to delete {staff.FullName}? This action cannot be undone.", 
+            "Confirm Delete", 
+            "Delete", 
+            "Cancel");
+        
+        if (confirmed)
+        {
+            var success = await StaffService.DeleteStaffAsync(staff.Id);
+            if (success)
+            {
+                ToastService.ShowSuccess($"{staff.FullName} deleted successfully");
+                await LoadStaffAsync();
+            }
+            else
+            {
+                ToastService.ShowError("Failed to delete staff member");
+            }
+        }
+    }
+}
