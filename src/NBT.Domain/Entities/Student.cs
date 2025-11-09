@@ -205,6 +205,40 @@ public class Student : BaseEntity
     /// </summary>
     public bool IsActive { get; set; } = true;
 
+    // Registration Progress Fields
+    
+    /// <summary>
+    /// Gets or sets the current step of the registration wizard (0, 1, 2, or 3).
+    /// 0 = Not started, 1 = Step 1 completed, 2 = Step 2 completed, 3 = Step 3 completed
+    /// </summary>
+    public int RegistrationStep { get; set; } = 0;
+
+    /// <summary>
+    /// Gets or sets whether the registration process is complete.
+    /// </summary>
+    public bool IsRegistrationComplete { get; set; } = false;
+
+    /// <summary>
+    /// Gets or sets the date and time when registration was completed.
+    /// </summary>
+    public DateTime? RegistrationCompletedDate { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the student's email has been verified.
+    /// </summary>
+    public bool IsEmailVerified { get; set; } = false;
+
+    /// <summary>
+    /// Gets or sets the OTP code for email verification.
+    /// </summary>
+    [StringLength(10)]
+    public string? EmailVerificationOTP { get; set; }
+
+    /// <summary>
+    /// Gets or sets the expiry time for the OTP code.
+    /// </summary>
+    public DateTime? OTPExpiry { get; set; }
+
     // Navigation properties
 
     /// <summary>
