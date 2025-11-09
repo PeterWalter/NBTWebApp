@@ -157,7 +157,7 @@ public class PdfService : IPdfService
 
                             table.Cell().Element(CellStyle).Text("NBT Test Fee");
                             table.Cell().Element(CellStyle).AlignRight().Text("1");
-                            table.Cell().Element(CellStyle).AlignRight().Text($"R {payment.Amount:N2}");
+                            table.Cell().Element(CellStyle).AlignRight().Text($"R {payment.TotalAmount:N2}");
 
                             static IContainer CellStyle(IContainer container)
                             {
@@ -165,7 +165,12 @@ public class PdfService : IPdfService
                             }
                         });
 
-                        x.Item().AlignRight().Text($"Total: R {payment.Amount:N2}").FontSize(16).SemiBold();
+                        x.Item().AlignRight().Text($"Total: R {payment.TotalAmount:N2}").FontSize(16).SemiBold();
+                        x.Item().AlignRight().Text($"Amount Paid: R {payment.AmountPaid:N2}").FontSize(14);
+                        if (payment.Balance > 0)
+                        {
+                            x.Item().AlignRight().Text($"Balance: R {payment.Balance:N2}").FontSize(14).FontColor(Colors.Red.Medium);
+                        }
                         x.Item().AlignRight().Text($"Status: {payment.Status}").FontColor(
                             payment.Status == NBT.Domain.Enums.PaymentStatus.Paid ? Colors.Green.Medium : Colors.Orange.Medium);
 
@@ -237,9 +242,25 @@ public class PdfService : IPdfService
 
                         x.Item().Text("Test Results").FontSize(16).SemiBold();
                         x.Item().Text($"Test Type: {result.TestType}");
-                        x.Item().Text($"Raw Score: {result.RawScore}").FontSize(14).SemiBold();
+                        x.Item().Text($"Barcode: {result.Barcode}").FontSize(12);
+                        
+                        if (result.ALScore.HasValue)
+                        {
+                            x.Item().Text($"Academic Literacy (AL): {result.ALScore:N2} - {result.ALPerformanceLevel}").FontSize(14).SemiBold();
+                        }
+                        
+                        if (result.QLScore.HasValue)
+                        {
+                            x.Item().Text($"Quantitative Literacy (QL): {result.QLScore:N2} - {result.QLPerformanceLevel}").FontSize(14).SemiBold();
+                        }
+                        
+                        if (result.MATScore.HasValue)
+                        {
+                            x.Item().Text($"Mathematics (MAT): {result.MATScore:N2} - {result.MATPerformanceLevel}").FontSize(14).SemiBold();
+                        }
+                        
                         x.Item().Text($"Percentile: {result.Percentile}").FontSize(14).SemiBold();
-                        x.Item().Text($"Performance Band: {result.PerformanceBand}").FontSize(14).SemiBold();
+                        x.Item().Text($"Overall Performance: {result.OverallPerformanceBand}").FontSize(14).SemiBold();
 
                         x.Item().LineHorizontal(1);
 

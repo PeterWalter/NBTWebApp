@@ -25,10 +25,30 @@ public class Payment : BaseEntity
     public string InvoiceNumber { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the payment amount in ZAR.
+    /// Gets or sets the total amount due for the registration in ZAR.
+    /// Based on test type and intake year pricing.
     /// </summary>
     [Required]
-    public decimal Amount { get; set; }
+    public decimal TotalAmount { get; set; }
+
+    /// <summary>
+    /// Gets or sets the total amount paid so far in ZAR.
+    /// Sum of all successful payment transactions.
+    /// </summary>
+    [Required]
+    public decimal AmountPaid { get; set; } = 0;
+
+    /// <summary>
+    /// Gets the balance remaining (computed property).
+    /// </summary>
+    public decimal Balance => TotalAmount - AmountPaid;
+
+    /// <summary>
+    /// Gets or sets the intake year for pricing calculation.
+    /// Example: 2024, 2025
+    /// </summary>
+    [Required]
+    public int IntakeYear { get; set; }
 
     /// <summary>
     /// Gets or sets the payment method.
@@ -86,4 +106,10 @@ public class Payment : BaseEntity
     /// Gets or sets the registration associated with this payment.
     /// </summary>
     public virtual Registration Registration { get; set; } = null!;
+
+    /// <summary>
+    /// Gets or sets the collection of payment transactions.
+    /// Tracks individual payments made towards this registration.
+    /// </summary>
+    public virtual ICollection<PaymentTransaction> Transactions { get; set; } = new List<PaymentTransaction>();
 }

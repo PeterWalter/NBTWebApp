@@ -21,20 +21,41 @@ public class TestResultConfiguration : IEntityTypeConfiguration<TestResult>
         builder.Property(tr => tr.TestSessionId)
             .IsRequired();
         
-        builder.Property(tr => tr.TestType)
+        builder.Property(tr => tr.RegistrationId)
+            .IsRequired();
+        
+        builder.Property(tr => tr.Barcode)
             .IsRequired()
             .HasMaxLength(50);
         
-        builder.Property(tr => tr.RawScore)
+        builder.Property(tr => tr.TestType)
             .IsRequired()
+            .HasMaxLength(20);
+        
+        builder.Property(tr => tr.ALScore)
             .HasColumnType("decimal(5,2)");
+        
+        builder.Property(tr => tr.ALPerformanceLevel)
+            .HasMaxLength(50);
+        
+        builder.Property(tr => tr.QLScore)
+            .HasColumnType("decimal(5,2)");
+        
+        builder.Property(tr => tr.QLPerformanceLevel)
+            .HasMaxLength(50);
+        
+        builder.Property(tr => tr.MATScore)
+            .HasColumnType("decimal(5,2)");
+        
+        builder.Property(tr => tr.MATPerformanceLevel)
+            .HasMaxLength(50);
+        
+        builder.Property(tr => tr.OverallPerformanceBand)
+            .IsRequired()
+            .HasMaxLength(50);
         
         builder.Property(tr => tr.Percentile)
             .IsRequired();
-        
-        builder.Property(tr => tr.PerformanceBand)
-            .IsRequired()
-            .HasMaxLength(50);
         
         builder.Property(tr => tr.IsReleased)
             .IsRequired()
@@ -61,6 +82,13 @@ public class TestResultConfiguration : IEntityTypeConfiguration<TestResult>
         builder.HasIndex(tr => tr.TestSessionId)
             .HasDatabaseName("IX_TestResults_SessionId");
         
+        builder.HasIndex(tr => tr.Barcode)
+            .IsUnique()
+            .HasDatabaseName("IX_TestResults_Barcode");
+        
+        builder.HasIndex(tr => tr.RegistrationId)
+            .HasDatabaseName("IX_TestResults_RegistrationId");
+        
         builder.HasIndex(tr => new { tr.StudentId, tr.TestType })
             .HasDatabaseName("IX_TestResults_StudentTest");
         
@@ -79,6 +107,11 @@ public class TestResultConfiguration : IEntityTypeConfiguration<TestResult>
         builder.HasOne(tr => tr.TestSession)
             .WithMany()
             .HasForeignKey(tr => tr.TestSessionId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasOne(tr => tr.Registration)
+            .WithMany(r => r.TestResults)
+            .HasForeignKey(tr => tr.RegistrationId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

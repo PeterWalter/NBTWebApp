@@ -23,9 +23,16 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
             .IsRequired()
             .HasMaxLength(20);
         
-        builder.Property(p => p.Amount)
+        builder.Property(p => p.TotalAmount)
             .IsRequired()
             .HasColumnType("decimal(18,2)");
+        
+        builder.Property(p => p.AmountPaid)
+            .IsRequired()
+            .HasColumnType("decimal(18,2)");
+        
+        builder.Property(p => p.IntakeYear)
+            .IsRequired();
         
         builder.Property(p => p.PaymentMethod)
             .IsRequired()
@@ -81,6 +88,11 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
             .WithOne(r => r.Payment)
             .HasForeignKey<Payment>(p => p.RegistrationId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasMany(p => p.Transactions)
+            .WithOne(t => t.Payment)
+            .HasForeignKey(t => t.PaymentId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
 

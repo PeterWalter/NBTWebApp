@@ -120,7 +120,7 @@ public class ReportService : IReportService
             worksheet.Cell(row, 1).Value = payment.InvoiceNumber;
             worksheet.Cell(row, 2).Value = payment.Registration?.Student?.NBTNumber;
             worksheet.Cell(row, 3).Value = $"{payment.Registration?.Student?.FirstName} {payment.Registration?.Student?.LastName}";
-            worksheet.Cell(row, 4).Value = payment.Amount;
+            worksheet.Cell(row, 4).Value = payment.TotalAmount;
             worksheet.Cell(row, 5).Value = payment.Status.ToString();
             worksheet.Cell(row, 6).Value = payment.PaymentMethod;
             worksheet.Cell(row, 7).Value = payment.PaidDate?.ToString("yyyy-MM-dd HH:mm");
@@ -158,15 +158,18 @@ public class ReportService : IReportService
         worksheet.Cell(1, 1).Value = "NBT Number";
         worksheet.Cell(1, 2).Value = "Student Name";
         worksheet.Cell(1, 3).Value = "Test Type";
-        worksheet.Cell(1, 4).Value = "Test Date";
-        worksheet.Cell(1, 5).Value = "Raw Score";
-        worksheet.Cell(1, 6).Value = "Percentile";
-        worksheet.Cell(1, 7).Value = "Performance Band";
-        worksheet.Cell(1, 8).Value = "Released";
-        worksheet.Cell(1, 9).Value = "Session";
+        worksheet.Cell(1, 4).Value = "Barcode";
+        worksheet.Cell(1, 5).Value = "Test Date";
+        worksheet.Cell(1, 6).Value = "AL Score";
+        worksheet.Cell(1, 7).Value = "QL Score";
+        worksheet.Cell(1, 8).Value = "MAT Score";
+        worksheet.Cell(1, 9).Value = "Percentile";
+        worksheet.Cell(1, 10).Value = "Overall Performance";
+        worksheet.Cell(1, 11).Value = "Released";
+        worksheet.Cell(1, 12).Value = "Session";
 
         // Style headers
-        var headerRange = worksheet.Range(1, 1, 1, 9);
+        var headerRange = worksheet.Range(1, 1, 1, 12);
         headerRange.Style.Font.Bold = true;
         headerRange.Style.Fill.BackgroundColor = XLColor.LightYellow;
         headerRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
@@ -178,12 +181,15 @@ public class ReportService : IReportService
             worksheet.Cell(row, 1).Value = result.Student?.NBTNumber;
             worksheet.Cell(row, 2).Value = $"{result.Student?.FirstName} {result.Student?.LastName}";
             worksheet.Cell(row, 3).Value = result.TestType;
-            worksheet.Cell(row, 4).Value = result.TestDate.ToString("yyyy-MM-dd");
-            worksheet.Cell(row, 5).Value = result.RawScore;
-            worksheet.Cell(row, 6).Value = result.Percentile;
-            worksheet.Cell(row, 7).Value = result.PerformanceBand;
-            worksheet.Cell(row, 8).Value = result.IsReleased ? "Yes" : "No";
-            worksheet.Cell(row, 9).Value = result.TestSession?.SessionName;
+            worksheet.Cell(row, 4).Value = result.Barcode;
+            worksheet.Cell(row, 5).Value = result.TestDate.ToString("yyyy-MM-dd");
+            worksheet.Cell(row, 6).Value = result.ALScore?.ToString() ?? "N/A";
+            worksheet.Cell(row, 7).Value = result.QLScore?.ToString() ?? "N/A";
+            worksheet.Cell(row, 8).Value = result.MATScore?.ToString() ?? "N/A";
+            worksheet.Cell(row, 9).Value = result.Percentile;
+            worksheet.Cell(row, 10).Value = result.OverallPerformanceBand;
+            worksheet.Cell(row, 11).Value = result.IsReleased ? "Yes" : "No";
+            worksheet.Cell(row, 12).Value = result.TestSession?.SessionName;
             row++;
         }
 
@@ -265,7 +271,7 @@ public class ReportService : IReportService
         // Payment stats
         var payments = await _context.Payments.ToListAsync(cancellationToken);
         summary.TotalPayments = payments.Count;
-        summary.TotalRevenue = payments.Where(p => p.Status == NBT.Domain.Enums.PaymentStatus.Paid).Sum(p => p.Amount);
+        summary.TotalRevenue = payments.Where(p => p.Status == NBT.Domain.Enums.PaymentStatus.Paid).Sum(p => p.TotalAmount);
         summary.PendingPayments = payments.Count(p => p.Status == NBT.Domain.Enums.PaymentStatus.Pending);
         summary.CompletedPayments = payments.Count(p => p.Status == NBT.Domain.Enums.PaymentStatus.Paid);
         summary.FailedPayments = payments.Count(p => p.Status == NBT.Domain.Enums.PaymentStatus.Failed);
@@ -296,7 +302,7 @@ public class ReportService : IReportService
             {
                 Status = g.Key.ToString(),
                 Count = g.Count(),
-                TotalAmount = g.Sum(p => p.Amount)
+                TotalAmount = g.Sum(p => p.TotalAmount)
             })
             .ToListAsync(cancellationToken);
 

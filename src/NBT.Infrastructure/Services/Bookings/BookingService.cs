@@ -409,7 +409,9 @@ public class BookingService : IBookingService
             {
                 Id = registration.Payment.Id,
                 InvoiceNumber = registration.Payment.InvoiceNumber,
-                Amount = registration.Payment.Amount,
+                Amount = registration.Payment.TotalAmount,
+                AmountPaid = registration.Payment.AmountPaid,
+                Balance = registration.Payment.Balance,
                 PaymentMethod = registration.Payment.PaymentMethod,
                 Status = registration.Payment.Status.ToString(),
                 EasyPayReference = registration.Payment.EasyPayReference,

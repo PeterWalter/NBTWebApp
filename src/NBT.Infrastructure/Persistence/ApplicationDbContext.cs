@@ -39,6 +39,12 @@ public class ApplicationDbContext : IdentityDbContext<User, Microsoft.AspNetCore
     public DbSet<RoomAllocation> RoomAllocations { get; set; } = null!;
     public DbSet<TestResult> TestResults { get; set; } = null!;
     public DbSet<AuditLog> AuditLogs { get; set; } = null!;
+    
+    // New entities for enhanced payment and calendar management
+    public DbSet<PaymentTransaction> PaymentTransactions { get; set; } = null!;
+    public DbSet<VenueAvailability> VenueAvailabilities { get; set; } = null!;
+    public DbSet<TestDateCalendar> TestDateCalendar { get; set; } = null!;
+    public DbSet<TestPricing> TestPricings { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

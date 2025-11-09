@@ -26,6 +26,14 @@ public class Venue : BaseEntity
     public string VenueCode { get; set; } = string.Empty;
 
     /// <summary>
+    /// Gets or sets the type of venue.
+    /// Values: National, SpecialSession, Research, Online, Other
+    /// </summary>
+    [Required]
+    [StringLength(50)]
+    public string VenueType { get; set; } = "National";
+
+    /// <summary>
     /// Gets or sets the physical address of the venue.
     /// </summary>
     [Required]
@@ -107,4 +115,9 @@ public class Venue : BaseEntity
     /// Gets or sets the test sessions scheduled at this venue.
     /// </summary>
     public virtual ICollection<TestSession> TestSessions { get; set; } = new List<TestSession>();
+
+    /// <summary>
+    /// Gets or sets the venue availability records.
+    /// </summary>
+    public virtual ICollection<VenueAvailability> VenueAvailabilities { get; set; } = new List<VenueAvailability>();
 }

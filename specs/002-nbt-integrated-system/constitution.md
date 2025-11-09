@@ -1,9 +1,9 @@
 # NBT Integrated System - Constitution
 
-**Version:** 2.0  
-**Last Updated:** 2025-11-08  
+**Version:** 3.0  
+**Last Updated:** 2025-11-09  
 **Status:** BINDING - Non-Negotiable Principles  
-**Architecture:** Blazor Web App Interactive Auto Mode  
+**Architecture:** Blazor Web App Interactive Auto Mode (.NET 9.0)  
 **Scope:** Full NBT Integrated System with Registration, Booking, Payments, Results, and Reporting
 
 ---
@@ -27,6 +27,34 @@
 - **GitHub Actions** must pass all build, test, and deployment steps
 - **Feature branches** follow naming convention: `feature/{phase-name}`
 - **Merge strategy**: Squash and merge for clean history
+
+**CRITICAL PAYMENT RULES:**
+- **Installment Payments**: Payments can be made in installments until complete
+- **Payment Order**: Payments processed in order of tests being written
+- **Year-Based Costs**: Test costs vary by intake year
+- **Payment Calculation**: System must account for intake year when calculating complete payment
+- **View Restrictions**: Only completely paid tests can be viewed/downloaded by students
+- **Admin Override**: Staff and Admin can view all tests regardless of payment status
+
+**CRITICAL VENUE RULES:**
+- **Venue Types**: National, Special Session, Research, Other (extensible)
+- **Availability**: Venues may not be available for certain test dates during the year
+- **Test Calendar**: System MUST maintain a table of test dates with:
+  - Test date and closing booking date
+  - Sunday test highlighting (color-coded)
+  - Online test highlighting (written anywhere with computer, video, sound, internet)
+  - Specific online test session dates
+
+**CRITICAL RESULT RULES:**
+- **Test Types**:
+  - AQL Test: AL (Academic Literacy) + QL (Quantitative Literacy) results
+  - MAT Test: AL + QL + MAT (Mathematics) results
+- **Performance Levels**: Basic Lower, Basic Upper, Intermediate Lower, Intermediate Upper, Proficient Lower, Proficient Upper, etc.
+- **Barcode**: Each test has unique barcode distinguishing the actual answer sheet used
+  - Multiple test attempts have different barcodes
+  - Essential for differentiating test instances
+- **Payment Restriction**: Students can only view/download fully paid test results
+- **Admin Access**: Staff/Admin can view all results regardless of payment
 
 ---
 
@@ -100,19 +128,22 @@ Business Logic:
 ### 2.3 Database (Extended Entities)
 ```yaml
 Core Entities (5 existing): User, ContentPage, Announcement, ContactInquiry, DownloadableResource
-New Entities (12 required):
+New Entities (15 required):
   1. Student (personal information, NBT number, ID type [SA_ID|FOREIGN_ID|PASSPORT])
   2. Registration (application data, status tracking)
   3. TestSession (test date, venue, capacity)
-  4. Venue (name, location, total capacity)
+  4. Venue (name, location, total capacity, venue type, online flag)
   5. Room (room number, capacity, venue FK)
   6. RoomAllocation (student-room assignment for session)
-  7. Payment (amount, status, EasyPay reference)
-  8. TestResult (test barcode, student FK, test type [AQL|MAT])
-  9. TestResultDomain (domain type [AL|QL|MAT], performance level, score, testResult FK)
-  10. SpecialSession (remote writer, special accommodations)
-  11. PreTestQuestionnaire (survey responses, student FK)
-  12. AuditLog (comprehensive activity logging)
+  7. Payment (amount, status, EasyPay reference, installment tracking, intake year)
+  8. PaymentInstallment (payment FK, installment number, amount, status, date paid)
+  9. TestResult (test barcode, student FK, test type [AQL|MAT], payment status check)
+  10. TestResultDomain (domain type [AL|QL|MAT], performance level, score, testResult FK)
+  11. SpecialSession (remote writer, special accommodations)
+  12. PreTestQuestionnaire (survey responses, student FK)
+  13. TestCalendar (test date, closing date, Sunday flag, online flag)
+  14. VenueAvailability (venue FK, test date FK, available flag)
+  15. AuditLog (comprehensive activity logging)
 
 Student Entity Extended Fields:
   - IDType: enum (SA_ID, FOREIGN_ID, PASSPORT)
@@ -125,13 +156,67 @@ Student Entity Extended Fields:
   - Age: int (calculated from DateOfBirth, not stored if DOB is present)
   - Ethnicity: string (collected during registration)
 
+Payment Entity Structure:
+  - PaymentId: Guid (primary key)
+  - StudentId: Guid (foreign key to Student)
+  - BookingId: Guid (foreign key to TestBooking)
+  - TotalAmount: decimal
+  - AmountPaid: decimal (sum of installments)
+  - IntakeYear: int (for year-based cost calculation)
+  - Status: enum (Pending, Partial, Complete, Failed)
+  - EasyPayReference: string (unique)
+  - CreatedDate: DateTime
+  - UpdatedDate: DateTime
+
+PaymentInstallment Entity Structure:
+  - InstallmentId: Guid (primary key)
+  - PaymentId: Guid (foreign key to Payment)
+  - InstallmentNumber: int
+  - Amount: decimal
+  - Status: enum (Pending, Paid, Failed)
+  - DatePaid: DateTime (nullable)
+  - EasyPayTransactionId: string
+  - CreatedDate: DateTime
+
 TestResult Entity Structure:
   - TestResultId: Guid (primary key)
   - StudentId: Guid (foreign key to Student)
   - TestSessionId: Guid (foreign key to TestSession)
-  - Barcode: string (unique identifier for the actual answer sheet)
+  - Barcode: string (unique identifier for the actual answer sheet - MANDATORY)
   - TestType: enum (AQL, MAT)
   - TestDate: DateTime
+  - IsFullyPaid: bool (computed from Payment status)
+  - PaymentId: Guid (foreign key to Payment)
+  - CreatedDate: DateTime
+  - UpdatedDate: DateTime
+
+Venue Entity Structure:
+  - VenueId: Guid (primary key)
+  - Name: string
+  - Type: enum (National, SpecialSession, Research, Other)
+  - Address: string
+  - IsOnline: bool
+  - TotalCapacity: int
+  - CreatedDate: DateTime
+  - UpdatedDate: DateTime
+
+TestCalendar Entity Structure:
+  - TestCalendarId: Guid (primary key)
+  - TestDate: DateTime
+  - ClosingDate: DateTime
+  - IsSunday: bool (computed)
+  - IsOnline: bool
+  - TestType: enum (AQL, MAT, Both)
+  - IntakeYear: int
+  - CreatedDate: DateTime
+  - UpdatedDate: DateTime
+
+VenueAvailability Entity Structure:
+  - VenueAvailabilityId: Guid (primary key)
+  - VenueId: Guid (foreign key to Venue)
+  - TestCalendarId: Guid (foreign key to TestCalendar)
+  - IsAvailable: bool
+  - Notes: string (nullable)
   - CreatedDate: DateTime
   - UpdatedDate: DateTime
 
@@ -154,15 +239,20 @@ PreTestQuestionnaire Entity Structure:
 Relationships:
   - Student 1:N Registration
   - Registration 1:1 Payment
+  - Payment 1:N PaymentInstallment (installment tracking)
   - TestSession N:1 Venue (CRITICAL: Session belongs to Venue, NOT Room)
   - Venue 1:N Room
   - TestSession 1:N RoomAllocation
   - Room 1:N RoomAllocation
   - Student 1:N RoomAllocation
   - Student 1:N TestResult
-  - TestResult 1:N TestResultDomain (1 for AQL domains [AL, QL], 3 for MAT [AL, QL, MAT])
+  - TestResult N:1 Payment (for payment status validation)
+  - TestResult 1:N TestResultDomain (2 for AQL domains [AL, QL], 3 for MAT [AL, QL, MAT])
   - Student 1:N PreTestQuestionnaire
   - Registration 1:1 PreTestQuestionnaire
+  - Venue 1:N VenueAvailability
+  - TestCalendar 1:N VenueAvailability
+  - TestSession N:1 TestCalendar (links session to calendar entry)
 ```
 
 ---
@@ -207,7 +297,26 @@ Students (applicants/writers) interact with the NBT Web Application through a st
 - **Booking Changes**: Students can change their booking BEFORE the close of booking date
 - **Test Types**: Choose AQL only OR AQL + MAT (both AQL and MAT)
 - **Venue Selection**: Choose from available venues with capacity
+  * Venues filtered by type (National, Special Session, Research, Other)
+  * Venues filtered by availability for selected test date
+  * Online venues available for online test dates
+- **Test Calendar**: All bookings reference Test Calendar entries showing:
+  * Test date and closing booking date
+  * Sunday tests (color highlighted)
+  * Online tests (special indicator)
 - **EasyPay Integration**: System generates EasyPay payment reference upon booking
+- **INSTALLMENT PAYMENTS** (NEW):
+  * Test payments can be made in installments until complete
+  * Payments processed in order of tests being written
+  * Test costs vary by intake year (stored per payment record)
+  * System calculates complete payment considering intake year
+  * Payment status: Pending → Partial (installments) → Complete
+  * Each installment tracked separately with amount, date, transaction ID
+- **PAYMENT ENFORCEMENT**:
+  * Only completely paid tests can be viewed/downloaded by students
+  * Partial payments allow booking but restrict result access
+  * Staff and Admin can view all tests regardless of payment status
+  * Result viewing checks Payment.Status == Complete OR User.Role IN (Staff, Admin, SuperUser)
 - **Payment Tracking**: Automated transaction recording and status updates from EasyPay confirmations
 - **Status Updates**: Payment confirmations trigger booking status changes
 - **ENFORCEMENT**: These rules MUST be validated at both UI and API layers before booking confirmation
@@ -216,6 +325,8 @@ Students (applicants/writers) interact with the NBT Web Application through a st
   * Cannot book if 2 tests already booked in current calendar year
   * Cannot book if session is full (capacity reached)
   * Cannot modify booking after close date
+  * Cannot book if venue not available for selected test date
+  * Online tests require online test calendar entry
 
 
 **Special or Remote Sessions**
@@ -230,9 +341,14 @@ Students (applicants/writers) interact with the NBT Web Application through a st
 - Mandatory before test participation
 - Data supports NBT research initiatives and operational insights
 
-**Results Access & Structure**
+**Results Access & Structure** (UPDATED WITH PAYMENT RESTRICTIONS)
 - Students securely log in to view or download their AQL and MAT results once released
 - Results available for 3 years from test date
+- **PAYMENT RESTRICTIONS** (CRITICAL):
+  * **Student Access**: Can ONLY view/download results for fully paid tests (Payment.Status == Complete)
+  * **Staff/Admin Access**: Can view ALL tests regardless of payment status
+  * Result viewing API enforces: `WHERE (Payment.Status = 'Complete') OR (User.Role IN ('Staff', 'Admin', 'SuperUser'))`
+  * Unpaid result message: "Payment required to view this result. Please complete your payment."
 - **Test Result Domains**:
   * **AQL Test**: Generates results for two domains:
     - Academic Literacy (AL) with performance level
@@ -242,12 +358,14 @@ Students (applicants/writers) interact with the NBT Web Application through a st
     - Quantitative Literacy (QL) with performance level
     - Mathematics (MAT) with performance level
 - **Performance Levels** (per domain): Basic Lower, Basic Upper, Intermediate Lower, Intermediate Upper, Proficient Lower, Proficient Upper
-- **Barcode Uniqueness**: Each result has a unique barcode that distinguishes the test written (identifies the actual answer sheet used)
+- **Barcode Uniqueness** (MANDATORY): Each result has a unique barcode that distinguishes the test written (identifies the actual answer sheet used)
   * If a student writes 2 tests, each test has a different barcode
-  * Barcode format: System-generated unique identifier per test write
+  * Barcode format: System-generated unique alphanumeric identifier (e.g., "NBT20250315-AQL-001234")
   * Essential for differentiating multiple test attempts
+  * Barcode printed on PDF certificate for verification
+  * Barcode MUST be unique across all results (database constraint)
 - Performance band and percentile displayed per domain
-- Downloadable result certificates with barcode
+- Downloadable PDF certificates with barcode (only for fully paid tests)
 
 **Profile Management**
 - Applicants may update personal or academic details

@@ -68,7 +68,9 @@ public class PaymentService : IPaymentService
                     Message = "Payment already initiated",
                     PaymentId = registration.Payment.Id,
                     InvoiceNumber = registration.Payment.InvoiceNumber,
-                    Amount = registration.Payment.Amount,
+                    Amount = registration.Payment.TotalAmount,
+                    AmountPaid = registration.Payment.AmountPaid,
+                    Balance = registration.Payment.Balance,
                     EasyPayReference = registration.Payment.EasyPayReference,
                     PaymentUrl = GenerateEasyPayUrl(registration.Payment.EasyPayReference!)
                 };
@@ -95,12 +97,16 @@ public class PaymentService : IPaymentService
             var easyPayReference = $"NBT{year}{nextSequence:D6}";
 
             // Create payment record
+            // TODO: Get pricing from TestPricing table based on intake year and test type
+            var currentYear = DateTime.UtcNow.Year;
             var payment = new Payment
             {
                 Id = Guid.NewGuid(),
                 RegistrationId = request.RegistrationId,
                 InvoiceNumber = invoiceNumber,
-                Amount = _testFee,
+                TotalAmount = _testFee,
+                AmountPaid = 0,
+                IntakeYear = currentYear,
                 PaymentMethod = request.PaymentMethod,
                 Status = PaymentStatus.Pending,
                 EasyPayReference = easyPayReference
@@ -218,7 +224,9 @@ public class PaymentService : IPaymentService
         {
             Id = payment.Id,
             InvoiceNumber = payment.InvoiceNumber,
-            Amount = payment.Amount,
+            Amount = payment.TotalAmount,
+            AmountPaid = payment.AmountPaid,
+            Balance = payment.Balance,
             PaymentMethod = payment.PaymentMethod,
             Status = payment.Status.ToString(),
             EasyPayReference = payment.EasyPayReference,

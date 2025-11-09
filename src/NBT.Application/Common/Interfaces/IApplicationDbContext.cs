@@ -84,6 +84,26 @@ public interface IApplicationDbContext
     DbSet<AuditLog> AuditLogs { get; set; }
 
     /// <summary>
+    /// Gets or sets the PaymentTransactions DbSet.
+    /// </summary>
+    DbSet<PaymentTransaction> PaymentTransactions { get; set; }
+
+    /// <summary>
+    /// Gets or sets the VenueAvailabilities DbSet.
+    /// </summary>
+    DbSet<VenueAvailability> VenueAvailabilities { get; set; }
+
+    /// <summary>
+    /// Gets or sets the TestDateCalendar DbSet.
+    /// </summary>
+    DbSet<TestDateCalendar> TestDateCalendar { get; set; }
+
+    /// <summary>
+    /// Gets or sets the TestPricings DbSet.
+    /// </summary>
+    DbSet<TestPricing> TestPricings { get; set; }
+
+    /// <summary>
     /// Saves all changes made in this context to the database.
     /// </summary>
     /// <param name="cancellationToken">Cancellation token.</param>

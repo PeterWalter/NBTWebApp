@@ -28,6 +28,8 @@ public class InitiatePaymentResponse
     public Guid PaymentId { get; set; }
     public string InvoiceNumber { get; set; } = string.Empty;
     public decimal Amount { get; set; }
+    public decimal AmountPaid { get; set; }
+    public decimal Balance { get; set; }
     public string? PaymentUrl { get; set; }
     public string? EasyPayReference { get; set; }
 }

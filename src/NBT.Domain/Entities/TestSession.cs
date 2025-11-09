@@ -79,6 +79,18 @@ public class TestSession : BaseEntity
     public bool IsSpecialSession { get; set; } = false;
 
     /// <summary>
+    /// Gets or sets whether this is an online test session.
+    /// Online tests can be taken from anywhere with proper setup.
+    /// </summary>
+    public bool IsOnline { get; set; } = false;
+
+    /// <summary>
+    /// Gets or sets whether this test is on a Sunday.
+    /// Sunday tests are highlighted differently in the calendar.
+    /// </summary>
+    public bool IsSunday { get; set; } = false;
+
+    /// <summary>
     /// Gets or sets notes about the special session.
     /// </summary>
     [StringLength(1000)]

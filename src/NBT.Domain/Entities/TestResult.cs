@@ -22,18 +22,77 @@ public class TestResult : BaseEntity
     public Guid TestSessionId { get; set; }
 
     /// <summary>
-    /// Gets or sets the type of test.
-    /// Values: "AcademicLiteracy", "QuantitativeLiteracy", "Mathematics"
+    /// Gets or sets the ID of the registration.
+    /// Links result to specific booking and payment.
+    /// </summary>
+    [Required]
+    public Guid RegistrationId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the unique barcode that identifies this specific test instance.
+    /// Format: BC-{NBTNumber}-{TestDate}-{Sequence}
+    /// Example: BC-20240000000123-20240615-001
+    /// Distinguishes multiple tests written by the same student.
     /// </summary>
     [Required]
     [StringLength(50)]
+    public string Barcode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the type of test.
+    /// Values: "AQL" (Academic and Quantitative Literacy) or "AQL_MAT" (includes Mathematics)
+    /// </summary>
+    [Required]
+    [StringLength(20)]
     public string TestType { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the raw score (0-100).
+    /// Gets or sets the Academic Literacy (AL) score.
+    /// </summary>
+    public decimal? ALScore { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Academic Literacy performance level.
+    /// Values: "Basic Lower", "Basic Upper", "Intermediate Lower", "Intermediate Upper", 
+    /// "Proficient Lower", "Proficient Upper", "Outstanding"
+    /// </summary>
+    [StringLength(50)]
+    public string? ALPerformanceLevel { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Quantitative Literacy (QL) score.
+    /// </summary>
+    public decimal? QLScore { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Quantitative Literacy performance level.
+    /// Values: "Basic Lower", "Basic Upper", "Intermediate Lower", "Intermediate Upper", 
+    /// "Proficient Lower", "Proficient Upper", "Outstanding"
+    /// </summary>
+    [StringLength(50)]
+    public string? QLPerformanceLevel { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Mathematics (MAT) score.
+    /// Only applicable for AQL_MAT tests.
+    /// </summary>
+    public decimal? MATScore { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Mathematics performance level.
+    /// Values: "Basic Lower", "Basic Upper", "Intermediate Lower", "Intermediate Upper", 
+    /// "Proficient Lower", "Proficient Upper", "Outstanding"
+    /// Only applicable for AQL_MAT tests.
+    /// </summary>
+    [StringLength(50)]
+    public string? MATPerformanceLevel { get; set; }
+
+    /// <summary>
+    /// Gets or sets the overall performance band across all domains.
     /// </summary>
     [Required]
-    public decimal RawScore { get; set; }
+    [StringLength(50)]
+    public string OverallPerformanceBand { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the percentile rank (1-99).
@@ -41,14 +100,6 @@ public class TestResult : BaseEntity
     /// </summary>
     [Required]
     public int Percentile { get; set; }
-
-    /// <summary>
-    /// Gets or sets the performance band achieved.
-    /// Values: "Elementary", "Basic", "Intermediate", "Proficient"
-    /// </summary>
-    [Required]
-    [StringLength(50)]
-    public string PerformanceBand { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets whether the results have been released to the student.
@@ -82,4 +133,9 @@ public class TestResult : BaseEntity
     /// Gets or sets the test session these results are from.
     /// </summary>
     public virtual TestSession TestSession { get; set; } = null!;
+
+    /// <summary>
+    /// Gets or sets the registration these results are for.
+    /// </summary>
+    public virtual Registration Registration { get; set; } = null!;
 }

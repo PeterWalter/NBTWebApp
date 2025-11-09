@@ -11,12 +11,13 @@ namespace NBT.Domain.Entities;
 public class Student : BaseEntity
 {
     /// <summary>
-    /// Gets or sets the student's NBT number (9 digits with Luhn checksum).
+    /// Gets or sets the student's NBT number (14 digits with Luhn checksum).
     /// This is auto-generated when the student is created.
-    /// Example: 202400015
+    /// Format: YYYY + 9-digit sequence + check digit
+    /// Example: 20240000000123
     /// </summary>
     [Required]
-    [StringLength(9, MinimumLength = 9)]
+    [StringLength(14, MinimumLength = 14)]
     public string NBTNumber { get; set; } = string.Empty;
 
     /// <summary>

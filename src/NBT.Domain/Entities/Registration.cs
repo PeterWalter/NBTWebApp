@@ -101,4 +101,9 @@ public class Registration : BaseEntity
     /// Gets or sets the payment for this registration.
     /// </summary>
     public virtual Payment? Payment { get; set; }
+
+    /// <summary>
+    /// Gets or sets the test results for this registration.
+    /// </summary>
+    public virtual ICollection<TestResult> TestResults { get; set; } = new List<TestResult>();
 }

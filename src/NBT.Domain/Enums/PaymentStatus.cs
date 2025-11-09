@@ -11,22 +11,27 @@ public enum PaymentStatus
     Pending = 0,
 
     /// <summary>
-    /// Payment has been successfully processed.
+    /// Payment has been partially paid (installment).
     /// </summary>
-    Paid = 1,
+    Partial = 1,
+
+    /// <summary>
+    /// Payment has been successfully processed (fully paid).
+    /// </summary>
+    Paid = 2,
 
     /// <summary>
     /// Payment processing failed.
     /// </summary>
-    Failed = 2,
+    Failed = 3,
 
     /// <summary>
     /// Payment has been fully refunded.
     /// </summary>
-    Refunded = 3,
+    Refunded = 4,
 
     /// <summary>
     /// Payment has been partially refunded.
     /// </summary>
-    PartialRefund = 4
+    PartialRefund = 5
 }
