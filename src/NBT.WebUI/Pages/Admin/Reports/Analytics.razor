@@ -1,0 +1,296 @@
+@page "/admin/reports/analytics"
+@using Microsoft.AspNetCore.Authorization
+@using System.Text.Json
+@attribute [Authorize(Roles = "Admin,Staff")]
+@inject HttpClient Http
+@rendermode @(new Microsoft.AspNetCore.Components.Web.InteractiveServerRenderMode(prerender: false))
+
+<PageTitle>Analytics Dashboard - NBT Admin</PageTitle>
+
+<div class="page-container">
+    <div class="page-header">
+        <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" Style="justify-content: space-between;">
+            <div>
+                <h1>Analytics Dashboard</h1>
+                <p>Real-time system statistics and insights</p>
+            </div>
+            <FluentButton Appearance="Appearance.Accent" OnClick="@LoadDashboardData" Loading="@isLoading">
+                🔄 Refresh Data
+            </FluentButton>
+        </FluentStack>
+    </div>
+
+    @if (isLoading && summary == null)
+    {
+        <div style="text-align: center; padding: 3rem;">
+            <FluentProgressRing />
+            <p>Loading analytics data...</p>
+        </div>
+    }
+    else if (summary != null)
+    {
+        <FluentStack Orientation="Orientation.Vertical" Style="gap: 2rem;">
+            
+            <!-- Key Metrics Cards -->
+            <div class="metrics-grid">
+                <FluentCard class="metric-card">
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 0.5rem;">
+                        <div style="font-size: 2rem;">👥</div>
+                        <div class="metric-value">@summary.TotalRegistrations</div>
+                        <div class="metric-label">Total Registrations</div>
+                    </FluentStack>
+                </FluentCard>
+
+                <FluentCard class="metric-card">
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 0.5rem;">
+                        <div style="font-size: 2rem;">💰</div>
+                        <div class="metric-value">R @summary.TotalRevenue.ToString("N2")</div>
+                        <div class="metric-label">Total Revenue</div>
+                    </FluentStack>
+                </FluentCard>
+
+                <FluentCard class="metric-card">
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 0.5rem;">
+                        <div style="font-size: 2rem;">💳</div>
+                        <div class="metric-value">@summary.TotalPayments</div>
+                        <div class="metric-label">Total Payments</div>
+                    </FluentStack>
+                </FluentCard>
+
+                <FluentCard class="metric-card">
+                    <FluentStack Orientation="Orientation.Vertical" Style="gap: 0.5rem;">
+                        <div style="font-size: 2rem;">✅</div>
+                        <div class="metric-value">@summary.TotalResults</div>
+                        <div class="metric-label">Test Results</div>
+                    </FluentStack>
+                </FluentCard>
+            </div>
+
+            <!-- Payment Status Breakdown -->
+            <FluentCard Style="padding: 1.5rem;">
+                <h2>Payment Status Breakdown</h2>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <FluentBadge Appearance="Appearance.Accent" Circular="true">@summary.PendingPayments</FluentBadge>
+                        <span>Pending</span>
+                    </div>
+                    <div class="status-item">
+                        <FluentBadge Appearance="Appearance.Accent" Fill="success" Circular="true">@summary.CompletedPayments</FluentBadge>
+                        <span>Completed</span>
+                    </div>
+                    <div class="status-item">
+                        <FluentBadge Appearance="Appearance.Accent" Fill="warning" Circular="true">@summary.FailedPayments</FluentBadge>
+                        <span>Failed</span>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    @{
+                        var completedPercentage = summary.TotalPayments > 0 
+                            ? (summary.CompletedPayments * 100.0 / summary.TotalPayments) 
+                            : 0;
+                    }
+                    <FluentProgress Value="@((int)completedPercentage)" Style="width: 100%;" />
+                    <div class="progress-label">@completedPercentage.ToString("F1")% Payment Success Rate</div>
+                </div>
+            </FluentCard>
+
+            <!-- Results Status Breakdown -->
+            <FluentCard Style="padding: 1.5rem;">
+                <h2>Test Results Status</h2>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <FluentBadge Appearance="Appearance.Accent" Circular="true">@summary.PendingResults</FluentBadge>
+                        <span>Pending</span>
+                    </div>
+                    <div class="status-item">
+                        <FluentBadge Appearance="Appearance.Accent" Fill="success" Circular="true">@summary.ReleasedResults</FluentBadge>
+                        <span>Released</span>
+                    </div>
+                </div>
+            </FluentCard>
+
+            <!-- Recent Activity -->
+            <FluentCard Style="padding: 1.5rem;">
+                <h2>Quick Stats</h2>
+                <FluentDataGrid Items="@GetQuickStats()" Style="width: 100%;">
+                    <PropertyColumn Property="@(s => s.Label)" Title="Metric" />
+                    <PropertyColumn Property="@(s => s.Value)" Title="Value" />
+                </FluentDataGrid>
+            </FluentCard>
+
+        </FluentStack>
+    }
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <FluentMessageBar Intent="MessageIntent.Error" Style="margin-top: 1rem;">
+            @errorMessage
+        </FluentMessageBar>
+    }
+</div>
+
+@code {
+    private DashboardSummary? summary;
+    private bool isLoading = false;
+    private string errorMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDashboardData();
+    }
+
+    private async Task LoadDashboardData()
+    {
+        isLoading = true;
+        errorMessage = "";
+
+        try
+        {
+            var response = await Http.GetAsync("/api/reports/summary");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                summary = JsonSerializer.Deserialize<DashboardSummary>(json, new JsonSerializerOptions 
+                { 
+                    PropertyNameCaseInsensitive = true 
+                });
+            }
+            else
+            {
+                errorMessage = $"Failed to load dashboard data: {response.ReasonPhrase}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading dashboard: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private IQueryable<QuickStat> GetQuickStats()
+    {
+        if (summary == null) return Enumerable.Empty<QuickStat>().AsQueryable();
+
+        var stats = new List<QuickStat>
+        {
+            new QuickStat { Label = "Total Registrations", Value = summary.TotalRegistrations.ToString() },
+            new QuickStat { Label = "Total Payments", Value = summary.TotalPayments.ToString() },
+            new QuickStat { Label = "Pending Payments", Value = summary.PendingPayments.ToString() },
+            new QuickStat { Label = "Completed Payments", Value = summary.CompletedPayments.ToString() },
+            new QuickStat { Label = "Failed Payments", Value = summary.FailedPayments.ToString() },
+            new QuickStat { Label = "Total Revenue", Value = $"R {summary.TotalRevenue:N2}" },
+            new QuickStat { Label = "Test Results", Value = summary.TotalResults.ToString() },
+            new QuickStat { Label = "Pending Results", Value = summary.PendingResults.ToString() },
+            new QuickStat { Label = "Released Results", Value = summary.ReleasedResults.ToString() }
+        };
+
+        return stats.AsQueryable();
+    }
+
+    private class DashboardSummary
+    {
+        public int TotalRegistrations { get; set; }
+        public int TotalPayments { get; set; }
+        public int PendingPayments { get; set; }
+        public int CompletedPayments { get; set; }
+        public int FailedPayments { get; set; }
+        public decimal TotalRevenue { get; set; }
+        public int TotalResults { get; set; }
+        public int PendingResults { get; set; }
+        public int ReleasedResults { get; set; }
+    }
+
+    private class QuickStat
+    {
+        public string Label { get; set; } = "";
+        public string Value { get; set; } = "";
+    }
+}
+
+<style>
+    .page-container {
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        margin: 0 0 0.5rem 0;
+        font-size: 2rem;
+        font-weight: 600;
+    }
+
+    .page-header p {
+        margin: 0;
+        color: var(--neutral-foreground-hint);
+    }
+
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .metric-card {
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .metric-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--accent-foreground-rest);
+    }
+
+    .metric-label {
+        font-size: 0.875rem;
+        color: var(--neutral-foreground-hint);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    fluent-card h2 {
+        margin: 0 0 1.5rem 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .status-grid {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .status-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .status-item span {
+        font-size: 0.875rem;
+        color: var(--neutral-foreground-hint);
+    }
+
+    .progress-bar {
+        margin-top: 1rem;
+    }
+
+    .progress-label {
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--neutral-foreground-hint);
+        text-align: center;
+    }
+</style>
