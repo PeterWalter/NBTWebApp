@@ -20,13 +20,13 @@
             <FluentWizard @ref="_wizard"
                           @bind-Value="@_currentStepIndex" 
                           StepperPosition="StepperPosition.Top"
-                          OnFinish="HandleFinishAsync"
-                          Height="auto">
+                          Height="auto"
+                          DisplayStepNumber="true">
                 
                 <!-- Step 1: Personal Information and Contact Details -->
                 <FluentWizardStep Label="Personal & Contact" 
                                 Summary="Identity and contact information"
-                                OnChange="@ValidateStep1Async">
+                                OnChange="@OnStepChangeAsync">
                     <div class="step-content">
                         <h3>Personal Information & Contact Details</h3>
                         <p class="step-description">Please provide your identity and contact information</p>
@@ -146,55 +146,11 @@
                     </div>
                 </FluentWizardStep>
 
-                <!-- Step 2: Address Information -->
-                <FluentWizardStep Label="Address" 
-                                Summary="Your residential address"
-                                OnChange="@ValidateStep2Async">
-                    <div class="step-content">
-                        <h3>Residential Address</h3>
-                        <p class="step-description">Please provide your residential address</p>
-                        <FluentTextField Label="Address Line 1" 
-                                       @bind-Value="_model.AddressLine1"
-                                       Style="width: 100%; margin-bottom: 20px;"
-                                       Placeholder="Street address" />
-
-                        <FluentTextField Label="Address Line 2" 
-                                       @bind-Value="_model.AddressLine2"
-                                       Style="width: 100%; margin-bottom: 20px;"
-                                       Placeholder="Apartment, suite, etc. (optional)" />
-
-                        <div class="form-row">
-                            <FluentTextField Label="City" 
-                                           @bind-Value="_model.City"
-                                           Style="width: 100%;"
-                                           Placeholder="City" />
-                            
-                            <FluentSelect Label="Province" 
-                                        @bind-Value="_model.Province"
-                                        TOption="string"
-                                        Items="@_provinces"
-                                        OptionValue="@(x => x)"
-                                        OptionText="@(x => x)"
-                                        Style="width: 100%;" />
-                        </div>
-
-                        <div class="form-row">
-                            <FluentTextField Label="Postal Code" 
-                                           @bind-Value="_model.PostalCode"
-                                           Style="width: 100%;"
-                                           Placeholder="0000" />
-                            
-                            <FluentTextField Label="Country" 
-                                           @bind-Value="_model.Country"
-                                           Style="width: 100%;" />
-                        </div>
-                    </div>
-                </FluentWizardStep>
-
-                <!-- Step 3: Academic Information and Survey Questions -->
+                <!-- Step 2: Academic Information and Survey Questions -->
                 <FluentWizardStep Label="Academic & Survey" 
                                 Summary="School details and background"
-                                OnChange="@ValidateStep3Async">
+                                OnChange="@OnStepChangeAsync">
+
                     <div class="step-content">
                         <h3>Academic Information & Background Questionnaire</h3>
                         <p class="step-description">Please provide your academic background and help us understand your needs</p>
@@ -259,17 +215,45 @@
                                       Style="width: 100%; margin-top: 20px;"
                                       Rows="3"
                                       Placeholder="Any additional information you'd like to share (optional)" />
-                    </div>
-                </FluentWizardStep>
 
-                <!-- Step 4: Special Accommodations -->
-                <FluentWizardStep Label="Accommodations" 
-                                Summary="Special requirements"
-                                OnChange="@ValidateStep4Async">
-                    <div class="step-content">
-                        <h3>Special Accommodations</h3>
-                        <p class="step-description">Do you require any special accommodations?</p>
+                        <h4 style="margin-top: 30px;">Residential Address (Optional)</h4>
+                        <FluentTextField Label="Address Line 1" 
+                                       @bind-Value="_model.AddressLine1"
+                                       Style="width: 100%; margin-bottom: 20px;"
+                                       Placeholder="Street address" />
 
+                        <FluentTextField Label="Address Line 2" 
+                                       @bind-Value="_model.AddressLine2"
+                                       Style="width: 100%; margin-bottom: 20px;"
+                                       Placeholder="Apartment, suite, etc. (optional)" />
+
+                        <div class="form-row">
+                            <FluentTextField Label="City" 
+                                           @bind-Value="_model.City"
+                                           Style="width: 100%;"
+                                           Placeholder="City" />
+                            
+                            <FluentSelect Label="Province" 
+                                        @bind-Value="_model.Province"
+                                        TOption="string"
+                                        Items="@_provinces"
+                                        OptionValue="@(x => x)"
+                                        OptionText="@(x => x)"
+                                        Style="width: 100%;" />
+                        </div>
+
+                        <div class="form-row">
+                            <FluentTextField Label="Postal Code" 
+                                           @bind-Value="_model.PostalCode"
+                                           Style="width: 100%;"
+                                           Placeholder="0000" />
+                            
+                            <FluentTextField Label="Country" 
+                                           @bind-Value="_model.Country"
+                                           Style="width: 100%;" />
+                        </div>
+
+                        <h4 style="margin-top: 30px;">Special Accommodations</h4>
                         <FluentCheckbox @bind-Value="_model.RequiresAccommodation"
                                       @bind-Value:after="StateHasChanged"
                                       Label="I require special accommodations"
@@ -292,8 +276,9 @@
                     </div>
                 </FluentWizardStep>
 
-                <!-- Step 5: Review and Submit -->
-                <FluentWizardStep Label="Review" Summary="Confirm your details">
+                <!-- Step 3: Review and Submit -->
+                <FluentWizardStep Label="Review" Summary="Confirm your details"
+                                OnChange="@OnStepChangeAsync">
                     <div class="step-content">
                         <h3>Review Your Information</h3>
                         <p class="step-description">Please review all information before submitting</p>
@@ -358,12 +343,6 @@
                             </div>
                         }
 
-                        @if (_isSubmitting)
-                        {
-                            <FluentProgressRing Style="margin-top: 20px;" />
-                            <p>Submitting your registration...</p>
-                        }
-
                         @if (!string.IsNullOrEmpty(_submitError))
                         {
                             <FluentMessageBar Intent="MessageIntent.Error" Style="margin-top: 20px;">
@@ -371,7 +350,22 @@
                             </FluentMessageBar>
                         }
 
-
+                        <div class="submit-section" style="margin-top: 30px;">
+                            @if (_isSubmitting)
+                            {
+                                <FluentProgressRing Style="margin-bottom: 10px;" />
+                                <p>Submitting your registration...</p>
+                            }
+                            else
+                            {
+                                <FluentButton Appearance="Appearance.Accent" 
+                                            OnClick="@HandleSubmitAsync"
+                                            Style="min-width: 200px;">
+                                    <FluentIcon Value="@(new Icons.Regular.Size20.CheckmarkCircle())" Slot="start" />
+                                    Complete Registration
+                                </FluentButton>
+                            }
+                        </div>
                     </div>
                 </FluentWizardStep>
             </FluentWizard>
@@ -441,7 +435,38 @@
     protected override void OnInitialized()
     {
         _model.Country = "South Africa";
+        _model.IDType = "SA_ID"; // Default to SA ID
         _currentStepIndex = 0; // Start at first step
+    }
+
+    private async Task OnStepChangeAsync(FluentWizardStepChangeEventArgs args)
+    {
+        // Validate current step before moving forward
+        if (args.TargetIndex > args.OldIndex)
+        {
+            var isValid = await ValidateCurrentStepAsync(args.OldIndex);
+            if (!isValid)
+            {
+                args.IsCancelled = true;
+                _submitError = "Please complete all required fields before proceeding.";
+                StateHasChanged();
+                return;
+            }
+        }
+        
+        // Clear error when moving between steps
+        _submitError = null;
+    }
+
+    private async Task<bool> ValidateCurrentStepAsync(int stepIndex)
+    {
+        return stepIndex switch
+        {
+            0 => await ValidateStep1Async(),
+            1 => await ValidateStep2Async(),
+            2 => true, // Review step
+            _ => true
+        };
     }
 
     private string GetIDTypeLabel(string idType)
@@ -547,17 +572,19 @@
         }
     }
 
-    private async Task HandleFinishAsync()
+    private async Task HandleSubmitAsync()
     {
-        // Validate required fields
+        // Validate all required fields
         if (!ValidateRegistrationModel())
         {
             _submitError = "Please fill in all required fields.";
+            StateHasChanged();
             return;
         }
 
         _isSubmitting = true;
         _submitError = null;
+        StateHasChanged();
 
         try
         {
@@ -580,6 +607,7 @@
         finally
         {
             _isSubmitting = false;
+            StateHasChanged();
         }
     }
 
@@ -618,7 +646,7 @@
     // Step validation methods
     private Task<bool> ValidateStep1Async()
     {
-        // Required fields for step 1
+        // Required fields for step 1 (Personal & Contact)
         if (string.IsNullOrWhiteSpace(_model.IDNumber) ||
             string.IsNullOrWhiteSpace(_model.FirstName) ||
             string.IsNullOrWhiteSpace(_model.LastName) ||
@@ -649,23 +677,19 @@
 
     private Task<bool> ValidateStep2Async()
     {
-        // Address is optional, can always proceed
-        return Task.FromResult(true);
-    }
+        // Required fields for step 2 (Academic & Survey)
+        // School name is required, survey questions are optional
+        if (string.IsNullOrWhiteSpace(_model.SchoolName))
+        {
+            return Task.FromResult(false);
+        }
 
-    private Task<bool> ValidateStep3Async()
-    {
-        // School name is required
-        return Task.FromResult(!string.IsNullOrWhiteSpace(_model.SchoolName));
-    }
-
-    private Task<bool> ValidateStep4Async()
-    {
         // If accommodation is required, details must be provided
         if (_model.RequiresAccommodation && string.IsNullOrWhiteSpace(_model.AccommodationDetails))
         {
             return Task.FromResult(false);
         }
+
         return Task.FromResult(true);
     }
 }

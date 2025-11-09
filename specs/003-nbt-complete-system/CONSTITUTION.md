@@ -59,7 +59,7 @@
 - **Monitoring**: Application performance and error monitoring
 
 ### 8. Business Rules
-- **NBT Number Generation**: Unique 14-digit number using Luhn algorithm upon registration
+- **NBT Number Generation**: Unique 14-digit number using Luhn algorithm upon registration completion
 - **Test Booking**: 
   - One active booking at a time
   - Can book another test only after closing date of current booking passes
@@ -67,6 +67,7 @@
   - Tests valid for 3 years from booking date
   - Booking changes allowed before closing date
   - Bookings open from start of Year Intake (typically 1 April)
+  - Test types: AQL only, or AQL and MAT combined
 - **Payment Rules**:
   - Installment payments allowed until complete
   - Payments applied in order of tests being written
@@ -74,23 +75,30 @@
   - Only fully paid tests downloadable by students as PDF certificates
   - Staff/Admin can view all tests regardless of payment status
   - Bank payment file uploads supported in specific format
+  - EasyPay integration for payment processing
 - **Test Sessions**:
   - Linked to TestVenue (not Room)
   - Online tests: Written remotely with video/sound/internet requirements
   - Sunday tests and Online tests highlighted in calendar
   - Test dates with closing booking dates available in calendar
+  - Special test dates for online assessments
 - **Results**:
   - AQL test: AL and QL results with performance levels
   - Math test: AL, QL, and MAT results with performance levels
   - Performance levels: Basic Lower/Upper, Intermediate Lower/Upper, Proficient Lower/Upper, etc.
   - Each test identified by unique Barcode (distinguishes answer sheet)
   - Multiple test results tracked separately by Barcode
+  - Results released after processing period
 - **Venues**:
   - Types: National, Special Session, Research, Other
   - Date-based availability
   - Test dates with closing booking dates
+  - Venue capacity and room allocation tracking
 - **Registration Recovery**: Students can resume interrupted registration from last completed step without redoing completed work
 - **Special/Remote Sessions**: Off-site testing with invigilator and venue details routed to NBT remote administration team
+- **Landing Page**: Menus for Applicants, Institutions, and Educators with relevant submenus matching current NBT website
+- **Videos**: Educational videos available on appropriate pages as per current NBT website
+- **Dashboard Navigation**: After login, users directed to role-appropriate dashboards with left-side menus
 
 ### 9. User Roles & Permissions
 - **Student/Applicant**: 
