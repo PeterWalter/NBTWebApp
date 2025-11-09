@@ -21,7 +21,7 @@
 /* Hero Section - Modern Design */
 .hero-section {
     position: relative;
-    min-height: 85vh;
+    min-height: 55vh;
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -62,10 +62,10 @@
 .hero-inner {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 4rem 2rem;
+    padding: 2.5rem 2rem;
     display: grid;
     grid-template-columns: 1.2fr 1fr;
-    gap: 4rem;
+    gap: 3rem;
     align-items: center;
     position: relative;
     z-index: 3;
@@ -101,10 +101,10 @@
 }
 
 .hero-title {
-    font-size: 4rem;
+    font-size: 3.5rem;
     font-weight: 700;
     line-height: 1.1;
-    margin: 0 0 1.5rem 0;
+    margin: 0 0 1rem 0;
     animation: slideInLeft 0.8s ease-out 0.3s both;
 }
 
@@ -132,28 +132,76 @@
 }
 
 .hero-subtitle {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 400;
     line-height: 1.5;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     opacity: 0.95;
     animation: slideInLeft 0.8s ease-out 0.4s both;
 }
 
 .hero-description {
-    font-size: 1.125rem;
+    font-size: 1rem;
     line-height: 1.6;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
     opacity: 0.85;
     max-width: 600px;
     animation: slideInLeft 0.8s ease-out 0.5s both;
+}
+
+/* Test Fees Display */
+.hero-fees {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    animation: slideInLeft 0.8s ease-out 0.5s both;
+}
+
+.fee-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 0.75rem 1.25rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.fee-card:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.fee-icon {
+    font-size: 1.5rem;
+}
+
+.fee-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.fee-label {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.fee-amount {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1;
 }
 
 .hero-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
-    margin-bottom: 3rem;
+    margin-bottom: 0;
     animation: slideInLeft 0.8s ease-out 0.6s both;
 }
 
@@ -196,38 +244,7 @@
     background: rgba(255, 255, 255, 0.1);
 }
 
-.hero-stats {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    animation: fadeIn 1s ease-out 0.8s both;
-}
 
-.stat-item {
-    text-align: center;
-}
-
-.stat-number {
-    font-size: 2rem;
-    font-weight: 700;
-    line-height: 1;
-    margin-bottom: 0.5rem;
-}
-
-.stat-label {
-    font-size: 0.875rem;
-    opacity: 0.8;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.stat-divider {
-    width: 1px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.3);
-}
 
 .hero-visual {
     position: relative;
@@ -236,26 +253,17 @@
 
 .visual-card {
     position: relative;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
+    background: transparent;
     border-radius: 24px;
-    padding: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0;
+    border: none;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     transform-style: preserve-3d;
     transition: transform 0.3s ease;
 }
 
 .visual-card:hover {
-    transform: translateY(-10px) rotateY(5deg);
-}
-
-.visual-glow {
-    position: absolute;
-    inset: -50%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
-    animation: pulse 3s ease-in-out infinite;
-    pointer-events: none;
+    transform: translateY(-10px) scale(1.02);
 }
 
 .student-illustration {
@@ -265,6 +273,8 @@
     border-radius: 16px;
     position: relative;
     z-index: 1;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
 @keyframes fadeInUp {
@@ -303,11 +313,6 @@
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 0.5; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.05); }
 }
 
 /* Audience Section */
@@ -368,16 +373,25 @@
  color: var(--accent-color-start);
 }
 
+/* Notices Section */
+.notices-section {
+    padding: 1.5rem 2rem;
+    background: var(--surface-light);
+}
+
 .message-bar {
- padding:1rem;
- border-radius:8px;
- margin-bottom:1rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    margin: 0;
+    text-align: center;
+    font-size: 1rem;
+    box-shadow: var(--shadow-sm);
 }
 
 .message-bar.info {
- background-color: #eef4ff;
- color: #0a5bd8;
- border:1px solid #b3d1ff;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    color: #0d47a1;
+    border: 1px solid #90caf9;
 }
 
 .icon {
@@ -398,7 +412,7 @@
 @media (max-width: 1200px) {
     .hero-inner {
         grid-template-columns: 1fr;
-        gap: 3rem;
+        gap: 2rem;
         text-align: center;
     }
 
@@ -409,18 +423,18 @@
     }
 
     .hero-title {
-        font-size: 3rem;
+        font-size: 2.5rem;
     }
 
     .hero-subtitle {
-        font-size: 1.25rem;
+        font-size: 1.125rem;
     }
 
-    .hero-actions {
+    .hero-fees {
         justify-content: center;
     }
 
-    .hero-stats {
+    .hero-actions {
         justify-content: center;
     }
 
@@ -433,23 +447,33 @@
 @media (max-width: 768px) {
     .hero-section {
         min-height: auto;
-        padding: 2rem 0;
+        padding: 1.5rem 0;
     }
 
     .hero-inner {
-        padding: 2rem 1rem;
+        padding: 1.5rem 1rem;
     }
 
     .hero-title {
-        font-size: 2.5rem;
+        font-size: 2rem;
     }
 
     .hero-subtitle {
-        font-size: 1.125rem;
+        font-size: 1rem;
     }
 
     .hero-description {
-        font-size: 1rem;
+        font-size: 0.925rem;
+    }
+
+    .hero-fees {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .fee-card {
+        width: 100%;
+        justify-content: center;
     }
 
     .hero-actions {
@@ -464,34 +488,29 @@
         justify-content: center;
     }
 
-    .hero-stats {
-        flex-direction: column;
-        gap: 1.5rem;
-    }
-
-    .stat-divider {
-        display: none;
-    }
-
     .visual-card {
-        padding: 1rem;
+        padding: 0;
     }
 }
 
 @media (max-width: 480px) {
     .hero-title {
-        font-size: 2rem;
+        font-size: 1.75rem;
     }
 
     .hero-subtitle {
-        font-size: 1rem;
+        font-size: 0.925rem;
     }
 
-    .stat-number {
-        font-size: 1.5rem;
+    .hero-description {
+        font-size: 0.875rem;
     }
 
-    .stat-label {
-        font-size: 0.75rem;
+    .fee-label {
+        font-size: 0.7rem;
+    }
+
+    .fee-amount {
+        font-size: 1.125rem;
     }
 }
