@@ -28,6 +28,13 @@
 - **Feature branches** follow naming convention: `feature/{phase-name}`
 - **Merge strategy**: Squash and merge for clean history
 
+**CRITICAL REGISTRATION RESUMPTION:**
+- **Session Persistence**: Registration wizard progress MUST be saved at each step
+- **Interruption Recovery**: If registration is interrupted, student can return and continue from where they left off
+- **No Data Loss**: Previously completed steps remain intact and don't require re-entry
+- **Session Storage**: Use browser sessionStorage + server-side draft records
+- **Draft Expiry**: Draft registrations expire after 30 days of inactivity
+
 **CRITICAL PAYMENT RULES:**
 - **Installment Payments**: Payments can be made in installments until complete
 - **Payment Order**: Payments processed in order of tests being written
@@ -35,6 +42,10 @@
 - **Payment Calculation**: System must account for intake year when calculating complete payment
 - **View Restrictions**: Only completely paid tests can be viewed/downloaded by students
 - **Admin Override**: Staff and Admin can view all tests regardless of payment status
+- **Bank Payment Upload**: Payment records uploaded to website in particular file format (CSV/Excel)
+- **Payment File Format**: Must contain fields: StudentID/NBTNumber, Amount, Date, BankReference, TransactionType
+- **Payment Reconciliation**: Automated matching of uploaded bank payments to pending payment records
+- **Payment Validation**: Bank payments validated against expected amounts and booking references
 
 **CRITICAL VENUE RULES:**
 - **Venue Types**: National, Special Session, Research, Other (extensible)
@@ -44,6 +55,19 @@
   - Sunday test highlighting (color-coded)
   - Online test highlighting (written anywhere with computer, video, sound, internet)
   - Specific online test session dates
+
+**CRITICAL UI/UX RULES:**
+- **Landing Page Structure**: Three main menu sections:
+  1. Applicants (Registration, NBT Info, Test Preparation, Results, FAQs)
+  2. Institutions (Institutional Reports, Bulk Results, Research Data, Contact)
+  3. Educators (Teaching Resources, Workshops, Assessment Tools, Research)
+- **Menu Content**: Submenus MUST match current NBT website structure (www.nbt.ac.za)
+- **Video Integration**: Videos embedded on relevant pages (Test Prep, Resources, About NBT)
+- **Dashboard Navigation**: After login, users directed to role-specific dashboard with left-side menu
+- **Student Dashboard**: My Profile, My Bookings, My Results, Test Dates, Payment History, Support
+- **Staff Dashboard**: View Students, View Bookings, View Payments, View Results, Reports
+- **Admin Dashboard**: Full CRUD + Reports + Venue Management + User Management + Settings
+- **SuperUser Dashboard**: All Admin + System Config + Data Imports + Audit Logs + Advanced Reports
 
 **CRITICAL RESULT RULES:**
 - **Test Types**:
@@ -280,13 +304,28 @@ Students (applicants/writers) interact with the NBT Web Application through a st
 
 **Registration Wizard**
 - Multi-step process collecting:
-  * Personal details (SA ID, Foreign ID, or Passport ID; contact info)
-  * Academic background (school, grade)
-  * Test preferences (AQL, MAT, or both)
-  * Venue selection
-  * Special accommodation requests
+  * **Step 1 (Combined Personal + Account)**:
+    - ID Type selection (SA_ID, FOREIGN_ID, PASSPORT)
+    - ID Number with validation
+    - Personal: First Name, Last Name, Email, Phone, DOB (if not SA ID), Gender, Ethnicity
+    - If SA_ID: Auto-extract DOB and Gender from ID number
+  * **Step 2 (Combined Academic + Test Selection)**:
+    - Academic background (school, grade, year)
+    - Test type (AQL or MAT)
+    - Venue and session selection with capacity validation
+    - Special accommodation requests
+  * **Step 3 (Survey Questionnaire)**:
+    - Pre-test questionnaire for research and equity reporting
+    - Background questions (multiple choice and short answer)
+  * **Step 4 (Review & Confirmation)**:
+    - Summary of all information
+    - Terms acceptance
+    - Submit registration (triggers NBT number generation automatically)
+    - Redirect to login after successful registration
 - Each step validates inputs and saves progress automatically
-- Registration resumable if interrupted
+- Registration resumable if interrupted (draft state preserved)
+- **CRITICAL**: NBT number generated on final submission, NOT as separate wizard step
+- **CRITICAL**: Wizard must NOT skip to end prematurely - all steps required
 
 **Booking & Payment Rules** (CRITICAL BUSINESS RULES)
 - **Intake Start Date**: Bookings open annually on April 1 (Year Intake start date). Bookings can be done anytime after start of Year Intake.
@@ -442,29 +481,57 @@ Steps:
      - If SA_ID: Auto-extract DOB and Gender from ID
      - Manual entry: DOB (if not SA_ID), Gender, Ethnicity
      - Age calculated from DOB (not required as separate input)
+     - Next button MUST be enabled ONLY when step is valid
   
   2. Academic & Test Selection (Combined Step):
      - Academic background (school, grade, year)
      - Test type selection (AQL or MAT)
      - Test preferences and special accommodations
      - Venue and session selection (capacity validation)
+     - Next button MUST be enabled ONLY when step is valid
   
-  3. Pre-Test Questionnaire:
+  3. Pre-Test Questionnaire (Survey):
      - Background survey questions for research and equity reporting
      - Multiple choice and short answer questions
      - Save responses to PreTestQuestionnaire entity
+     - Next button MUST be enabled ONLY when questionnaire is complete
   
   4. Review & Confirmation:
      - Summary of all entered information
-     - Terms and conditions acceptance
-     - Submit registration
-     - NBT Number generation (automatic upon submission)
-     - Navigate to login page after successful registration
+     - Terms and conditions acceptance checkbox (required)
+     - Register button enabled ONLY when terms accepted
+     - Submit registration → triggers NBT Number generation (server-side)
+     - Success: Navigate to login page with success message
+     - Failure: Display error, remain on wizard
 
-Persistence Strategy: Save draft on each step
-Validation: Client + server-side per step
-Navigation: Forward (enabled when step is valid), backward, cancel with state preservation
-NBT Number Generation: Triggered automatically on final submission, not as separate step
+Persistence Strategy: 
+  - Save draft to database on each step completion
+  - Store wizard state in sessionStorage (currentStep, completedSteps)
+  - On page reload: Restore from database + sessionStorage
+  
+Validation: 
+  - Client-side: Real-time field validation with FluentValidation
+  - Server-side: Validate on each step submission via API
+  - Next button disabled until current step is valid
+  
+Navigation: 
+  - Forward: Enabled when current step valid
+  - Backward: Always enabled (except on step 1)
+  - Cancel: Prompt confirmation, preserve draft if confirmed
+  - Step indicators show progress (completed, current, upcoming)
+  
+NBT Number Generation: 
+  - Triggered automatically on final submission (server-side)
+  - NOT a separate wizard step
+  - Generated in RegistrationService.SubmitRegistration()
+  - Luhn validation enforced before saving
+  
+CRITICAL BUG FIXES:
+  - Wizard MUST NOT skip to end prematurely
+  - All steps MUST be completed in sequence
+  - Next button activation logic MUST be correct per step
+  - Step validation MUST prevent progression if invalid
+  - Auto-fill from SA ID MUST NOT trigger premature step completion
 ```
 
 **PRINCIPLE:** Registration MUST be resumable. Partial data MUST be persisted to prevent data loss. NBT number is generated server-side upon successful submission, not during wizard navigation.
