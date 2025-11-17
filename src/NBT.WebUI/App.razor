@@ -16,7 +16,7 @@
   <ChildContent>
     <Router AppAssembly="@typeof(App).Assembly">
       <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(NBT.WebUI.Components.Layout.MainLayout)"/>
       </Found>
       <NotFound>
         <p>Sorry, there's nothing at this address.</p>
@@ -26,9 +26,10 @@
 </ErrorBoundary>
 
 @code {
-    private void Reload(MouseEventArgs e)
+    private Task Reload(MouseEventArgs e)
     {
         NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+        return Task.CompletedTask;
     }
 
     [Inject] private NavigationManager NavigationManager { get; set; } = default!;
