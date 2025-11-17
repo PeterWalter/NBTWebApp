@@ -2,8 +2,10 @@
 @rendermode InteractiveServer
 @using NBT.WebUI.Services
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Authorization
 @inject IAuthenticationService AuthService
 @inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Login - NBT Website</PageTitle>
 
@@ -30,7 +32,7 @@
                     Label="Email Address"
                     Placeholder="your.email@example.com"
                     Required="true"
-                    Style="width: 100%;" />
+                    Style="width:100%;" />
                 <ValidationMessage For="@(() => _loginModel.Email)" />
             </div>
 
@@ -41,7 +43,7 @@
                     Placeholder="Enter your password"
                     TextFieldType="TextFieldType.Password"
                     Required="true"
-                    Style="width: 100%;" />
+                    Style="width:100%;" />
                 <ValidationMessage For="@(() => _loginModel.Password)" />
             </div>
 
@@ -55,7 +57,7 @@
                     Appearance="Appearance.Accent"
                     Loading="@_isLoading"
                     Disabled="@_isLoading"
-                    Style="width: 100%;">
+                    Style="width:100%;">
                     @(_isLoading ? "Logging in..." : "Login")
                 </FluentButton>
             </div>
@@ -90,21 +92,34 @@
 
             if (result.Success)
             {
+                // determine redirect based on actual role names returned by backend
                 var redirectUrl = !string.IsNullOrEmpty(ReturnUrl) ? ReturnUrl : "/";
-                
-                if (result.User?.Roles?.Contains("Admin") == true)
+
+                var roles = result.User?.Roles ?? new List<string>();
+
+                if (roles.Any(r => string.Equals(r, "Administrator", StringComparison.OrdinalIgnoreCase) || string.Equals(r, "Admin", StringComparison.OrdinalIgnoreCase)))
                 {
                     redirectUrl = "/admin";
                 }
-                else if (result.User?.Roles?.Contains("Institution") == true)
+                else if (roles.Any(r => string.Equals(r, "Institution", StringComparison.OrdinalIgnoreCase) || string.Equals(r, "InstitutionalUser", StringComparison.OrdinalIgnoreCase)))
                 {
                     redirectUrl = "/institution-dashboard";
                 }
-                else if (result.User?.Roles?.Contains("Student") == true)
+                else if (roles.Any(r => string.Equals(r, "Student", StringComparison.OrdinalIgnoreCase) || string.Equals(r, "Applicant", StringComparison.OrdinalIgnoreCase)))
                 {
                     redirectUrl = "/student-dashboard";
                 }
-                
+
+                // Notify authentication state provider so UI updates
+                try
+                {
+                    (AuthStateProvider as CustomAuthenticationStateProvider)?.NotifyAuthenticationStateChanged();
+                }
+                catch
+                {
+                    // ignore if cast fails
+                }
+
                 Navigation.NavigateTo(redirectUrl, forceLoad: true);
             }
             else
@@ -129,7 +144,7 @@
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Password is required")]
-        [MinLength(6, ErrorMessage = "Password must be at least 6 characters")]
+        [MinLength(6, ErrorMessage = "Password must be at least6 characters")]
         public string Password { get; set; } = string.Empty;
 
         public bool RememberMe { get; set; }

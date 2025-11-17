@@ -127,9 +127,17 @@ if (!app.Environment.IsDevelopment())
  app.UseExceptionHandler("/Error");
  app.UseHsts();
 }
+else
+{
+ // Show detailed errors when developing
+ app.UseDeveloperExceptionPage();
+}
 
 app.UseStaticFiles();
-app.UseAntiforgery();
+
+// NOTE: removed app.UseAntiforgery() — that middleware does not exist.
+// If you need antiforgery, call services.AddAntiforgery() and
+// use the antiforgery token where required from components/handlers.
 
 app.MapRazorComponents<App>()
  .AddInteractiveServerRenderMode();

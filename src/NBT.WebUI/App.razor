@@ -1,0 +1,35 @@
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components
+
+<ErrorBoundary>
+  <ErrorContent>
+    <div class="app-error" style="padding:1rem; color:#a33;">
+      <h3>Something went wrong</h3>
+      <p>@context.Message</p>
+      <details style="white-space:pre-wrap;">
+        @context.ToString()
+      </details>
+      <p><a href="" @onclick="Reload">Reload</a></p>
+    </div>
+  </ErrorContent>
+  <ChildContent>
+    <Router AppAssembly="@typeof(App).Assembly">
+      <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
+      </Found>
+      <NotFound>
+        <p>Sorry, there's nothing at this address.</p>
+      </NotFound>
+    </Router>
+  </ChildContent>
+</ErrorBoundary>
+
+@code {
+    private void Reload(MouseEventArgs e)
+    {
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+    }
+
+    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+}

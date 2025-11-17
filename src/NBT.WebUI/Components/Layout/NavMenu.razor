@@ -1,5 +1,7 @@
+@using Microsoft.AspNetCore.Components.Authorization
 @using NBT.WebUI.Services
 @inject IAuthenticationService AuthService
+@inject AuthenticationStateProvider AuthStateProvider
 @implements IDisposable
 
 <nav class="top-nav">
@@ -37,19 +39,19 @@
             {
                 <span class="user-name">@_currentUser.FirstName @_currentUser.LastName</span>
                 
-                @if (_currentUser.Roles.Contains("Admin"))
+                @if (_currentUser.Roles.Contains("Administrator") || _currentUser.Roles.Contains("Admin"))
                 {
                     <FluentNavLink Href="/admin" Class="auth-link admin-link">
                         Admin
                     </FluentNavLink>
                 }
-                else if (_currentUser.Roles.Contains("Institution"))
+                else if (_currentUser.Roles.Contains("Institution") || _currentUser.Roles.Contains("InstitutionalUser"))
                 {
                     <FluentNavLink Href="/institution-dashboard" Class="auth-link">
                         Dashboard
                     </FluentNavLink>
                 }
-                else if (_currentUser.Roles.Contains("Student"))
+                else if (_currentUser.Roles.Contains("Student") || _currentUser.Roles.Contains("Applicant"))
                 {
                     <FluentNavLink Href="/student-dashboard" Class="auth-link">
                         Dashboard
@@ -73,17 +75,39 @@
 @code {
     private bool _isAuthenticated;
     private UserInfo? _currentUser;
-    private Timer? _checkTimer;
 
     protected override async Task OnInitializedAsync()
     {
+        // Initialize state
         await CheckAuthenticationStatus();
-        
-        _checkTimer = new Timer(async _ => await InvokeAsync(async () =>
+
+        // Subscribe to authentication state changes so UI updates immediately
+        AuthStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
+    }
+
+    // Handler must match the event delegate signature; use async void for event handler
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        try
         {
-            await CheckAuthenticationStatus();
-            StateHasChanged();
-        }), null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
+            var authState = await task;
+            _isAuthenticated = authState.User.Identity?.IsAuthenticated ?? false;
+
+            if (_isAuthenticated)
+            {
+                _currentUser = await AuthService.GetCurrentUserAsync();
+            }
+            else
+            {
+                _currentUser = null;
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
+        catch
+        {
+            // ignore
+        }
     }
 
     private async Task CheckAuthenticationStatus()
@@ -93,6 +117,10 @@
         {
             _currentUser = await AuthService.GetCurrentUserAsync();
         }
+        else
+        {
+            _currentUser = null;
+        }
     }
 
     private async Task HandleLogoutAsync()
@@ -100,11 +128,12 @@
         await AuthService.LogoutAsync();
         _isAuthenticated = false;
         _currentUser = null;
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()
     {
-        _checkTimer?.Dispose();
+        // Unsubscribe to avoid memory leaks
+        AuthStateProvider.AuthenticationStateChanged -= OnAuthenticationStateChanged;
     }
 }
