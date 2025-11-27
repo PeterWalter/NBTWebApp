@@ -63,9 +63,7 @@ a, .btn-link {
     color: white;
 }
 
-    .blazor-error-boundary::after {
-        content: "An error has occurred."
-    }
+/* removed injected message to avoid showing literal text */
 
 .loading-progress {
     position: relative;

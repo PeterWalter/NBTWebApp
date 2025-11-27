@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace NBT.WebUI.Services;
 
@@ -7,10 +8,12 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 {
     private readonly ClaimsPrincipal _anonymous = new(new ClaimsIdentity());
     private readonly IAuthenticationService _authService;
+    private readonly ILogger<CustomAuthenticationStateProvider> _logger;
 
-    public CustomAuthenticationStateProvider(IAuthenticationService authService)
+    public CustomAuthenticationStateProvider(IAuthenticationService authService, ILogger<CustomAuthenticationStateProvider> logger)
     {
         _authService = authService;
+        _logger = logger;
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -18,11 +21,11 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
         try
         {
             var isAuthenticated = await _authService.IsAuthenticatedAsync();
-            
+
             if (isAuthenticated)
             {
                 var user = await _authService.GetCurrentUserAsync();
-                
+
                 if (user != null)
                 {
                     var claims = new List<Claim>
@@ -41,14 +44,15 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 
                     var identity = new ClaimsIdentity(claims, "jwt");
                     var claimsPrincipal = new ClaimsPrincipal(identity);
-                    
+
                     return new AuthenticationState(claimsPrincipal);
                 }
             }
         }
-        catch
+        catch (Exception ex)
         {
-            // If anything goes wrong, return anonymous
+            // log and return anonymous instead of letting the exception bubble up to Blazor rendering
+            _logger.LogWarning(ex, "Authentication state resolution failed during prerendering or startup.");
         }
 
         return new AuthenticationState(_anonymous);

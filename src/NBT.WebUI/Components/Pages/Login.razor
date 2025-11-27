@@ -72,8 +72,7 @@
 </div>
 
 @code {
-    [SupplyParameterFromForm]
-    private LoginModel _loginModel { get; set; } = new();
+    private LoginModel _loginModel { get; set; }
     
     private bool _isLoading = false;
     private string? _errorMessage;
@@ -135,6 +134,11 @@
         {
             _isLoading = false;
         }
+    }
+
+    protected override void OnInitialized()
+    {
+        _loginModel = new LoginModel();
     }
 
     public class LoginModel

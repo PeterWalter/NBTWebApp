@@ -1,6 +1,7 @@
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components
+@using NBT.WebUI.Components.Layout
 
 <ErrorBoundary>
   <ErrorContent>
@@ -10,16 +11,20 @@
       <details style="white-space:pre-wrap;">
         @context.ToString()
       </details>
-      <p><a href="" @onclick="Reload">Reload</a></p>
+      <p><a href="" @onclick="@Reload">Reload</a></p>
     </div>
   </ErrorContent>
   <ChildContent>
     <Router AppAssembly="@typeof(App).Assembly">
       <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(NBT.WebUI.Components.Layout.MainLayout)"/>
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
       </Found>
       <NotFound>
-        <p>Sorry, there's nothing at this address.</p>
+        <div style="text-align: center; padding: 2rem;">
+          <h2>Page Not Found</h2>
+          <p>Sorry, the page you're looking for doesn't exist.</p>
+          <p><a href="/">Go back to Home</a></p>
+        </div>
       </NotFound>
     </Router>
   </ChildContent>
@@ -33,4 +38,22 @@
     }
 
     [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+
+    // Example delegate moved into @code to avoid top-level C# code that breaks compilation.
+    // Uncomment and adapt as needed:
+    //
+    // private Func<object, Task> handler = async (args) =>
+    // {
+    //     if (condition)
+    //         return;
+    //     else
+    //         await SomeOtherTask;
+    // };
 }
+
+# fetch and rebase, resolve conflicts if any, then push
+git fetch origin
+git pull --rebase origin upgrade-to-NET10
+# resolve conflicts (if present), then:
+git rebase --continue
+git push

@@ -11,10 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-// Add Health Checks
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<ApplicationDbContext>();
 
@@ -55,7 +51,10 @@ builder.Services.AddCors(options =>
                 "https://localhost:5001", 
                 "http://localhost:5000",
                 "https://localhost:5089",
-                "http://localhost:5089")
+                "http://localhost:5089",
+                "https://localhost:44332",  // IIS Express SSL
+                "http://localhost:51342"    // IIS Express HTTP
+            )
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
@@ -87,11 +86,11 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI();
+// }
 
 app.UseHttpsRedirection();
 

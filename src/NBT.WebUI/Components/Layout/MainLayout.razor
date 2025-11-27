@@ -3,11 +3,13 @@
 @inject NavigationManager Navigation
 
 <FluentLayout>
+    <!-- Put the top navigation inside the header so the menu appears at the top instead of a left sidebar -->
     <FluentHeader>
-        <LandingHeader />
+        <div class="header-top-wrapper">
+            <LandingHeader />
+            <NavMenu />
+        </div>
     </FluentHeader>
-
-    <NavMenu />
 
     <FluentBodyContent Class="body-content">
         <div class="content">

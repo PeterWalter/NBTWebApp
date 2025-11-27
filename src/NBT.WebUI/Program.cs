@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.FluentUI.AspNetCore.Components;
 using NBT.WebUI.Components;
 using NBT.WebUI.Services;
-using NBT.WebUI.Services.Bookings;
+using NBT.WebUI.Services.Bookings;  
 using System.Net.Http;
 using Microsoft.Extensions.Logging;
 
@@ -32,9 +32,15 @@ builder.Services.AddServerSideBlazor(options =>
 // Add Fluent UI
 builder.Services.AddFluentUIComponents();
 
-// Add Authentication and Authorization
+// Add Authentication and Authorization (Blazor client-side helpers)
 builder.Services.AddAuthorizationCore();
 builder.Services.AddCascadingAuthenticationState();
+
+// NOTE: Do NOT add antiforgery services or middleware unless you intentionally use
+// [SupplyParameterFromForm] or other antiforgery-enabled features across endpoints.
+// Removing antiforgery registration avoids runtime errors when middleware is not configured.
+
+builder.Services.AddAntiforgery();
 
 // Read API base url from configuration
 var apiUrl = builder.Configuration["ApiBaseUrl"];
@@ -56,7 +62,7 @@ builder.Services.AddSingleton(apiOptions);
 builder.Services.AddTransient<BackendUnavailableHandler>(sp => new BackendUnavailableHandler(
  apiOptions.IsConfigured
  ? $"Unable to contact backend at {apiOptions.BaseUrl}. Ensure the API is running and the address is correct."
- : "Backend API base URL is not configured. Set 'ApiBaseUrl' in appsettings or environment variables (e.g. https://localhost:7001/)."));
+ : "Backend API base URL is not configured. Set 'ApiBaseUrl' in appsettings or environment variables (e.g. https://localhost:7001)."));
 
 // Register HttpClient factory for non-service usage
 builder.Services.AddHttpClient();
@@ -76,7 +82,7 @@ void AddApiHttpClient<TService, TImplementation>(string? name = null)
  clientBuilder.ConfigureHttpClient(c =>
  {
  c.BaseAddress = new Uri(apiOptions.BaseUrl!);
- c.Timeout = TimeSpan.FromSeconds(30);
+ c.Timeout = TimeSpan.FromSeconds(120);
  });
  }
  else
@@ -99,7 +105,7 @@ AddApiHttpClient<IRegistrationService, RegistrationService>();
  var b = builder.Services.AddHttpClient<BookingApiService>();
  if (apiOptions.IsConfigured)
  {
- b.ConfigureHttpClient(c => { c.BaseAddress = new Uri(apiOptions.BaseUrl!); c.Timeout = TimeSpan.FromSeconds(30); });
+ b.ConfigureHttpClient(c => { c.BaseAddress = new Uri(apiOptions.BaseUrl!); c.Timeout = TimeSpan.FromSeconds(120); });
  }
  else
  {
@@ -111,7 +117,7 @@ AddApiHttpClient<IRegistrationService, RegistrationService>();
  var b = builder.Services.AddHttpClient<PaymentApiService>();
  if (apiOptions.IsConfigured)
  {
- b.ConfigureHttpClient(c => { c.BaseAddress = new Uri(apiOptions.BaseUrl!); c.Timeout = TimeSpan.FromSeconds(30); });
+ b.ConfigureHttpClient(c => { c.BaseAddress = new Uri(apiOptions.BaseUrl!); c.Timeout = TimeSpan.FromSeconds(120); });
  }
  else
  {
@@ -135,9 +141,11 @@ else
 
 app.UseStaticFiles();
 
-// NOTE: removed app.UseAntiforgery() — that middleware does not exist.
-// If you need antiforgery, call services.AddAntiforgery() and
-// use the antiforgery token where required from components/handlers.
+// Ensure routing middleware is present so endpoint mapping works correctly
+app.UseRouting();
+
+// Do not add UseAntiforgery here — keep middleware minimal for Blazor Interactive Server unless needed
+app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
  .AddInteractiveServerRenderMode();
